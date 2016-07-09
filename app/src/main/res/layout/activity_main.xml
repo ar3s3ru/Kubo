@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/text1"
+        android:layout_width="345dp"
+        android:layout_height="462dp"
+        android:text="Hello World!"
+        app:layout_constraintLeft_toLeftOf="@+id/activity_main"
+        app:layout_constraintTop_toTopOf="@+id/activity_main"
+        app:layout_constraintRight_toRightOf="@+id/activity_main"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_main"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:text="Button"
+        android:layout_width="91dp"
+        android:layout_height="51dp"
+        android:id="@+id/button"
+        app:layout_constraintLeft_toLeftOf="@+id/activity_main"
+        app:layout_constraintTop_toBottomOf="@+id/text1"
+        app:layout_constraintRight_toRightOf="@+id/activity_main"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_main" />
+
+</android.support.constraint.ConstraintLayout>
