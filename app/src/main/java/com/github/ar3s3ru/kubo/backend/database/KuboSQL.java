@@ -19,4 +19,5 @@ package com.github.ar3s3ru.kubo.backend.database;
  */
 
 public class KuboSQL {
+
 }

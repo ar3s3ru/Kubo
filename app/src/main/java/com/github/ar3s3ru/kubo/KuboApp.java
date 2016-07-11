@@ -40,7 +40,7 @@ public class KuboApp extends Application {
                 .build();
 
         mAppComponent = DaggerKuboAppComponent.builder()
-                .kuboAppModule(new KuboAppModule())
+                .kuboAppModule(new KuboAppModule(this))
                 .build();
     }
 

@@ -4,6 +4,7 @@ import com.github.ar3s3ru.kubo.backend.models.BoardsList;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 
 /**
  * Copyright (C) 2016  Danilo Cianfrone
@@ -26,4 +27,7 @@ import retrofit2.http.GET;
 public interface KuboAPInterface {
     @GET("boards.json")
     Call<BoardsList> getBoards();
+
+    @GET("{board}/catalog.json")
+    Call<Object> getCatalog(@Path("board") String board);
 }

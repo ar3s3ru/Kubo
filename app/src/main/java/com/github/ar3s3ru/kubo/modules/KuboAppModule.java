@@ -1,7 +1,11 @@
 package com.github.ar3s3ru.kubo.modules;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+
 import com.squareup.otto.Bus;
-import com.squareup.otto.ThreadEnforcer;
 
 import javax.inject.Singleton;
 
@@ -29,6 +33,12 @@ import dagger.Provides;
 @Module
 public class KuboAppModule {
 
+    private Context appContext;
+
+    public KuboAppModule(@NonNull Context appContext) {
+        this.appContext = appContext;
+    }
+
     /**
      * Provider for Otto EventBus singleton
      * @return Singleton EventBus instance
@@ -38,5 +48,11 @@ public class KuboAppModule {
     static Bus provideEventBus() {
         // We want to receive events on the UI thread (callbacks usually have to change the ui)
         return new Bus();
+    }
+
+    @Provides
+    @Singleton
+    SharedPreferences provideSharedPrefs() {
+        return PreferenceManager.getDefaultSharedPreferences(appContext);
     }
 }
