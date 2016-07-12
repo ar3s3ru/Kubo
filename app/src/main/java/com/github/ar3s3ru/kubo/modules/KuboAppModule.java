@@ -4,8 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-
-import com.squareup.otto.Bus;
+import android.widget.Toast;
 
 import javax.inject.Singleton;
 
@@ -32,7 +31,8 @@ import dagger.Provides;
 
 @Module
 public class KuboAppModule {
-
+    // The AppModule needs application context to access
+    // application-level resources (such as DB, shared preferences, ...)
     private Context appContext;
 
     public KuboAppModule(@NonNull Context appContext) {
@@ -40,19 +40,31 @@ public class KuboAppModule {
     }
 
     /**
-     * Provider for Otto EventBus singleton
-     * @return Singleton EventBus instance
+     * Provides the application context to the other modules
+     * @return Application context
      */
     @Provides
-    @Singleton
-    static Bus provideEventBus() {
-        // We want to receive events on the UI thread (callbacks usually have to change the ui)
-        return new Bus();
+    Context provideAppContext() {
+        return appContext;
     }
 
+    /**
+     * Provides the default shared preferences
+     * @return Default application shared preferences
+     */
     @Provides
     @Singleton
     SharedPreferences provideSharedPrefs() {
         return PreferenceManager.getDefaultSharedPreferences(appContext);
+    }
+
+    /**
+     * Provides a Toast instance with application context to show
+     * errors within Activities and Fragments and so on...
+     * @return Toast instance for errors notifications
+     */
+    @Provides
+    Toast provideNewErrorToast() {
+        return Toast.makeText(appContext, "", Toast.LENGTH_LONG);
     }
 }

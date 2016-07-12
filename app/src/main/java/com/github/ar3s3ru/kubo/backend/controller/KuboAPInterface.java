@@ -24,10 +24,22 @@ import retrofit2.http.Path;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
+/**
+ * 4Chan REST API for Retrofit usage.
+ */
 public interface KuboAPInterface {
+    /**
+     * Get JSON representation of 4chan available boards
+     * @return Call object with BoardsList JSON representation
+     */
     @GET("boards.json")
     Call<BoardsList> getBoards();
 
+    /**
+     * Get JSON representation of 4chan alive threads (a.k.a catalog)
+     * @param board Board path
+     * @return Call object with Threads JSON representation
+     */
     @GET("{board}/catalog.json")
     Call<Object> getCatalog(@Path("board") String board);
 }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/KuboTheme.List.Container"
+    android:id="@+id/boardslist_layout">
+
+    <TextView
+        style="@style/KuboTheme.List.Element.Title"
+        android:id="@+id/boardslist_title" />
+
+    <TextView
+        style="@style/KuboTheme.List.Element.Text"
+        android:id="@+id/boardslist_description"
+        android:layout_alignLeft="@+id/boardslist_title"
+        android:layout_alignStart="@+id/boardslist_title"
+        android:layout_below="@+id/boardslist_title" />
+
+    <TextView style="@style/KuboTheme.List.Notifier"
+        android:id="@+id/boardslist_text_noelements"
+        android:text="@string/no_elements"
+        android:drawableStart="@drawable/ic_mood_bad"
+        android:drawableLeft="@drawable/ic_mood_bad" />
+
+</RelativeLayout>

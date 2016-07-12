@@ -9,10 +9,10 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
+        android:theme="@style/KuboTheme"
         android:name=".KuboApp">
 
-        <activity android:name=".views.MainActivity">
+        <activity android:name=".views.BoardsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

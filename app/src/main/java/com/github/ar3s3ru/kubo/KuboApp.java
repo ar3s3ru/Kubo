@@ -7,6 +7,7 @@ import com.github.ar3s3ru.kubo.components.DaggerKuboNetComponent;
 import com.github.ar3s3ru.kubo.components.KuboAppComponent;
 import com.github.ar3s3ru.kubo.components.KuboNetComponent;
 import com.github.ar3s3ru.kubo.modules.KuboAppModule;
+import com.github.ar3s3ru.kubo.modules.KuboDBModule;
 import com.github.ar3s3ru.kubo.modules.KuboNetModule;
 
 /**
@@ -31,23 +32,38 @@ public class KuboApp extends Application {
     private KuboNetComponent mNetComponent;
     private KuboAppComponent mAppComponent;
 
+    private KuboNetModule mNetModule = new KuboNetModule("https://api.4chan.org");
+    private KuboAppModule mAppModule = new KuboAppModule(this);
+    private KuboDBModule  mDBModule  = new KuboDBModule();
+
     @Override
     public void onCreate() {
         super.onCreate();
 
         mNetComponent = DaggerKuboNetComponent.builder()
-                .kuboNetModule(new KuboNetModule("https://api.4chan.org"))
+                .kuboNetModule(mNetModule)
+                .kuboAppModule(mAppModule)
+                .kuboDBModule(mDBModule)
                 .build();
 
         mAppComponent = DaggerKuboAppComponent.builder()
-                .kuboAppModule(new KuboAppModule(this))
+                .kuboAppModule(mAppModule)
+                .kuboDBModule(mDBModule)
                 .build();
     }
 
+    /**
+     * Getter for Dagger Net Component for IntentService injection
+     * @return Dagger NetComponent instance
+     */
     public KuboNetComponent getNetComponent() {
         return mNetComponent;
     }
 
+    /**
+     * Getter for Dagger App Component for UI components injection
+     * @return Dagger AppComponent instance
+     */
     public KuboAppComponent getAppComponent() {
         return mAppComponent;
     }

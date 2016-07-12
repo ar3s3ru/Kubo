@@ -1,14 +1,12 @@
-package com.github.ar3s3ru.kubo.views.receivers;
+package com.github.ar3s3ru.kubo.backend.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.github.ar3s3ru.kubo.backend.controller.KuboEvents;
-import com.github.ar3s3ru.kubo.backend.models.parcelable.ParcelableBoardsList;
+import com.github.ar3s3ru.kubo.views.BoardsActivity;
 
 import java.lang.ref.WeakReference;
 
@@ -30,36 +28,40 @@ import java.lang.ref.WeakReference;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
+/**
+ * Local BroadcastReceiver for the getBoards() request.
+ * Generally, this is done within MainActivity (hence the constructor param).
+ */
 public class BoardsReceiver extends BroadcastReceiver {
 
-    private WeakReference<TextView> mTextView;
-    private WeakReference<Button>   mButton;
+    // Maintains a WeakReference to the MainActivity
+    // to prevent blocking garbage collection
+    private WeakReference<BoardsActivity> mActivity;
 
-    public BoardsReceiver(@NonNull TextView text, @NonNull Button button) {
-        mTextView = new WeakReference<>(text);
-        mButton   = new WeakReference<>(button);
+    public BoardsReceiver(@NonNull BoardsActivity activity) {
+        mActivity = new WeakReference<>(activity);
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        TextView text   = mTextView.get();
-        Button   button = mButton.get();
-        // Handle receive only if text/button still exists in the heap
-        if (text != null && button != null) {
+        // Gets MainActivity strong reference
+        BoardsActivity activity = mActivity.get();
+
+        // Handle receive only if the activity still exists
+        if (activity != null) {
             // Status OK
             if (intent.getBooleanExtra(KuboEvents.BOARDS_STATUS, false)) {
-                ParcelableBoardsList list = intent.getParcelableExtra(KuboEvents.BOARDS_ARG0);
-                text.setText("Received " + list.getBoards().size() + " boards...");
-
-                button.setText("Downloaded");
-                button.setClickable(false);
+                // Sets up the recycler view
+                activity.flagReadyToRecyclers();
+                // Disables startup boards download
+                activity.disableStartupDownload();
             } else {
                 // Status not OK
-                String error = intent.getStringExtra(KuboEvents.BOARDS_ERR0);
-                int errcod = intent.getIntExtra(KuboEvents.BOARDS_ERRCOD, 0);
+                String error  = intent.getStringExtra(KuboEvents.BOARDS_ERR);
+                int    errcod = intent.getIntExtra(KuboEvents.BOARDS_ERRCOD, 0);
 
-                text.setText("Error (" + errcod + "): " + error);
-                button.setText("Download");
+                // Shows error within the activity
+                activity.showToastError(error, errcod);
             }
         }
     }

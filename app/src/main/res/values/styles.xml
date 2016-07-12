@@ -1,11 +1,71 @@
 <resources>
-
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <style name="KuboTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="KuboTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <!-- MainActivity style -->
+    <style name="KuboTheme.MainActivity">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/colorPrimaryDark</item>
+    </style>
+
+    <!-- App style for list elements -->
+    <style name="KuboTheme.List">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/colorBackground</item>
+    </style>
+
+    <style name="KuboTheme.List.Container" parent="KuboTheme.List">
+        <item name="android:clickable">true</item>
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+    </style>
+
+    <style name="KuboTheme.List.Notifier">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/colorBackground</item>
+        <item name="android:layout_margin">@dimen/listelement_margin</item>
+        <item name="android:layout_centerInParent">true</item>
+
+        <item name="android:textColor">@color/notifyTextColor</item>
+        <item name="android:textAppearance">?android:textAppearanceMedium</item>
+        <item name="android:drawablePadding">@dimen/drawable_padding_long</item>
+
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="KuboTheme.List.Element" parent="KuboTheme.List">
+        <item name="android:layout_marginLeft">@dimen/listelement_marginleft</item>
+        <item name="android:textAppearance">?android:textAppearanceSmall</item>
+    </style>
+    
+    <style name="KuboTheme.List.Element.Header" parent="KuboTheme.List.Element">
+        <item name="android:layout_marginLeft">@dimen/listelement_header_marginLeft</item>
+        <item name="android:layout_marginTop">@dimen/listelement_header_marginLeft</item>
+        <item name="android:layout_marginBottom">@dimen/listelement_header_marginLeft</item>
+        <item name="android:textAppearance">?android:textAppearanceMedium</item>
+        <item name="android:textColor">@color/colorBackground</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:drawablePadding">@dimen/drawable_padding_short</item>
+    </style>
+
+    <style name="KuboTheme.List.Element.Title" parent="KuboTheme.List.Element">
+        <item name="android:textStyle">normal|bold</item>
+        <item name="android:layout_marginTop">@dimen/listelement_margin</item>
+    </style>
+
+    <style name="KuboTheme.List.Element.Text" parent="KuboTheme.List.Element">
+        <item name="android:layout_marginBottom">@dimen/listelement_margin</item>
+    </style>
 </resources>

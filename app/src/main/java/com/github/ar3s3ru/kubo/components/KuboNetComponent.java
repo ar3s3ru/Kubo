@@ -2,6 +2,7 @@ package com.github.ar3s3ru.kubo.components;
 
 import com.github.ar3s3ru.kubo.backend.controller.KuboRESTService;
 import com.github.ar3s3ru.kubo.modules.KuboAppModule;
+import com.github.ar3s3ru.kubo.modules.KuboDBModule;
 import com.github.ar3s3ru.kubo.modules.KuboNetModule;
 
 import javax.inject.Singleton;
@@ -27,7 +28,7 @@ import dagger.Component;
  */
 
 @Singleton
-@Component(modules = {KuboAppModule.class, KuboNetModule.class})
+@Component(modules = {KuboAppModule.class, KuboNetModule.class, KuboDBModule.class})
 public interface KuboNetComponent {
     void inject(KuboRESTService service);
 }

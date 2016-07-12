@@ -1,4 +1,13 @@
-package com.github.ar3s3ru.kubo.backend.database;
+package com.github.ar3s3ru.kubo.modules;
+
+import android.content.Context;
+
+import com.github.ar3s3ru.kubo.backend.database.KuboSQLHelper;
+
+import javax.inject.Singleton;
+
+import dagger.Module;
+import dagger.Provides;
 
 /**
  * Copyright (C) 2016  Danilo Cianfrone
@@ -18,6 +27,16 @@ package com.github.ar3s3ru.kubo.backend.database;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-public class KuboSQL {
-
+@Module
+public class KuboDBModule {
+    /**
+     * Provides a SQLite application helper instance (singleton)
+     * @param context Generally, application context
+     * @return SQLite application helper instance
+     */
+    @Provides
+    @Singleton
+    static KuboSQLHelper provideSQLHelper(Context context) {
+        return new KuboSQLHelper(context);
+    }
 }

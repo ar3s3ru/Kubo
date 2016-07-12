@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Kubo</string>
+    <string name="no_elements">There are no elements here...</string>
+    <string name="header_starred">Starred</string>
+    <string name="header_unstarred">Others</string>
 </resources>

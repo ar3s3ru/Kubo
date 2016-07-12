@@ -13,22 +13,11 @@ public class BoardsList {
     @Expose
     private List<Board> boards = new ArrayList<>();
 
-    /**
-     * 
-     * @return
-     *     The boards
-     */
     public List<Board> getBoards() {
         return boards;
     }
 
-    /**
-     * 
-     * @param boards
-     *     The boards
-     */
     public void setBoards(List<Board> boards) {
         this.boards = boards;
     }
-
 }

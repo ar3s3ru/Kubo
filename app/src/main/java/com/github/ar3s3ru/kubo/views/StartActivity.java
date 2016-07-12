@@ -1,12 +1,4 @@
-package com.github.ar3s3ru.kubo.components;
-
-import com.github.ar3s3ru.kubo.modules.KuboAppModule;
-import com.github.ar3s3ru.kubo.modules.KuboDBModule;
-import com.github.ar3s3ru.kubo.views.BoardsActivity;
-
-import javax.inject.Singleton;
-
-import dagger.Component;
+package com.github.ar3s3ru.kubo.views;
 
 /**
  * Copyright (C) 2016  Danilo Cianfrone
@@ -26,8 +18,5 @@ import dagger.Component;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-@Singleton
-@Component(modules = {KuboAppModule.class, KuboDBModule.class})
-public interface KuboAppComponent {
-    void inject(BoardsActivity activity);
+public class StartActivity extends KuboActivity {
 }

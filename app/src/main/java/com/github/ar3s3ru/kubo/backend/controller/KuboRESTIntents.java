@@ -18,7 +18,10 @@ package com.github.ar3s3ru.kubo.backend.controller;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
+/**
+ * Containers for all the private intents to use within the application,
+ * as requests directed to the IntentService.
+ */
 class KuboRESTIntents {
-    final static String ABORT_REQS = "com.github.ar3s3ru.kubo.api.abortrequests";
     final static String GET_BOARDS = "com.github.ar3s3ru.kubo.api.getboards";
 }

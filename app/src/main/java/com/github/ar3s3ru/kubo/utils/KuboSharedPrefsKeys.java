@@ -1,4 +1,4 @@
-package com.github.ar3s3ru.kubo.components;
+package com.github.ar3s3ru.kubo.utils;
 
 /**
  * Copyright (C) 2016  Danilo Cianfrone
@@ -18,5 +18,9 @@ package com.github.ar3s3ru.kubo.components;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-public class KuboDBComponent {
+/**
+ * Container class for all the preferences keys definitions.
+ */
+class KuboSharedPrefsKeys {
+    static final String KEY_DOWNLOAD_BOARDS = "downloadBoards";
 }

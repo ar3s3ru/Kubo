@@ -18,11 +18,17 @@ package com.github.ar3s3ru.kubo.backend.controller;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
+/**
+ * Container for all the private intents to use across the application,
+ * with LocalBroadcastManager receivers.
+ */
 public class KuboEvents {
+    /**
+     *  Requesting Boards list event
+     */
     public static final String BOARDS        = "com.github.ar3s3ru.kubo.event.boards";
     public static final String BOARDS_STATUS = "com.github.ar3s3ru.kubo.event.boards.status";
-    public static final String BOARDS_ARG0   = "com.github.ar3s3ru.kubo.event.boards.arg0";
 
-    public static final String BOARDS_ERR0   = "com.github.ar3s3ru.kubo.event.boards.err0";
+    public static final String BOARDS_ERR    = "com.github.ar3s3ru.kubo.event.boards.err";
     public static final String BOARDS_ERRCOD = "com.github.ar3s3ru.kubo.event.boards.errcod";
 }
