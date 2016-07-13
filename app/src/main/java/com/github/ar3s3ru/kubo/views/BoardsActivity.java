@@ -188,8 +188,6 @@ public class BoardsActivity extends KuboActivity
 
         mBottomBar.mapColorForTab(0, ContextCompat.getColor(this, R.color.colorStarredTab));
         mBottomBar.mapColorForTab(1, ContextCompat.getColor(this, R.color.colorUnstarredTab));
-
-        mBottomBar.noTabletGoodness();
     }
 
     /**
