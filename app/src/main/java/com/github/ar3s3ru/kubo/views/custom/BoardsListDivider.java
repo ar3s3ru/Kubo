@@ -30,7 +30,7 @@ import android.view.View;
 
 public class BoardsListDivider extends RecyclerView.ItemDecoration {
 
-    private static final int DIVIDER_HEIGHT = 1;
+    private static final int DIVIDER_HEIGHT = 2;
 
     private int   spaceLeft;
     private Paint mPaint;
@@ -53,7 +53,15 @@ public class BoardsListDivider extends RecyclerView.ItemDecoration {
     }
 
     @Override
+    public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
+                               RecyclerView.State state) {
+        // Needs space for the divider
+        outRect.bottom = DIVIDER_HEIGHT;
+    }
+
+    @Override
     public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
+        // Lateral paddings
         mRect.left  = parent.getPaddingLeft() + spaceLeft;
         mRect.right = parent.getWidth() - parent.getPaddingRight();
 
@@ -65,10 +73,11 @@ public class BoardsListDivider extends RecyclerView.ItemDecoration {
             currentChild  = parent.getChildAt(childIdx);
             currentParams = (RecyclerView.LayoutParams) currentChild.getLayoutParams();
 
-            // Calculate top/bottom bounds
+            // Calculate top/bottom paddings
             mRect.top    = currentChild.getBottom() + currentParams.bottomMargin;
             mRect.bottom = mRect.top + DIVIDER_HEIGHT;
 
+            // Drawing divider
             c.drawRect(mRect, mPaint);
         }
     }

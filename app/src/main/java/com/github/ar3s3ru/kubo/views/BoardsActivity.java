@@ -86,15 +86,17 @@ public class BoardsActivity extends KuboActivity
 
     @Override
     public void onMenuTabReSelected(@IdRes int menuItemId) {
+        // On tab reselection, go up
         if (menuItemId == R.id.boards_activity_menu_starred) {
-
+            mStarRecycler.smoothScrollToPosition(0);
         } else if (menuItemId == R.id.boards_activity_menu_unstarred) {
-
+            mUnstarRecycler.smoothScrollToPosition(0);
         }
     }
 
     @Override
     public void onMenuTabSelected(@IdRes int menuItemId) {
+        // Change RecyclerViews visibility
         if (menuItemId == R.id.boards_activity_menu_starred) {
             switchVisibility(mUnstarRecycler, mStarRecycler);
         } else if (menuItemId == R.id.boards_activity_menu_unstarred) {
@@ -155,18 +157,27 @@ public class BoardsActivity extends KuboActivity
     private void settingUpRecyclerView(@NonNull RecyclerView recyclerView,
                                        @NonNull BoardsListRecycler adapter) {
         // Setting up recyclerView
-        // recyclerView.addItemDecoration(
-        //         new BoardsListDivider(this, R.dimen.listelement_marginleft, R.color.dividerColor)
-        // );
+        recyclerView.addItemDecoration(
+                new BoardsListDivider(this, R.dimen.listelement_marginleft, R.color.dividerColor)
+        );
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
     }
 
+    /**
+     * Switch visibility between two RecyclerViews
+     * @param visible Visible RecyclerView that must become invisible
+     * @param invisible Invisible RecyclerView that must become visible
+     */
     private void switchVisibility(@NonNull RecyclerView visible, @NonNull RecyclerView invisible) {
         visible.setVisibility(View.GONE);
         invisible.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Setter for BottomBar view object
+     * @param savedInstanceState Activity savedInstanceState bundle
+     */
     private void settingUpBottomBar(@Nullable Bundle savedInstanceState) {
         mBottomBar = BottomBar.attach(this, savedInstanceState);
 
@@ -177,6 +188,8 @@ public class BoardsActivity extends KuboActivity
 
         mBottomBar.mapColorForTab(0, ContextCompat.getColor(this, R.color.colorStarredTab));
         mBottomBar.mapColorForTab(1, ContextCompat.getColor(this, R.color.colorUnstarredTab));
+
+        mBottomBar.noTabletGoodness();
     }
 
     /**
