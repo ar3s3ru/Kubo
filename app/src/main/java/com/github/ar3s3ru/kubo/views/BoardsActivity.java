@@ -155,9 +155,9 @@ public class BoardsActivity extends KuboActivity
     private void settingUpRecyclerView(@NonNull RecyclerView recyclerView,
                                        @NonNull BoardsListRecycler adapter) {
         // Setting up recyclerView
-        recyclerView.addItemDecoration(
-                new BoardsListDivider(this, R.dimen.listelement_marginleft, R.color.dividerColor)
-        );
+        // recyclerView.addItemDecoration(
+        //         new BoardsListDivider(this, R.dimen.listelement_marginleft, R.color.dividerColor)
+        // );
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
     }
@@ -170,14 +170,13 @@ public class BoardsActivity extends KuboActivity
     private void settingUpBottomBar(@Nullable Bundle savedInstanceState) {
         mBottomBar = BottomBar.attach(this, savedInstanceState);
 
-        mBottomBar.useFixedMode();
-
         mBottomBar.setBackgroundColor(getResources().getColor(R.color.colorBackground));
+        mBottomBar.setMaxFixedTabs(1);                      // Workaround for tab coloring
         mBottomBar.setItems(R.menu.boards_activity_menu);
         mBottomBar.setOnMenuTabClickListener(this);
 
-        mBottomBar.mapColorForTab(0, ContextCompat.getColor(this, R.color.colorAccent));
-        mBottomBar.mapColorForTab(1, ContextCompat.getColor(this, R.color.colorAccent));
+        mBottomBar.mapColorForTab(0, ContextCompat.getColor(this, R.color.colorStarredTab));
+        mBottomBar.mapColorForTab(1, ContextCompat.getColor(this, R.color.colorUnstarredTab));
     }
 
     /**
