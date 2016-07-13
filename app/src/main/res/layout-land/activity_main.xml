@@ -1,48 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/KuboTheme.BoardsActivity.Layout"
-    android:id="@+id/activity_main_layout">
+    android:id="@+id/activity_main_layout"
+    android:orientation="horizontal">
 
-    <!-- An invisible view aligned to the center of the parent.
-         Allows other views to be arranged on either side.
-         Ugly workaround, but it works... -->
-    <View
-        android:id="@+id/centerShim"
-        android:layout_height="match_parent"
-        android:layout_width="@dimen/drawable_padding_very_short"
-        android:visibility="invisible"
-        android:layout_centerHorizontal="true"/>
+    <android.support.v7.widget.RecyclerView style="@style/KuboTheme.List"
+        android:id="@+id/activity_main_recyclerview_star_boards" />
 
-    <TextView style="@style/KuboTheme.List.Element.Header"
-        android:id="@+id/activity_main_starred_header"
-        android:text="@string/header_starred"
-        android:drawableLeft="@drawable/ic_star_full"
-        android:drawableStart="@drawable/ic_star_full"
+    <android.support.v7.widget.RecyclerView style="@style/KuboTheme.List"
+        android:id="@+id/activity_main_recyclerview_unstar_boards" />
 
-        android:layout_toLeftOf="@+id/centerShim"
-        android:layout_toStartOf="@+id/centerShim" />
-
-    <android.support.v7.widget.RecyclerView style="@style/KuboTheme.List.Landscape"
-        android:id="@+id/activity_main_recyclerview_star_boards"
-
-        android:layout_below="@id/activity_main_starred_header"
-        android:layout_toLeftOf="@+id/centerShim"
-        android:layout_toStartOf="@+id/centerShim" />
-
-    <TextView style="@style/KuboTheme.List.Element.Header"
-        android:id="@+id/activity_main_unstarred_header"
-        android:text="@string/header_unstarred"
-        android:drawableLeft="@drawable/ic_star_empty"
-        android:drawableStart="@drawable/ic_star_empty"
-
-        android:layout_toRightOf="@+id/centerShim"
-        android:layout_toEndOf="@+id/centerShim" />
-
-    <android.support.v7.widget.RecyclerView style="@style/KuboTheme.List.Landscape"
-        android:id="@+id/activity_main_recyclerview_unstar_boards"
-
-        android:layout_below="@+id/activity_main_unstarred_header"
-        android:layout_toRightOf="@+id/centerShim"
-        android:layout_toEndOf="@+id/centerShim" />
-
-</RelativeLayout>
+</LinearLayout>

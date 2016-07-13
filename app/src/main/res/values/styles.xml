@@ -46,7 +46,7 @@
 
     <!-- BoardsActivity style -->
     <style name="KuboTheme.BoardsActivity" parent="KuboTheme">
-        <item name="android:background">@color/colorVeryDark</item>
+        <item name="android:background">@color/colorBackground</item>
     </style>
 
     <style name="KuboTheme.BoardsActivity.Layout" parent="KuboTheme.BoardsActivity">
@@ -57,7 +57,7 @@
     <!-- App style for list elements -->
     <style name="KuboTheme.List">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
         <item name="android:background">@color/colorBackground</item>
         <item name="android:fadeScrollbars">true</item>
         <item name="android:scrollbars">vertical</item>
@@ -70,6 +70,7 @@
     <style name="KuboTheme.List.Container" parent="KuboTheme.List">
         <item name="android:clickable">true</item>
         <item name="android:foreground">?android:attr/selectableItemBackground</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
 
     <style name="KuboTheme.List.Notifier">
@@ -90,20 +91,11 @@
         <item name="android:layout_marginLeft">@dimen/listelement_marginleft</item>
         <item name="android:textAppearance">?android:textAppearanceSmall</item>
     </style>
-    
-    <style name="KuboTheme.List.Element.Header" parent="KuboTheme.List.Element">
-        <item name="android:layout_marginLeft">@dimen/listelement_header_marginLeft</item>
-        <item name="android:layout_marginTop">@dimen/listelement_header_marginLeft</item>
-        <item name="android:layout_marginBottom">@dimen/listelement_header_marginLeft</item>
-        <item name="android:textAppearance">?android:textAppearanceMedium</item>
-        <item name="android:textColor">@color/colorBackground</item>
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:drawablePadding">@dimen/drawable_padding_short</item>
-    </style>
 
     <style name="KuboTheme.List.Element.Title" parent="KuboTheme.List.Element">
-        <item name="android:textStyle">normal|bold</item>
         <item name="android:layout_marginTop">@dimen/listelement_margin</item>
+        <item name="android:textAppearance">?android:textAppearanceMedium</item>
+        <item name="android:textColor">@color/titleTextColor</item>
     </style>
 
     <style name="KuboTheme.List.Element.Text" parent="KuboTheme.List.Element">

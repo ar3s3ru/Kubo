@@ -11,7 +11,6 @@ import com.github.ar3s3ru.kubo.backend.database.KuboSQLHelper;
 import com.github.ar3s3ru.kubo.backend.database.tables.KuboTableBoard;
 import com.github.ar3s3ru.kubo.backend.models.Board;
 import com.github.ar3s3ru.kubo.backend.models.BoardsList;
-import com.squareup.otto.Bus;
 
 import javax.inject.Inject;
 

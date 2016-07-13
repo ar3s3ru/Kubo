@@ -2,9 +2,13 @@ package com.github.ar3s3ru.kubo.views;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.Toast;
 
 import com.github.ar3s3ru.kubo.KuboApp;
@@ -13,6 +17,8 @@ import com.github.ar3s3ru.kubo.backend.database.KuboSQLHelper;
 import com.github.ar3s3ru.kubo.views.custom.BoardsListDivider;
 import com.github.ar3s3ru.kubo.views.dialogs.BoardSelectedDialog;
 import com.github.ar3s3ru.kubo.views.recyclers.BoardsListRecycler;
+import com.roughike.bottombar.BottomBar;
+import com.roughike.bottombar.OnMenuTabClickListener;
 
 import javax.inject.Inject;
 
@@ -37,7 +43,8 @@ import butterknife.ButterKnife;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-public class BoardsActivity extends KuboActivity implements BoardSelectedDialog.Listener {
+public class BoardsActivity extends KuboActivity
+        implements BoardSelectedDialog.Listener, OnMenuTabClickListener {
 
     @Inject Toast             mToast;
     @Inject KuboSQLHelper     mHelper;
@@ -50,6 +57,7 @@ public class BoardsActivity extends KuboActivity implements BoardSelectedDialog.
     RecyclerView mUnstarRecycler;
 
     private BoardsListRecycler mStarAdapter, mUnstarAdapter;
+    private BottomBar mBottomBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +74,32 @@ public class BoardsActivity extends KuboActivity implements BoardSelectedDialog.
         mStarAdapter   = new BoardsListRecycler(true, mHelper, getSupportFragmentManager());
         mUnstarAdapter = new BoardsListRecycler(false, mHelper, getSupportFragmentManager());
 
-        // Set up recyclers
-        flagReadyToRecyclers();
+        settingUpBottomBar(savedInstanceState); // Setting up BottomBar
+        flagReadyToRecyclers();                 // Set up recyclers
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mBottomBar.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onMenuTabReSelected(@IdRes int menuItemId) {
+        if (menuItemId == R.id.boards_activity_menu_starred) {
+
+        } else if (menuItemId == R.id.boards_activity_menu_unstarred) {
+
+        }
+    }
+
+    @Override
+    public void onMenuTabSelected(@IdRes int menuItemId) {
+        if (menuItemId == R.id.boards_activity_menu_starred) {
+            switchVisibility(mUnstarRecycler, mStarRecycler);
+        } else if (menuItemId == R.id.boards_activity_menu_unstarred) {
+            switchVisibility(mStarRecycler, mUnstarRecycler);
+        }
     }
 
     /**
@@ -123,9 +155,29 @@ public class BoardsActivity extends KuboActivity implements BoardSelectedDialog.
     private void settingUpRecyclerView(@NonNull RecyclerView recyclerView,
                                        @NonNull BoardsListRecycler adapter) {
         // Setting up recyclerView
-        recyclerView.addItemDecoration(new BoardsListDivider(this, R.dimen.listelement_marginleft, R.color.dividerColor));
+        recyclerView.addItemDecoration(
+                new BoardsListDivider(this, R.dimen.listelement_marginleft, R.color.dividerColor)
+        );
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+    }
+
+    private void switchVisibility(@NonNull RecyclerView visible, @NonNull RecyclerView invisible) {
+        visible.setVisibility(View.GONE);
+        invisible.setVisibility(View.VISIBLE);
+    }
+
+    private void settingUpBottomBar(@Nullable Bundle savedInstanceState) {
+        mBottomBar = BottomBar.attach(this, savedInstanceState);
+
+        mBottomBar.useFixedMode();
+
+        mBottomBar.setBackgroundColor(getResources().getColor(R.color.colorBackground));
+        mBottomBar.setItems(R.menu.boards_activity_menu);
+        mBottomBar.setOnMenuTabClickListener(this);
+
+        mBottomBar.mapColorForTab(0, ContextCompat.getColor(this, R.color.colorAccent));
+        mBottomBar.mapColorForTab(1, ContextCompat.getColor(this, R.color.colorAccent));
     }
 
     /**

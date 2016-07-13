@@ -42,8 +42,7 @@ public class BoardsListDivider extends RecyclerView.ItemDecoration {
     private View currentChild;
     private RecyclerView.LayoutParams currentParams;
 
-    public BoardsListDivider(@NonNull Context context,
-                             @DimenRes int spaceRes,
+    public BoardsListDivider(@NonNull Context context, @DimenRes int spaceRes,
                              @ColorRes int colorRes) {
         spaceLeft = context.getResources().getDimensionPixelSize(spaceRes);
         mPaint    = new Paint();
