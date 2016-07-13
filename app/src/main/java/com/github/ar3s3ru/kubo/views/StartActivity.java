@@ -41,7 +41,7 @@ public class StartActivity extends KuboActivity {
     @Inject SharedPreferences mSharedPrefs;
 
     private BoardsReceiver mBoardReceiver;
-    private boolean        isRegistered = false;
+    private boolean isRegistered = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,6 +50,11 @@ public class StartActivity extends KuboActivity {
 
         // Perform injection to have all dependencies ready for use
         ((KuboApp) getApplication()).getAppComponent().inject(this);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     @Override

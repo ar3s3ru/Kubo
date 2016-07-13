@@ -1,6 +1,9 @@
 package com.github.ar3s3ru.kubo.backend.controller;
 
 import com.github.ar3s3ru.kubo.backend.models.BoardsList;
+import com.github.ar3s3ru.kubo.backend.models.autoparcel.ThreadsList;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -41,5 +44,5 @@ public interface KuboAPInterface {
      * @return Call object with Threads JSON representation
      */
     @GET("{board}/catalog.json")
-    Call<Object> getCatalog(@Path("board") String board);
+    Call<List<ThreadsList>> getCatalog(@Path("board") String board);
 }

@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import javax.inject.Singleton;
 
+import auto.parcelgson.gson.AutoParcelGsonTypeAdapterFactory;
 import dagger.Module;
 import dagger.Provides;
 
@@ -66,5 +67,15 @@ public class KuboAppModule {
     @Provides
     Toast provideNewErrorToast() {
         return Toast.makeText(appContext, "", Toast.LENGTH_LONG);
+    }
+
+    /**
+     * Provides an AutoParceGson TypeAdapter factory for reflection usage
+     * into Retrofit calls
+     * @return TypeAdapter factory to use Gson + AutoParcelGson
+     */
+    @Provides
+    AutoParcelGsonTypeAdapterFactory provideAutoParcelFactory() {
+        return new AutoParcelGsonTypeAdapterFactory();
     }
 }

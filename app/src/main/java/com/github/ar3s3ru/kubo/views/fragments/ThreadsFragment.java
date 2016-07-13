@@ -1,4 +1,6 @@
-package com.github.ar3s3ru.kubo.backend.controller;
+package com.github.ar3s3ru.kubo.views.fragments;
+
+import android.support.v4.app.Fragment;
 
 /**
  * Copyright (C) 2016  Danilo Cianfrone
@@ -18,13 +20,5 @@ package com.github.ar3s3ru.kubo.backend.controller;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-/**
- * Containers for all the private intents to use within the application,
- * as requests directed to the IntentService.
- */
-class KuboRESTIntents {
-    final static String GET_BOARDS  = "com.github.ar3s3ru.kubo.api.getboards";
-    final static String GET_CATALOG = "com.github.ar3s3ru.kubo.api.getcatalog";
-
-    final static String GET_CATALOG_PATH = "com.github.ar3s3ru.kubo.api.getcatalog.path";
+public class ThreadsFragment extends Fragment {
 }

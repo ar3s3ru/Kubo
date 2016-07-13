@@ -24,11 +24,21 @@ package com.github.ar3s3ru.kubo.backend.controller;
  */
 public class KuboEvents {
     /**
-     *  Requesting Boards list event
+     * Requesting Boards list event
      */
     public static final String BOARDS        = "com.github.ar3s3ru.kubo.event.boards";
     public static final String BOARDS_STATUS = "com.github.ar3s3ru.kubo.event.boards.status";
 
     public static final String BOARDS_ERR    = "com.github.ar3s3ru.kubo.event.boards.err";
     public static final String BOARDS_ERRCOD = "com.github.ar3s3ru.kubo.event.boards.errcod";
+
+    /**
+     * Requesting Catalog event
+     */
+    public static final String CATALOG        = "com.github.ar3s3ru.kubo.event.catalog";
+    public static final String CATALOG_STATUS = "com.github.ar3s3ru.kubo.event.catalog.status";
+    public static final String CATALOG_RESULT = "com.github.ar3s3ru.kubo.event.catalog.result";
+
+    public static final String CATALOG_ERROR  = "com.github.ar3s3ru.kubo.event.catalog.error";
+    public static final String CATALOG_ERRCOD = "com.github.ar3s3ru.kubo.event.catalog.errcod";
 }

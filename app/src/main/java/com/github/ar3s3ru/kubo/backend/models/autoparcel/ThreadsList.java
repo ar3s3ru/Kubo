@@ -1,4 +1,12 @@
-package com.github.ar3s3ru.kubo.backend.controller;
+package com.github.ar3s3ru.kubo.backend.models.autoparcel;
+
+import android.os.Parcelable;
+
+import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
+
+import auto.parcelgson.AutoParcelGson;
 
 /**
  * Copyright (C) 2016  Danilo Cianfrone
@@ -18,13 +26,15 @@ package com.github.ar3s3ru.kubo.backend.controller;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-/**
- * Containers for all the private intents to use within the application,
- * as requests directed to the IntentService.
- */
-class KuboRESTIntents {
-    final static String GET_BOARDS  = "com.github.ar3s3ru.kubo.api.getboards";
-    final static String GET_CATALOG = "com.github.ar3s3ru.kubo.api.getcatalog";
+@AutoParcelGson
+public abstract class ThreadsList implements Parcelable {
+    @SerializedName("page")
+    abstract int page();
 
-    final static String GET_CATALOG_PATH = "com.github.ar3s3ru.kubo.api.getcatalog.path";
+    @SerializedName("threads")
+    abstract List<Thread> threads();
+
+    static ThreadsList creator(int page, List<Thread> threads) {
+        return new AutoParcelGson_ThreadsList(page, threads);
+    }
 }

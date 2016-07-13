@@ -72,14 +72,29 @@ public class BoardSelectedDialog extends DialogFragment implements DialogInterfa
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt(ID, mID);
+        outState.putInt(POS, mPosition);
+        outState.putBoolean(STAR, mBoardStarred);
+        outState.putString(TITLE, mTitle);
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Bundle takeArgs = getArguments();
+        if (savedInstanceState != null) {
+            takeArgs = savedInstanceState;
+        }
+
         // Get arguments
-        mID           = getArguments().getInt(ID);
-        mTitle        = getArguments().getString(TITLE);
-        mPosition     = getArguments().getInt(POS);
-        mBoardStarred = getArguments().getBoolean(STAR);
+        mID           = takeArgs.getInt(ID);
+        mTitle        = takeArgs.getString(TITLE);
+        mPosition     = takeArgs.getInt(POS);
+        mBoardStarred = takeArgs.getBoolean(STAR);
 
         // BoardsActivity MUST implement Listener
         mListener = (Listener) getActivity();
@@ -107,7 +122,7 @@ public class BoardSelectedDialog extends DialogFragment implements DialogInterfa
     public void onClick(DialogInterface dialog, int which) {
         if (which == 0) {
             // Open selected board
-            mListener.onGoToSelected(mBoardStarred, mPosition);
+            mListener.onGoToSelected(mBoardStarred, mID, mPosition);
         } else if (mBoardStarred) {
             // Unstarring
             mListener.onUnstarSelected(mID, mPosition);
@@ -118,7 +133,7 @@ public class BoardSelectedDialog extends DialogFragment implements DialogInterfa
     }
 
     public interface Listener {
-        void onGoToSelected(boolean starred, int position);
+        void onGoToSelected(boolean starred, int id, int position);
         void onStarSelected(int id, int position);
         void onUnstarSelected(int id, int position);
     }

@@ -36,4 +36,6 @@ dependencies {
     compile 'com.google.dagger:dagger:2.5'
     apt 'com.google.dagger:dagger-compiler:2.5'
     compile 'com.roughike:bottom-bar:1.4.0'
+    compile 'me.tatarka:auto-parcel-gson:0.1'
+    apt 'me.tatarka:auto-parcel-gson-processor:0.1'
 }

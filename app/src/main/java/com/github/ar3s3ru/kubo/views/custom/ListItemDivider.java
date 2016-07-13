@@ -28,7 +28,10 @@ import android.view.View;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-public class BoardsListDivider extends RecyclerView.ItemDecoration {
+/**
+ * Simple divider for RecyclerViews.
+ */
+public class ListItemDivider extends RecyclerView.ItemDecoration {
 
     private static final int DIVIDER_HEIGHT = 2;
 
@@ -42,8 +45,8 @@ public class BoardsListDivider extends RecyclerView.ItemDecoration {
     private View currentChild;
     private RecyclerView.LayoutParams currentParams;
 
-    public BoardsListDivider(@NonNull Context context, @DimenRes int spaceRes,
-                             @ColorRes int colorRes) {
+    public ListItemDivider(@NonNull Context context, @DimenRes int spaceRes,
+                           @ColorRes int colorRes) {
         spaceLeft = context.getResources().getDimensionPixelSize(spaceRes);
         mPaint    = new Paint();
         mRect     = new Rect();

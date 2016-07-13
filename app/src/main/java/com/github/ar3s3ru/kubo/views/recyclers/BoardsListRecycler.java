@@ -1,6 +1,7 @@
 package com.github.ar3s3ru.kubo.views.recyclers;
 
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -11,8 +12,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.github.ar3s3ru.kubo.R;
+import com.github.ar3s3ru.kubo.backend.controller.KuboRESTService;
 import com.github.ar3s3ru.kubo.backend.database.KuboSQLHelper;
 import com.github.ar3s3ru.kubo.backend.database.tables.KuboTableBoard;
+import com.github.ar3s3ru.kubo.views.ContentsActivity;
 import com.github.ar3s3ru.kubo.views.dialogs.BoardSelectedDialog;
 
 import butterknife.BindView;
@@ -37,6 +40,8 @@ import butterknife.ButterKnife;
  */
 
 public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.ViewHolder> {
+
+    protected static final String TAG = "BoardsListRecycler";
 
     private FragmentManager mFragmentManager;
     private Cursor mCursor;
@@ -78,10 +83,12 @@ public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         if (mCount > 0) {
+            holder.setPath(KuboTableBoard.getBoard(mCursor, position));
             holder.title.setText(KuboTableBoard.getTitle(mCursor, position));
             holder.text.setText(Html.fromHtml(
                     KuboTableBoard.getMetaDescription(mCursor, position)
             ));
+
             holder.noElems.setVisibility(View.GONE);
         } else {
             holder.title.setVisibility(View.GONE);
@@ -125,6 +132,18 @@ public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.
         updateCursor(helper);
     }
 
+    /**
+     * Gets Board path of item in position
+     * @param position Board item position
+     * @return Board path (if position is valid), null otherwise
+     */
+    public String getItemPath(int position) {
+        if (position >= 0 && position < mCount) {
+            return KuboTableBoard.getBoard(mCursor, position);
+        }
+        return null;
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener, View.OnLongClickListener {
 
@@ -134,6 +153,7 @@ public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.
 
         private FragmentManager mFragmentManager;
         private boolean mStarred;
+        private String  mPath;
 
         ViewHolder(View itemView, FragmentManager fm, boolean starred) {
             super(itemView);
@@ -147,6 +167,7 @@ public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.
 
             // Setting up itemView onLongClick listener
             itemView.setOnLongClickListener(this);
+            itemView.setOnClickListener(this);
         }
 
         @Override
@@ -167,7 +188,16 @@ public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.
 
         @Override
         public void onClick(View view) {
-            // TODO: implement navigation
+            int id = (int) getItemId();
+
+            if (id != -1 && mPath != null) {
+                ContentsActivity.startContentsActivity(view.getContext(), mPath, id);
+                Log.e(TAG, "Requesting " + mPath);
+            }
+        }
+
+        public void setPath(@NonNull String path) {
+            mPath = path;
         }
     }
 }

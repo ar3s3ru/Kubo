@@ -25,3 +25,5 @@
 
 -keepnames *Dagger*
 
+-keep class **.AutoParcelGson_*
+-keepnames @auto.parcelgson.AutoParcelGson class *

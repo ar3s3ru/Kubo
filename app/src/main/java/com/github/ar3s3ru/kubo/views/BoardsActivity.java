@@ -14,7 +14,7 @@ import android.widget.Toast;
 import com.github.ar3s3ru.kubo.KuboApp;
 import com.github.ar3s3ru.kubo.R;
 import com.github.ar3s3ru.kubo.backend.database.KuboSQLHelper;
-import com.github.ar3s3ru.kubo.views.custom.BoardsListDivider;
+import com.github.ar3s3ru.kubo.views.custom.ListItemDivider;
 import com.github.ar3s3ru.kubo.views.dialogs.BoardSelectedDialog;
 import com.github.ar3s3ru.kubo.views.recyclers.BoardsListRecycler;
 import com.roughike.bottombar.BottomBar;
@@ -127,14 +127,16 @@ public class BoardsActivity extends KuboActivity
     /**
      * Board selected, starts intent to ThreadsActivity
      * @param starred If board selected is starred or not
+     * @param id Board id
      * @param position Board position into the adapter
      */
     @Override
-    public void onGoToSelected(boolean starred, int position) {
-        if (starred) {
-            showToastError("Selected starred board", position);
-        } else {
-            showToastError("Selected unstarred board", position);
+    public void onGoToSelected(boolean starred, int id, int position) {
+        String path =
+                starred ? mStarAdapter.getItemPath(position) : mUnstarAdapter.getItemPath(position);
+
+        if (path != null) {
+            ContentsActivity.startContentsActivity(this, path, id);
         }
     }
 
@@ -158,7 +160,7 @@ public class BoardsActivity extends KuboActivity
                                        @NonNull BoardsListRecycler adapter) {
         // Setting up recyclerView
         recyclerView.addItemDecoration(
-                new BoardsListDivider(this, R.dimen.listelement_marginleft, R.color.dividerColor)
+                new ListItemDivider(this, R.dimen.listelement_marginleft, R.color.dividerColor)
         );
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
