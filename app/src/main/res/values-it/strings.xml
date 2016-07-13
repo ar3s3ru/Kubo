@@ -4,4 +4,5 @@
     <string name="no_elements">Non ci sono elementi qui...</string>
     <string name="header_starred">Preferiti</string>
     <string name="header_unstarred">Altri</string>
+    <string name="text_close">Annulla</string>
 </resources>

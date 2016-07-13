@@ -1,15 +1,19 @@
 package com.github.ar3s3ru.kubo.views.recyclers;
 
 import android.database.Cursor;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.github.ar3s3ru.kubo.R;
+import com.github.ar3s3ru.kubo.backend.database.KuboSQLHelper;
 import com.github.ar3s3ru.kubo.backend.database.tables.KuboTableBoard;
+import com.github.ar3s3ru.kubo.views.dialogs.BoardSelectedDialog;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,11 +38,21 @@ import butterknife.ButterKnife;
 
 public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.ViewHolder> {
 
+    private FragmentManager mFragmentManager;
     private Cursor mCursor;
     private int    mCount;
 
-    public BoardsListRecycler(Cursor cursor) {
-        mCursor = cursor;
+    private boolean isStar;
+
+    public BoardsListRecycler(boolean star, KuboSQLHelper helper, FragmentManager fm) {
+        isStar = star;
+        mFragmentManager = fm;
+
+        // Updating cursor value
+        updateCursor(helper);
+
+        // Has stable ids
+        setHasStableIds(true);
     }
 
     @Override
@@ -48,10 +62,16 @@ public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.
     }
 
     @Override
+    public long getItemId(int position) {
+        return mCount > 0 ? KuboTableBoard.getId(mCursor, position) : -1;
+    }
+
+    @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new ViewHolder(
                 LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.adapter_boardslist, parent, false)
+                        .inflate(R.layout.adapter_boardslist, parent, false),
+                mFragmentManager, isStar
         );
     }
 
@@ -62,6 +82,7 @@ public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.
             holder.text.setText(Html.fromHtml(
                     KuboTableBoard.getMetaDescription(mCursor, position)
             ));
+            holder.noElems.setVisibility(View.GONE);
         } else {
             holder.title.setVisibility(View.GONE);
             holder.text.setVisibility(View.GONE);
@@ -69,15 +90,84 @@ public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.
         }
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    /**
+     * Update adapter's data with a new cursor
+     * @param helper SQLite application helper instance
+     */
+    public void updateCursor(KuboSQLHelper helper) {
+        // Close cursor only if really is there
+        if (mCursor != null) {
+            mCursor.close();
+        }
+        // Retrieve new cursor
+        mCursor = isStar ? KuboTableBoard.getStarredBoards(helper) :    // Getting starred boards
+                           KuboTableBoard.getUnstarredBoards(helper);   // Getting unstarred boards
+        // Notify data updated
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Stars/unstars a defined board, removes the board from the dataset and updates the cursor
+     * @param helper SQLite application helper instance
+     * @param id Board id
+     * @param position Board dataset position
+     */
+    public void removeItem(KuboSQLHelper helper, int id, int position) {
+        // Starring/unstarring
+        if (isStar) {
+            KuboTableBoard.unstarringBoard(helper, id);
+        } else {
+            KuboTableBoard.starringBoard(helper, id);
+        }
+        // Notify data removed
+        notifyItemRemoved(position);
+        // Update cursor
+        updateCursor(helper);
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener, View.OnLongClickListener {
 
         @BindView(R.id.boardslist_title)           TextView title;
         @BindView(R.id.boardslist_description)     TextView text;
         @BindView(R.id.boardslist_text_noelements) TextView noElems;
 
-        ViewHolder(View itemView) {
+        private FragmentManager mFragmentManager;
+        private boolean mStarred;
+
+        ViewHolder(View itemView, FragmentManager fm, boolean starred) {
             super(itemView);
+
+            // Binding views
             ButterKnife.bind(this, itemView);
+
+            // Setting up private fields
+            mFragmentManager = fm;
+            mStarred         = starred;
+
+            // Setting up itemView onLongClick listener
+            itemView.setOnLongClickListener(this);
+        }
+
+        @Override
+        public boolean onLongClick(View view) {
+            int id = (int) getItemId(); // Gets the ItemId (casting is valid because we use int ids)
+
+            if (id != -1) {
+                // id is valid, create new Dialog
+                BoardSelectedDialog
+                        .newInstance(id, getAdapterPosition(), mStarred, title.getText().toString())
+                        .show(mFragmentManager, BoardSelectedDialog.TAG);
+                return true;
+            }
+
+            // If id is not valid, no longClick is performed
+            return false;
+        }
+
+        @Override
+        public void onClick(View view) {
+            // TODO: implement navigation
         }
     }
 }

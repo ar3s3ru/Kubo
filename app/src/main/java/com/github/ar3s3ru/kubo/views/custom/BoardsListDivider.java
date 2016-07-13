@@ -2,10 +2,11 @@ package com.github.ar3s3ru.kubo.views.custom;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.DrawableRes;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.support.annotation.ColorRes;
+import android.support.annotation.DimenRes;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -27,34 +28,35 @@ import android.view.View;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-/**
- * RecyclerView Item divider for BoardsListRecycler adapter.
- */
 public class BoardsListDivider extends RecyclerView.ItemDecoration {
 
-    // Divider drawable shape
-    private Drawable mDivider;
+    private static final int DIVIDER_HEIGHT = 1;
+
+    private int   spaceLeft;
+    private Paint mPaint;
+    private Rect  mRect;
 
     // Using member variables to deal with onDraw allocations overhead
-    private int paddingLeft, paddingRight, paddingTop, paddingBottom;
     private int childIdx, childCount;
 
     private View currentChild;
     private RecyclerView.LayoutParams currentParams;
-    // ---------------------------------------------------------------
 
-    /**
-     * Creates a new BoardListDivider with the drawable resId
-     */
-    public BoardsListDivider(@NonNull Context context, @DrawableRes int resId) {
-        // Get divider drawable shape
-        mDivider = ContextCompat.getDrawable(context, resId);
+    public BoardsListDivider(@NonNull Context context,
+                             @DimenRes int spaceRes,
+                             @ColorRes int colorRes) {
+        spaceLeft = context.getResources().getDimensionPixelSize(spaceRes);
+        mPaint    = new Paint();
+        mRect     = new Rect();
+
+        mPaint.setColor(context.getResources().getColor(colorRes));
+        mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
     }
 
     @Override
     public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
-        paddingLeft  = parent.getPaddingLeft();
-        paddingRight = parent.getWidth() - parent.getPaddingRight();
+        mRect.left  = parent.getPaddingLeft() + spaceLeft;
+        mRect.right = parent.getWidth() - parent.getPaddingRight();
 
         // How many child views we have?
         childCount = parent.getChildCount();
@@ -65,11 +67,10 @@ public class BoardsListDivider extends RecyclerView.ItemDecoration {
             currentParams = (RecyclerView.LayoutParams) currentChild.getLayoutParams();
 
             // Calculate top/bottom bounds
-            paddingTop    = currentChild.getBottom() + currentParams.bottomMargin;
-            paddingBottom = paddingTop + mDivider.getIntrinsicHeight();
+            mRect.top    = currentChild.getBottom() + currentParams.bottomMargin;
+            mRect.bottom = mRect.top + DIVIDER_HEIGHT;
 
-            mDivider.setBounds(paddingLeft, paddingTop, paddingRight, paddingBottom);
-            mDivider.draw(c);
+            c.drawRect(mRect, mPaint);
         }
     }
 }

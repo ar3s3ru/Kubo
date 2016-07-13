@@ -6,17 +6,52 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="KuboTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <style name="KuboTheme.NoActionBar" parent="KuboTheme">
+        <!-- Disable action bar -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
-    <!-- MainActivity style -->
-    <style name="KuboTheme.MainActivity">
+    <!-- StartActivity style -->
+    <style name="KuboTheme.StartActivity" parent="KuboTheme.NoActionBar">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
-        <item name="android:background">@color/colorPrimaryDark</item>
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+
+    <style name="KuboTheme.StartActivity.Child">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="KuboTheme.StartActivity.Logo" parent="KuboTheme.StartActivity.Child">
+        <item name="android:src">@drawable/ic_mood_bad</item>
+        <item name="android:layout_margin">@dimen/generic_margin_long</item>
+        <item name="android:layout_centerInParent">true</item>
+    </style>
+
+    <style name="KuboTheme.StartActivity.ProgressBar" parent="KuboTheme.StartActivity.Child">
+        <item name="android:src">@drawable/ic_mood_bad</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="KuboTheme.StartActivity.Group" parent="KuboTheme.StartActivity.Child">
+        <item name="android:orientation">horizontal</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:layout_marginTop">@dimen/generic_margin_short</item>
+        <item name="android:layout_marginRight">@dimen/generic_margin_long</item>
+        <item name="android:layout_marginLeft">@dimen/generic_margin_long</item>
+        <item name="android:layout_marginBottom">@dimen/generic_margin_long</item>
+    </style>
+
+    <!-- BoardsActivity style -->
+    <style name="KuboTheme.BoardsActivity" parent="KuboTheme">
+        <item name="android:background">@color/colorVeryDark</item>
+    </style>
+
+    <style name="KuboTheme.BoardsActivity.Layout" parent="KuboTheme.BoardsActivity">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
 
     <!-- App style for list elements -->
@@ -24,6 +59,12 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@color/colorBackground</item>
+        <item name="android:fadeScrollbars">true</item>
+        <item name="android:scrollbars">vertical</item>
+    </style>
+
+    <style name="KuboTheme.List.Landscape" parent="KuboTheme.List">
+        <item name="android:layout_height">match_parent</item>
     </style>
 
     <style name="KuboTheme.List.Container" parent="KuboTheme.List">

@@ -1,14 +1,6 @@
-package com.github.ar3s3ru.kubo.components;
+package com.github.ar3s3ru.kubo.views.fragments;
 
-import com.github.ar3s3ru.kubo.modules.KuboAppModule;
-import com.github.ar3s3ru.kubo.modules.KuboDBModule;
-import com.github.ar3s3ru.kubo.views.BoardsActivity;
-import com.github.ar3s3ru.kubo.views.StartActivity;
-import com.github.ar3s3ru.kubo.views.dialogs.BoardSelectedDialog;
-
-import javax.inject.Singleton;
-
-import dagger.Component;
+import android.support.v4.app.Fragment;
 
 /**
  * Copyright (C) 2016  Danilo Cianfrone
@@ -28,9 +20,6 @@ import dagger.Component;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-@Singleton
-@Component(modules = {KuboAppModule.class, KuboDBModule.class})
-public interface KuboAppComponent {
-    void inject(StartActivity  activity);
-    void inject(BoardsActivity activity);
+public class StarredBoardsFragment extends Fragment {
+
 }

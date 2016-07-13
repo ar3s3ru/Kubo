@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 
 import com.github.ar3s3ru.kubo.backend.controller.KuboEvents;
 import com.github.ar3s3ru.kubo.views.BoardsActivity;
+import com.github.ar3s3ru.kubo.views.StartActivity;
 
 import java.lang.ref.WeakReference;
 
@@ -36,32 +37,29 @@ public class BoardsReceiver extends BroadcastReceiver {
 
     // Maintains a WeakReference to the MainActivity
     // to prevent blocking garbage collection
-    private WeakReference<BoardsActivity> mActivity;
+    private WeakReference<StartActivity> mActivity;
 
-    public BoardsReceiver(@NonNull BoardsActivity activity) {
+    public BoardsReceiver(@NonNull StartActivity activity) {
         mActivity = new WeakReference<>(activity);
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
         // Gets MainActivity strong reference
-        BoardsActivity activity = mActivity.get();
+        StartActivity activity = mActivity.get();
 
         // Handle receive only if the activity still exists
         if (activity != null) {
             // Status OK
             if (intent.getBooleanExtra(KuboEvents.BOARDS_STATUS, false)) {
-                // Sets up the recycler view
-                activity.flagReadyToRecyclers();
-                // Disables startup boards download
-                activity.disableStartupDownload();
+                // Notify download success
+                activity.handleSuccessfullyDownload();
             } else {
-                // Status not OK
-                String error  = intent.getStringExtra(KuboEvents.BOARDS_ERR);
-                int    errcod = intent.getIntExtra(KuboEvents.BOARDS_ERRCOD, 0);
-
                 // Shows error within the activity
-                activity.showToastError(error, errcod);
+                activity.handleErrorDownload(
+                        intent.getStringExtra(KuboEvents.BOARDS_ERR),
+                        intent.getIntExtra(KuboEvents.BOARDS_ERRCOD, 0)
+                );
             }
         }
     }

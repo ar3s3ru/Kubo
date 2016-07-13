@@ -32,7 +32,7 @@ import com.github.ar3s3ru.kubo.utils.KuboUtilities;
  */
 public class KuboTableBoard {
     private static final String TABLE_NAME  = "board";  // Table name
-    private static final String LIMIT_QUERY = "10";     // Pagination
+    private static final String LIMIT_QUERY = "50";     // Pagination (unused for now...)
 
     private static final String KEY_BOARD = "board";
     private static final String KEY_TITLE = "title";
@@ -73,7 +73,7 @@ public class KuboTableBoard {
      * @param value Boolean (yeah...) value to write
      * @return Number of rows affected by the change (should be == 1 if successful)
      */
-    private static int writeStarring(KuboSQLHelper helper, long id, int value) {
+    private static int writeStarring(KuboSQLHelper helper, int id, int value) {
         ContentValues cv = new ContentValues();
         cv.put(KEY_STARD, value);
 
@@ -108,7 +108,7 @@ public class KuboTableBoard {
      * @param id Board row primary key
      * @return true if the operation was successful, false otherwise
      */
-    public static boolean starringBoard(KuboSQLHelper helper, long id) {
+    public static boolean starringBoard(KuboSQLHelper helper, int id) {
         // Returns true if only one row is affected from the change
         return writeStarring(helper, id, 1) == 1;
     }
@@ -119,9 +119,21 @@ public class KuboTableBoard {
      * @param id Board row primary key
      * @return true if the operation was successful, false otherwise
      */
-    public static boolean unstarringBoard(KuboSQLHelper helper, long id) {
+    public static boolean unstarringBoard(KuboSQLHelper helper, int id) {
         // Same as above
         return writeStarring(helper, id, 0) == 1;
+    }
+
+    /**
+     * Returns a Cursor that contains a certain board
+     * @param helper SQLite application helper instance
+     * @param id Board row primary key
+     * @return Cursor with 1 element (board requested), or no elements
+     */
+    public static Cursor getBoard(KuboSQLHelper helper, int id) {
+        return helper.getWritableDatabase().query(
+            TABLE_NAME, null, "_id=" + id, null, null, null, null
+        );
     }
 
     /**
@@ -153,6 +165,17 @@ public class KuboTableBoard {
     /**
      * Cursor getters
      */
+
+    /**
+     * Returns board primary key from a row in a Cursor
+     * @param cursor Query cursor
+     * @param position Row position in the cursor
+     * @return Board primary key
+     */
+    public static int getId(Cursor cursor, int position) {
+        cursor.moveToPosition(position);
+        return cursor.getInt(cursor.getColumnIndex("_id"));
+    }
 
     /**
      * Returns board 'Board" field from a Cursor in position 'position'

@@ -29,14 +29,18 @@ import com.github.ar3s3ru.kubo.modules.KuboNetModule;
  */
 
 public class KuboApp extends Application {
+
+    /** Dagger Components */
     private KuboNetComponent mNetComponent;
     private KuboAppComponent mAppComponent;
 
+    /** Dagger Modules */
     private KuboNetModule mNetModule = new KuboNetModule("https://api.4chan.org");
     private KuboAppModule mAppModule = new KuboAppModule(this);
     private KuboDBModule  mDBModule  = new KuboDBModule();
 
-    @Override
+    @SuppressWarnings("deprecation")    // Dagger sometimes flags as deprecated some
+    @Override                           // modules...
     public void onCreate() {
         super.onCreate();
 

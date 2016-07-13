@@ -1,25 +1,17 @@
 package com.github.ar3s3ru.kubo.views;
 
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.ar3s3ru.kubo.KuboApp;
 import com.github.ar3s3ru.kubo.R;
-import com.github.ar3s3ru.kubo.backend.controller.KuboEvents;
-import com.github.ar3s3ru.kubo.backend.controller.KuboRESTService;
 import com.github.ar3s3ru.kubo.backend.database.KuboSQLHelper;
-import com.github.ar3s3ru.kubo.backend.database.tables.KuboTableBoard;
-import com.github.ar3s3ru.kubo.backend.receivers.BoardsReceiver;
-import com.github.ar3s3ru.kubo.utils.KuboUtilities;
 import com.github.ar3s3ru.kubo.views.custom.BoardsListDivider;
+import com.github.ar3s3ru.kubo.views.dialogs.BoardSelectedDialog;
 import com.github.ar3s3ru.kubo.views.recyclers.BoardsListRecycler;
 
 import javax.inject.Inject;
@@ -45,10 +37,7 @@ import butterknife.ButterKnife;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-public class BoardsActivity extends KuboActivity {
-
-    private BoardsReceiver mBoardReceiver;
-    private boolean isRegistered = false;
+public class BoardsActivity extends KuboActivity implements BoardSelectedDialog.Listener {
 
     @Inject Toast             mToast;
     @Inject KuboSQLHelper     mHelper;
@@ -60,11 +49,7 @@ public class BoardsActivity extends KuboActivity {
     @BindView(R.id.activity_main_recyclerview_unstar_boards)
     RecyclerView mUnstarRecycler;
 
-    @BindView(R.id.activity_main_starred_header)
-    TextView starredHeader;
-
-    @BindView(R.id.activity_main_unstarred_header)
-    TextView unstarredHeader;
+    private BoardsListRecycler mStarAdapter, mUnstarAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,76 +62,70 @@ public class BoardsActivity extends KuboActivity {
         // Perform ButterKnife binding/injection
         ButterKnife.bind(this);
 
-        // Initial views setup
-        mStarRecycler.setVisibility(View.GONE);
-        mUnstarRecycler.setVisibility(View.GONE);
-        starredHeader.setVisibility(View.GONE);
-        unstarredHeader.setVisibility(View.GONE);
-    }
+        // Setting up adapters
+        mStarAdapter   = new BoardsListRecycler(true, mHelper, getSupportFragmentManager());
+        mUnstarAdapter = new BoardsListRecycler(false, mHelper, getSupportFragmentManager());
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if (KuboUtilities.hasToDownloadBoards(mSharedPrefs)) {
-            // Register receiver
-            mBoardReceiver = new BoardsReceiver(this);
-            mBroadcastManager.registerReceiver(mBoardReceiver, new IntentFilter(KuboEvents.BOARDS));
-            isRegistered = true;
-            // Request boards
-            KuboRESTService.getBoards(this);
-        } else {
-            // Recyclers can be visible now
-            flagReadyToRecyclers();
-
-            // Headers visible
-            starredHeader.setVisibility(View.VISIBLE);
-            unstarredHeader.setVisibility(View.VISIBLE);
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        if (isRegistered) {
-            mBroadcastManager.unregisterReceiver(mBoardReceiver);
-            isRegistered = false;
-        }
+        // Set up recyclers
+        flagReadyToRecyclers();
     }
 
     /**
-     * Disables boards download on startup (updating the shared preferences)
+     * Notifies that a board has been unstarred
+     * @param position Starred board position
      */
-    public void disableStartupDownload() {
-        // Remind that we don't need to download on startup anymore
-        KuboUtilities.disableStartupBoards(mSharedPrefs);
+    @Override
+    public void onUnstarSelected(int id, int position) {
+        mStarAdapter.removeItem(mHelper, id, position);
+        mUnstarAdapter.updateCursor(mHelper);
+    }
+
+    /**
+     * Notifies that a board has been starred
+     * @param position Unstarred board position
+     */
+    @Override
+    public void onStarSelected(int id, int position) {
+        mUnstarAdapter.removeItem(mHelper, id, position);
+        mStarAdapter.updateCursor(mHelper);
+    }
+
+    /**
+     * Board selected, starts intent to ThreadsActivity
+     * @param starred If board selected is starred or not
+     * @param position Board position into the adapter
+     */
+    @Override
+    public void onGoToSelected(boolean starred, int position) {
+        if (starred) {
+            showToastError("Selected starred board", position);
+        } else {
+            showToastError("Selected unstarred board", position);
+        }
     }
 
     /**
      * Flags the application as ready for boards showing, so
      * sets the RecyclerView with the BoardsListRecycler adapter
      */
-    public void flagReadyToRecyclers() {
+    private void flagReadyToRecyclers() {
         // Setting up Starred Recycler adapter
-        settingUpRecyclerView(mStarRecycler, KuboTableBoard.getStarredBoards(mHelper));
+        settingUpRecyclerView(mStarRecycler, mStarAdapter);
         // Setting up Unstarred Recycler adapter
-        settingUpRecyclerView(mUnstarRecycler, KuboTableBoard.getUnstarredBoards(mHelper));
+        settingUpRecyclerView(mUnstarRecycler, mUnstarAdapter);
     }
 
     /**
      * Sets up a RecyclerView with the BoardsListRecycler adapter and a certain cursor
      * @param recyclerView RecyclerView
-     * @param cursor Data cursor
+     * @param adapter Board data adapter
      */
-    private void settingUpRecyclerView(@NonNull RecyclerView recyclerView, @NonNull Cursor cursor) {
+    private void settingUpRecyclerView(@NonNull RecyclerView recyclerView,
+                                       @NonNull BoardsListRecycler adapter) {
         // Setting up recyclerView
-        recyclerView.addItemDecoration(new BoardsListDivider(this, R.drawable.list_divider));
+        recyclerView.addItemDecoration(new BoardsListDivider(this, R.dimen.listelement_marginleft, R.color.dividerColor));
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new BoardsListRecycler(cursor));
-
-        // Recycler can be visible again
-        recyclerView.setVisibility(View.VISIBLE);
+        recyclerView.setAdapter(adapter);
     }
 
     /**

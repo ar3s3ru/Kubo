@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout style="@style/KuboTheme.StartActivity"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_start_constraintLayout">
+
+    <ImageView style="@style/KuboTheme.StartActivity.Logo"
+        android:id="@+id/activity_start_logo" />
+
+    <RadioGroup style="@style/KuboTheme.StartActivity.Group"
+        android:id="@+id/activity_start_progress_radioGroup"
+        android:layout_below="@+id/activity_start_logo">
+
+        <ImageView style="@style/KuboTheme.StartActivity.ProgressBar"
+            android:id="@+id/activity_start_progress1" />
+
+        <ImageView style="@style/KuboTheme.StartActivity.ProgressBar"
+            android:id="@+id/activity_start_progress2" />
+
+        <ImageView style="@style/KuboTheme.StartActivity.ProgressBar"
+            android:id="@+id/activity_start_progress3" />
+
+    </RadioGroup>
+
+</RelativeLayout>

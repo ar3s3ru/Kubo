@@ -12,13 +12,18 @@
         android:theme="@style/KuboTheme"
         android:name=".KuboApp">
 
-        <activity android:name=".views.BoardsActivity">
+        <activity
+            android:name=".views.StartActivity"
+            android:noHistory="true"
+            android:theme="@style/KuboTheme.StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".views.BoardsActivity" />
 
         <service
             android:name=".backend.controller.KuboRESTService"

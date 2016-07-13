@@ -3,11 +3,11 @@
     <!-- General theme colors -->
     <color name="colorPrimary">#c62828</color>
     <color name="colorPrimaryDark">#b71c1c</color>
+    <color name="colorVeryDark">#263238</color>
     <color name="colorAccent">#00838F</color>
     <color name="colorBackground">#FFFFFF</color>
 
     <!-- BoardsList adapters colors -->
-    <color name="dividerColor">#e0e0e0</color>
+    <color name="dividerColor">#000000</color>
     <color name="notifyTextColor">#757575</color>
-
 </resources>
