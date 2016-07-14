@@ -7,7 +7,7 @@
         android:id="@+id/activity_contents_threads_fragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:name="com.github.ar3s3ru.kubo.views.fragments.ThreadsFragment" />
     
     <View style="@style/KuboTheme.ContentsActivity.Separator"
@@ -17,7 +17,7 @@
         android:id="@+id/activity_contents_replies_fragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="2"
+        android:layout_weight="3"
         android:name="com.github.ar3s3ru.kubo.views.fragments.RepliesFragment" />
 
 </LinearLayout>

@@ -68,6 +68,7 @@
     <style name="KuboTheme.ContentsActivity.Separator">
         <item name="android:layout_width">@dimen/drawable_padding_very_short</item>
         <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/dividerColor</item>
     </style>
 
     <style name="KuboTheme.ContentsActivity.Fragment">
@@ -109,6 +110,7 @@
         <item name="android:clickable">true</item>
         <item name="android:foreground">?android:attr/selectableItemBackground</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">@dimen/listelement_margin</item>
     </style>
 
     <style name="KuboTheme.List.Notifier">
@@ -120,23 +122,103 @@
 
         <item name="android:textColor">@color/notifyTextColor</item>
         <item name="android:textAppearance">?android:textAppearanceMedium</item>
+
         <item name="android:drawablePadding">@dimen/drawable_padding_long</item>
+        <item name="android:drawableLeft">@drawable/ic_mood_bad</item>
+        <item name="android:drawableStart">@drawable/ic_mood_bad</item>
 
         <item name="android:visibility">gone</item>
     </style>
 
     <style name="KuboTheme.List.Element" parent="KuboTheme.List">
-        <item name="android:layout_marginLeft">@dimen/listelement_marginleft</item>
-        <item name="android:textAppearance">?android:textAppearanceSmall</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
 
     <style name="KuboTheme.List.Element.Title" parent="KuboTheme.List.Element">
-        <item name="android:layout_marginTop">@dimen/listelement_margin</item>
+        <item name="android:layout_marginBottom">@dimen/listelement_intern_margin</item>
         <item name="android:textAppearance">?android:textAppearanceMedium</item>
         <item name="android:textColor">@color/titleTextColor</item>
     </style>
 
     <style name="KuboTheme.List.Element.Text" parent="KuboTheme.List.Element">
-        <item name="android:layout_marginBottom">@dimen/listelement_margin</item>
+        <item name="android:textAppearance">?android:textAppearanceSmall</item>
     </style>
+
+    <!-- CardView styles -->
+    <style name="KuboTheme.CardView">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="cardCornerRadius">@dimen/card_corner_radius</item>
+    </style>
+
+    <style name="KuboTheme.CardView.Divider">
+        <item name="android:background">@color/dividerColor</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/generic_items_divider</item>
+        <item name="android:clickable">false</item>
+    </style>
+
+    <style name="KuboTheme.CardView.InnerLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:clickable">true</item>
+        <item name="android:foreground">?android:selectableItemBackground</item>
+    </style>
+
+    <style name="KuboTheme.CardView.ElementTop">
+        <item name="android:layout_marginLeft">@dimen/card_lateral_margin</item>
+        <item name="android:layout_marginRight">@dimen/card_lateral_margin</item>
+        <item name="android:layout_marginTop">@dimen/card_lateral_margin</item>
+        <item name="android:layout_marginBottom">@dimen/card_lateral_margin</item>
+    </style>
+
+    <style name="KuboTheme.CardView.ElementBottom">
+        <item name="android:layout_marginLeft">@dimen/card_vertical_divider_margin</item>
+        <item name="android:layout_marginRight">@dimen/card_vertical_divider_margin</item>
+        <item name="android:layout_marginTop">@dimen/card_vertical_divider_margin</item>
+        <item name="android:layout_marginBottom">@dimen/card_vertical_divider_margin</item>
+
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="KuboTheme.CardView.Portrait" parent="KuboTheme.CardView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginTop">@dimen/card_vertical_divider_margin</item>
+        <item name="android:layout_marginBottom">@dimen/card_vertical_divider_margin</item>
+        <item name="android:layout_marginLeft">@dimen/card_lateral_margin</item>
+        <item name="android:layout_marginRight">@dimen/card_lateral_margin</item>
+    </style>
+
+    <style name="KuboTheme.CardView.Portrait.Thumbnail" parent="KuboTheme.CardView.ElementTop">
+        <item name="android:layout_width">@dimen/card_thumbnail_dim_portrait</item>
+        <item name="android:layout_height">@dimen/card_thumbnail_dim_portrait</item>
+        <item name="android:layout_marginLeft">@dimen/card_lateral_inner_margin</item>
+        <item name="android:scaleType">centerInside</item>
+    </style>
+
+    <style name="KuboTheme.CardView.Portrait.Comment" parent="KuboTheme.CardView.ElementTop">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/card_thumbnail_dim_portrait</item>
+        <item name="android:layout_marginRight">@dimen/card_lateral_inner_margin</item>
+        <item name="android:maxLines">@integer/card_portrait_text_lines</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="KuboTheme.CardView.Portrait.Number" parent="KuboTheme.CardView.ElementBottom">
+        <item name="android:maxLines">1</item>
+        <item name="android:maxLength">9</item>     <!-- log10(2 ** 32) -->
+        <item name="android:textAppearance">?android:textAppearanceSmall</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:textColor">@color/colorAccent</item>
+    </style>
+
+    <style name="KuboTheme.CardView.Portrait.Icons" parent="KuboTheme.CardView.ElementBottom">
+        <item name="android:layout_marginRight">@dimen/card_icons_div_portrait</item>
+    </style>
+
+    <style name="KuboTheme.CardView.Portrait.Texts" parent="KuboTheme.CardView.ElementBottom">
+        <item name="android:layout_marginLeft">@dimen/card_icons_div_portrait</item>
+        <item name="android:textAppearance">?android:textAppearanceSmall</item>
+    </style>
+
 </resources>

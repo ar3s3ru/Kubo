@@ -68,13 +68,13 @@ public class CatalogRecycler extends RecyclerView.Adapter<CatalogRecycler.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         Thread thread = mList.get(position);
 
-        holder.title.setText(thread.semanticUrl);
         if (thread.comment != null) {
             holder.comment.setText(Html.fromHtml(thread.comment));
         }
 
-        holder.thumbnail.setMinimumWidth(thread.thumbWidth);
-        holder.thumbnail.setMinimumHeight(thread.thumbHeight);
+        holder.number.setText(String.format("%d", thread.number));
+        holder.images.setText(String.format("%d", thread.images));
+        holder.replies.setText(String.format("%d", thread.replies));
 
         Glide.with(holder.thumbnail.getContext())
                 .load("http://t.4cdn.org/" + mBoard + "/" + thread.properFilename + "s" + thread.fileExtension)
@@ -83,9 +83,11 @@ public class CatalogRecycler extends RecyclerView.Adapter<CatalogRecycler.ViewHo
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.catalog_thread_thumbnail) ImageView thumbnail;
-        @BindView(R.id.catalog_thread_title)     TextView  title;
-        @BindView(R.id.catalog_thread_comment)   TextView  comment;
+        @BindView(R.id.catalog_thread_thumbnail)    ImageView thumbnail;
+        @BindView(R.id.catalog_thread_comment)      TextView  comment;
+        @BindView(R.id.catalog_thread_number)       TextView  number;
+        @BindView(R.id.catalog_thread_images_text)  TextView  images;
+        @BindView(R.id.catalog_thread_replies_text) TextView  replies;
 
         ViewHolder(View itemView) {
             super(itemView);

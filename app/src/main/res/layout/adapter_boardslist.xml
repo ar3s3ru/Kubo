@@ -16,8 +16,6 @@
 
     <TextView style="@style/KuboTheme.List.Notifier"
         android:id="@+id/boardslist_text_noelements"
-        android:text="@string/no_elements"
-        android:drawableStart="@drawable/ic_mood_bad"
-        android:drawableLeft="@drawable/ic_mood_bad" />
+        android:text="@string/no_elements" />
 
 </RelativeLayout>

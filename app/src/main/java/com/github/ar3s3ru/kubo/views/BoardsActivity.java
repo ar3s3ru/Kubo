@@ -160,7 +160,8 @@ public class BoardsActivity extends KuboActivity
                                        @NonNull BoardsListRecycler adapter) {
         // Setting up recyclerView
         recyclerView.addItemDecoration(
-                new ListItemDivider(this, R.dimen.listelement_marginleft, R.color.dividerColor)
+                new ListItemDivider(this, R.dimen.listelement_margin,
+                        R.dimen.generic_items_divider, R.color.dividerColor)
         );
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);

@@ -1,36 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="16dp">
+    style="@style/KuboTheme.CardView.Portrait"
+    android:id="@+id/catalog_cardview">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="8dp">
+    <RelativeLayout style="@style/KuboTheme.CardView.InnerLayout"
+        android:id="@+id/catalog_layout">
 
-        <TextView
-            android:id="@+id/catalog_thread_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-
-        <ImageView
+        <ImageView style="@style/KuboTheme.CardView.Portrait.Thumbnail"
             android:id="@+id/catalog_thread_thumbnail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true" />
+
+        <TextView style="@style/KuboTheme.CardView.Portrait.Comment"
+            android:id="@+id/catalog_thread_comment"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/catalog_thread_title" />
+            android:layout_toLeftOf="@id/catalog_thread_thumbnail"
+            android:layout_toStartOf="@id/catalog_thread_thumbnail" />
 
-        <TextView
-            android:id="@+id/catalog_thread_comment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/catalog_thread_thumbnail"
-            android:layout_toEndOf="@+id/catalog_thread_thumbnail"
-            android:layout_below="@+id/catalog_thread_title" />
+        <View style="@style/KuboTheme.CardView.Divider"
+            android:id="@+id/catalog_thread_divider"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/catalog_thread_thumbnail" />
+
+        <TextView style="@style/KuboTheme.CardView.Portrait.Number"
+            android:id="@+id/catalog_thread_number"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/catalog_thread_divider" />
+
+        <ImageView style="@style/KuboTheme.CardView.Portrait.Icons"
+            android:id="@+id/catalog_thread_images"
+            android:src="@drawable/ic_images"
+            android:layout_toLeftOf="@+id/catalog_thread_images_text"
+            android:layout_toStartOf="@+id/catalog_thread_images_text"
+            android:layout_below="@+id/catalog_thread_divider" />
+
+        <TextView style="@style/KuboTheme.CardView.Portrait.Texts"
+            android:id="@+id/catalog_thread_images_text"
+            android:layout_toLeftOf="@+id/catalog_thread_replies"
+            android:layout_toStartOf="@+id/catalog_thread_replies"
+            android:layout_below="@+id/catalog_thread_divider" />
+
+        <ImageView style="@style/KuboTheme.CardView.Portrait.Icons"
+            android:id="@+id/catalog_thread_replies"
+            android:src="@drawable/ic_replies"
+            android:layout_toLeftOf="@+id/catalog_thread_replies_text"
+            android:layout_toStartOf="@+id/catalog_thread_replies_text"
+            android:layout_below="@+id/catalog_thread_divider" />
+
+        <TextView style="@style/KuboTheme.CardView.Portrait.Texts"
+            android:id="@+id/catalog_thread_replies_text"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/catalog_thread_divider" />
 
     </RelativeLayout>
 

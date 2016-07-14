@@ -33,9 +33,7 @@ import android.view.View;
  */
 public class ListItemDivider extends RecyclerView.ItemDecoration {
 
-    private static final int DIVIDER_HEIGHT = 2;
-
-    private int   spaceLeft;
+    private int   spaceLeft, height;
     private Paint mPaint;
     private Rect  mRect;
 
@@ -46,8 +44,10 @@ public class ListItemDivider extends RecyclerView.ItemDecoration {
     private RecyclerView.LayoutParams currentParams;
 
     public ListItemDivider(@NonNull Context context, @DimenRes int spaceRes,
-                           @ColorRes int colorRes) {
+                           @DimenRes int heightRes, @ColorRes int colorRes) {
         spaceLeft = context.getResources().getDimensionPixelSize(spaceRes);
+        height    = context.getResources().getDimensionPixelSize(heightRes);
+
         mPaint    = new Paint();
         mRect     = new Rect();
 
@@ -59,7 +59,7 @@ public class ListItemDivider extends RecyclerView.ItemDecoration {
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
                                RecyclerView.State state) {
         // Needs space for the divider
-        outRect.bottom = DIVIDER_HEIGHT;
+        outRect.bottom = height;
     }
 
     @Override
@@ -69,7 +69,8 @@ public class ListItemDivider extends RecyclerView.ItemDecoration {
         mRect.right = parent.getWidth() - parent.getPaddingRight();
 
         // How many child views we have?
-        childCount = parent.getChildCount();
+        // We don't want to draw the last divider, so we use childs - 1
+        childCount = parent.getChildCount() - 1;
 
         for (childIdx = 0; childIdx < childCount; childIdx++) {
             // Get current child view and layout params
@@ -78,7 +79,7 @@ public class ListItemDivider extends RecyclerView.ItemDecoration {
 
             // Calculate top/bottom paddings
             mRect.top    = currentChild.getBottom() + currentParams.bottomMargin;
-            mRect.bottom = mRect.top + DIVIDER_HEIGHT;
+            mRect.bottom = mRect.top + height;
 
             // Drawing divider
             c.drawRect(mRect, mPaint);

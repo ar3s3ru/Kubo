@@ -8,7 +8,7 @@
     <color name="colorBackground">#FFFFFF</color>
 
     <!-- BoardsList adapters colors -->
-    <color name="dividerColor">#e0e0e0</color>
+    <color name="dividerColor">#eeeeee</color>
     <color name="notifyTextColor">#757575</color>
     <color name="titleTextColor">#006064</color>
 
