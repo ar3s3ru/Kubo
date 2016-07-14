@@ -54,6 +54,44 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <!-- ContentsActivity style -->
+    <style name="KuboTheme.ContentsActivity" parent="KuboTheme">
+        <!-- TODO: populate this -->
+    </style>
+    
+    <style name="KuboTheme.ContentsActivity.Layout" parent="KuboTheme.ContentsActivity">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+    
+    <style name="KuboTheme.ContentsActivity.Separator">
+        <item name="android:layout_width">@dimen/drawable_padding_very_short</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="KuboTheme.ContentsActivity.Fragment">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="KuboTheme.ContentsActivity.ProgressBar">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:indeterminate">true</item>
+    </style>
+
+    <!-- ThreadsFragment style -->
+    <style name="KuboTheme.ThreadsFragment" parent="KuboTheme.ContentsActivity.Fragment">
+        <!-- TODO: complete this -->
+    </style>
+
+    <!-- RepliesFragment style -->
+    <style name="KuboTheme.RepliesFragment" parent="KuboTheme.ContentsActivity.Fragment">
+        <!-- TODO: complete this -->
+    </style>
+
     <!-- App style for list elements -->
     <style name="KuboTheme.List">
         <item name="android:layout_width">match_parent</item>

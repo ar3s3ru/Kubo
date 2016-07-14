@@ -1,10 +1,10 @@
-package com.github.ar3s3ru.kubo.backend.models.autoparcel;
+package com.github.ar3s3ru.kubo.backend.models;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
+import org.parceler.Parcel;
 
-import auto.parcelgson.AutoParcelGson;
+import java.util.List;
 
 /**
  * Copyright (C) 2016  Danilo Cianfrone
@@ -24,37 +24,43 @@ import auto.parcelgson.AutoParcelGson;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-@AutoParcelGson
-abstract class Thread {
+@Parcel
+public class Thread extends Reply {
     @SerializedName("bumplimit")
-    abstract int bumplimit();
+    public int bumplimit;
 
     @SerializedName("imagelimit")
-    abstract int imagelimit();
+    public int imagelimit;
 
     @SerializedName("semantic_url")
-    abstract String semanticUrl();
+    public String semanticUrl;
 
     @SerializedName("replies")
-    abstract int replies();
+    public int replies;
 
     @SerializedName("images")
-    abstract int images();
+    public int images;
 
     @SerializedName("omitted_posts")
-    abstract int omittedPosts();
+    public int omittedPosts;
 
     @SerializedName("omitted_images")
-    abstract int omittedImages();
+    public int omittedImages;
 
     @SerializedName("last_replies")
-    abstract List<Reply> lastReplies();
+    public List<Reply> lastReplies;
 
-    static Thread creator(int bumplimit, int imagelimit, String semanticUrl,
-                          int replies, int images, int omittedPosts, int omittedImages,
-                          List<Reply> lastReplies) {
-        // Parcelable creator
-        return new AutoParcelGson_Thread(bumplimit, imagelimit, semanticUrl, replies,
-                images, omittedPosts, omittedImages, lastReplies);
+    @Override
+    public String toString() {
+        return "Thread{" +
+                "bumplimit=" + bumplimit +
+                ", imagelimit=" + imagelimit +
+                ", semanticUrl='" + semanticUrl + '\'' +
+                ", replies=" + replies +
+                ", images=" + images +
+                ", omittedPosts=" + omittedPosts +
+                ", omittedImages=" + omittedImages +
+                ", lastReplies=" + lastReplies +
+                "} " + super.toString();
     }
 }

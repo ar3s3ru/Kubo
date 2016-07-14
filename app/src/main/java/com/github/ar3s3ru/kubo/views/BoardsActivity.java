@@ -131,12 +131,12 @@ public class BoardsActivity extends KuboActivity
      * @param position Board position into the adapter
      */
     @Override
-    public void onGoToSelected(boolean starred, int id, int position) {
+    public void onGoToSelected(String title, boolean starred, int id, int position) {
         String path =
                 starred ? mStarAdapter.getItemPath(position) : mUnstarAdapter.getItemPath(position);
 
         if (path != null) {
-            ContentsActivity.startContentsActivity(this, path, id);
+            ContentsActivity.startContentsActivity(this, title, path, id);
         }
     }
 

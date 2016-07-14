@@ -2,20 +2,13 @@ package com.github.ar3s3ru.kubo.views.dialogs;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 
-import com.github.ar3s3ru.kubo.KuboApp;
 import com.github.ar3s3ru.kubo.R;
-import com.github.ar3s3ru.kubo.backend.database.KuboSQLHelper;
-import com.github.ar3s3ru.kubo.backend.database.tables.KuboTableBoard;
-
-import javax.inject.Inject;
 
 /**
  * Copyright (C) 2016  Danilo Cianfrone
@@ -122,7 +115,7 @@ public class BoardSelectedDialog extends DialogFragment implements DialogInterfa
     public void onClick(DialogInterface dialog, int which) {
         if (which == 0) {
             // Open selected board
-            mListener.onGoToSelected(mBoardStarred, mID, mPosition);
+            mListener.onGoToSelected(mTitle, mBoardStarred, mID, mPosition);
         } else if (mBoardStarred) {
             // Unstarring
             mListener.onUnstarSelected(mID, mPosition);
@@ -133,7 +126,7 @@ public class BoardSelectedDialog extends DialogFragment implements DialogInterfa
     }
 
     public interface Listener {
-        void onGoToSelected(boolean starred, int id, int position);
+        void onGoToSelected(String title, boolean starred, int id, int position);
         void onStarSelected(int id, int position);
         void onUnstarSelected(int id, int position);
     }

@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.github.ar3s3ru.kubo.R;
+import com.github.ar3s3ru.kubo.views.fragments.RepliesFragment;
+import com.github.ar3s3ru.kubo.views.fragments.ThreadsFragment;
 
 /**
  * Copyright (C) 2016  Danilo Cianfrone
@@ -27,10 +29,17 @@ import com.github.ar3s3ru.kubo.R;
  */
 
 public class ContentsActivity extends KuboActivity {
+    // Activity TAG
+    private static final String TAG = "ContentsActivity";
     // Board primary key
     private static final String BOARD_PK = "com.github.ar3s3ru.kubo.views.ContentsActivity.board_pk";
     // Board path id
     private static final String BOARD_ID = "com.github.ar3s3ru.kubo.views.ContentsActivity.board_id";
+    // Board title
+    private static final String BOARD_TL = "com.github.ar3s3ru.kubo.views.ContentsActivity.board_tl";
+
+    private ThreadsFragment threadsFragment;
+    private RepliesFragment repliesFragment;
 
     /**
      * Starts ContentsActivity with provided path and id, from defined context
@@ -38,11 +47,13 @@ public class ContentsActivity extends KuboActivity {
      * @param path Board path
      * @param id Board id
      */
-    public static void startContentsActivity(@NonNull Context context,
+    public static void startContentsActivity(@NonNull Context context, @NonNull String title,
                                              @NonNull String path, int id) {
         context.startActivity(
                 new Intent(context, ContentsActivity.class)
-                .putExtra(BOARD_PK, id).putExtra(BOARD_ID, path)
+                        .putExtra(BOARD_PK, id)
+                        .putExtra(BOARD_ID, path)
+                        .putExtra(BOARD_TL, title)
         );
     }
 
@@ -50,5 +61,25 @@ public class ContentsActivity extends KuboActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contents);
+
+        // Get Threads fragment
+        threadsFragment = (ThreadsFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.activity_contents_threads_fragment);
+
+        // Get Replies fragment
+        repliesFragment = (RepliesFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.activity_contents_replies_fragment);
+
+        // Freshly started activity, sets up member variables accordingly
+        setUpContents(
+                getIntent().getStringExtra(BOARD_TL),
+                getIntent().getStringExtra(BOARD_ID),
+                getIntent().getIntExtra(BOARD_PK, -1)
+        );
+    }
+
+    // TODO: Javadoc
+    private void setUpContents(String title, String path, int primaryKey) {
+        threadsFragment.setUpContents(title, path, primaryKey);
     }
 }

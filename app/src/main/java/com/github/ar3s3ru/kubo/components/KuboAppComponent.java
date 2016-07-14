@@ -4,7 +4,7 @@ import com.github.ar3s3ru.kubo.modules.KuboAppModule;
 import com.github.ar3s3ru.kubo.modules.KuboDBModule;
 import com.github.ar3s3ru.kubo.views.BoardsActivity;
 import com.github.ar3s3ru.kubo.views.StartActivity;
-import com.github.ar3s3ru.kubo.views.dialogs.BoardSelectedDialog;
+import com.github.ar3s3ru.kubo.views.fragments.ThreadsFragment;
 
 import javax.inject.Singleton;
 
@@ -33,4 +33,5 @@ import dagger.Component;
 public interface KuboAppComponent {
     void inject(StartActivity  activity);
     void inject(BoardsActivity activity);
+    void inject(ThreadsFragment fragment);
 }

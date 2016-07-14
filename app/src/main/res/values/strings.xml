@@ -4,4 +4,5 @@
     <string name="header_starred">Starred</string>
     <string name="header_unstarred">Others</string>
     <string name="text_close">Close</string>
+    <string name="boards_activity_label">Kubo - Select a board</string>
 </resources>

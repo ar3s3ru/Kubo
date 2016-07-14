@@ -5,14 +5,12 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.github.ar3s3ru.kubo.R;
-import com.github.ar3s3ru.kubo.backend.controller.KuboRESTService;
 import com.github.ar3s3ru.kubo.backend.database.KuboSQLHelper;
 import com.github.ar3s3ru.kubo.backend.database.tables.KuboTableBoard;
 import com.github.ar3s3ru.kubo.views.ContentsActivity;
@@ -191,8 +189,9 @@ public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.
             int id = (int) getItemId();
 
             if (id != -1 && mPath != null) {
-                ContentsActivity.startContentsActivity(view.getContext(), mPath, id);
-                Log.e(TAG, "Requesting " + mPath);
+                ContentsActivity.startContentsActivity(
+                        view.getContext(), title.getText().toString(), mPath, id
+                );
             }
         }
 

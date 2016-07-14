@@ -5,4 +5,5 @@
     <string name="header_starred">Preferiti</string>
     <string name="header_unstarred">Altri</string>
     <string name="text_close">Annulla</string>
+    <string name="boards_activity_label">Kubo - Scegli una board</string>
 </resources>

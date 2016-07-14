@@ -23,7 +23,10 @@
     @com.squareup.otto.Produce public *;
 }
 
+## Dagger config
 -keepnames *Dagger*
 
--keep class **.AutoParcelGson_*
--keepnames @auto.parcelgson.AutoParcelGson class *
+## Parcel library
+-keep interface org.parceler.Parcel
+-keep @org.parceler.Parcel class * { *; }
+-keep class **$$Parcelable { *; }

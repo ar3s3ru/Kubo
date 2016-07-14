@@ -6,9 +6,14 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 
 import com.github.ar3s3ru.kubo.backend.controller.KuboEvents;
-import com.github.ar3s3ru.kubo.views.StartActivity;
+import com.github.ar3s3ru.kubo.backend.models.ThreadsList;
+import com.github.ar3s3ru.kubo.views.fragments.ThreadsFragment;
+
+import org.parceler.Parcels;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Copyright (C) 2016  Danilo Cianfrone
@@ -28,34 +33,28 @@ import java.lang.ref.WeakReference;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-/**
- * Local BroadcastReceiver for the getBoards() request.
- * Generally, this is done within MainActivity (hence the constructor param).
- */
-public class BoardsReceiver extends BroadcastReceiver {
+public class CatalogReceiver extends BroadcastReceiver {
 
-    // Maintains a WeakReference to the MainActivity
-    // to prevent blocking garbage collection
-    private WeakReference<StartActivity> mActivity;
+    private WeakReference<ThreadsFragment> mFragment;
 
-    public BoardsReceiver(@NonNull StartActivity activity) {
-        mActivity = new WeakReference<>(activity);
+    public CatalogReceiver(@NonNull ThreadsFragment threadsFragment) {
+        mFragment = new WeakReference<>(threadsFragment);
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        // Gets MainActivity strong reference
-        StartActivity activity = mActivity.get();
+        ThreadsFragment threadsFragment = mFragment.get();
 
-        // Handle receive only if the activity still exists
-        if (activity != null) {
-            // Status OK
-            if (intent.getBooleanExtra(KuboEvents.BOARDS_STATUS, false)) {
-                // Notify download success
-                activity.handleSuccessfullyDownload();
+        if (threadsFragment != null) {
+            if (intent.getBooleanExtra(KuboEvents.CATALOG_STATUS, false)) {
+                // Success
+                threadsFragment.handleCatalogSuccess(
+                        // Cast should work... :-/
+                        (List<ThreadsList>) Parcels.unwrap(intent.getParcelableExtra(KuboEvents.CATALOG_RESULT))
+                );
             } else {
                 // Shows error within the activity
-                activity.handleErrorDownload(
+                threadsFragment.handleCatalogError(
                         intent.getStringExtra(KuboEvents.BOARDS_ERR),
                         intent.getIntExtra(KuboEvents.BOARDS_ERRCOD, 0)
                 );

@@ -18,12 +18,15 @@
             android:theme="@style/KuboTheme.StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".views.BoardsActivity" />
+        <activity
+            android:name=".views.BoardsActivity"
+            android:label="@string/boards_activity_label" />
+
+        <activity android:name=".views.ContentsActivity" />
 
         <service
             android:name=".backend.controller.KuboRESTService"

@@ -13,8 +13,11 @@ import com.github.ar3s3ru.kubo.backend.database.KuboSQLHelper;
 import com.github.ar3s3ru.kubo.backend.database.tables.KuboTableBoard;
 import com.github.ar3s3ru.kubo.backend.models.Board;
 import com.github.ar3s3ru.kubo.backend.models.BoardsList;
-import com.github.ar3s3ru.kubo.backend.models.autoparcel.ThreadsList;
+import com.github.ar3s3ru.kubo.backend.models.ThreadsList;
 
+import org.parceler.Parcels;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -171,7 +174,8 @@ public class KuboRESTService extends IntentService implements Callback {
             intent = newErrorIntent(KuboEvents.BOARDS, KuboEvents.BOARDS_STATUS,
                     KuboEvents.BOARDS_ERR, KuboEvents.BOARDS_ERRCOD, response);
             // ---------------------------------------------------------------- //
-        } else if (response.body() instanceof List && ((List) response.body()).get(0) instanceof ThreadsList) {
+        } else if (response.body() instanceof List &&
+                   ((List) response.body()).get(0) instanceof ThreadsList) {
             // getCatalog() error
             intent = newErrorIntent(KuboEvents.CATALOG, KuboEvents.CATALOG_STATUS,
                     KuboEvents.CATALOG_ERROR, KuboEvents.CATALOG_ERRCOD, response);
@@ -218,5 +222,10 @@ public class KuboRESTService extends IntentService implements Callback {
      */
     private void handleGetCatalog(List<ThreadsList> list) {
         Log.e(TAG, list.toString());
+        LocalBroadcastManager.getInstance(this).sendBroadcast(
+                new Intent(KuboEvents.CATALOG)
+                        .putExtra(KuboEvents.CATALOG_STATUS, true)
+                        .putExtra(KuboEvents.CATALOG_RESULT, Parcels.wrap(list))
+        );
     }
 }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/KuboTheme.RepliesFragment"
+    android:id="@+id/fragment_replies_viewflipper">
+
+    <ProgressBar style="@style/KuboTheme.ContentsActivity.ProgressBar"
+        android:id="@+id/fragment_replies_progressbar" />
+
+    <android.support.v7.widget.RecyclerView style="@style/KuboTheme.List"
+        android:id="@+id/fragment_replies_recyclerview" />
+
+</ViewFlipper>

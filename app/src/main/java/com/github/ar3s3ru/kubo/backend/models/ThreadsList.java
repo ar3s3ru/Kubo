@@ -1,12 +1,10 @@
-package com.github.ar3s3ru.kubo.backend.models.autoparcel;
-
-import android.os.Parcelable;
+package com.github.ar3s3ru.kubo.backend.models;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
+import org.parceler.Parcel;
 
-import auto.parcelgson.AutoParcelGson;
+import java.util.List;
 
 /**
  * Copyright (C) 2016  Danilo Cianfrone
@@ -26,15 +24,19 @@ import auto.parcelgson.AutoParcelGson;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-@AutoParcelGson
-public abstract class ThreadsList implements Parcelable {
+@Parcel
+public class ThreadsList {
     @SerializedName("page")
-    abstract int page();
+    public int page;
 
     @SerializedName("threads")
-    abstract List<Thread> threads();
+    public List<Thread> threads;
 
-    static ThreadsList creator(int page, List<Thread> threads) {
-        return new AutoParcelGson_ThreadsList(page, threads);
+    @Override
+    public String toString() {
+        return "ThreadsList{" +
+                "page=" + page +
+                ", threads=" + threads +
+                '}';
     }
 }
