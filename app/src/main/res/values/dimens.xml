@@ -22,4 +22,8 @@
 
     <dimen name="card_thumbnail_dim_portrait">112dp</dimen>
     <dimen name="card_icons_div_portrait">4dp</dimen>
+
+    <dimen name="card_header_textsize">12sp</dimen>
+    <dimen name="card_header_height">14dp</dimen>
+    <dimen name="card_header_padding_lateral">4dp</dimen>
 </resources>

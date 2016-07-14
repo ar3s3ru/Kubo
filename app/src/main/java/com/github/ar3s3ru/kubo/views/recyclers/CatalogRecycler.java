@@ -64,6 +64,7 @@ public class CatalogRecycler extends RecyclerView.Adapter<CatalogRecycler.ViewHo
         );
     }
 
+    @SuppressWarnings("all")
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Thread thread = mList.get(position);
@@ -72,6 +73,8 @@ public class CatalogRecycler extends RecyclerView.Adapter<CatalogRecycler.ViewHo
             holder.comment.setText(Html.fromHtml(thread.comment));
         }
 
+        // TODO: change layout!
+        holder.header.setText(String.format("%s | %d", thread.name, thread.number));
         holder.number.setText(String.format("%d", thread.number));
         holder.images.setText(String.format("%d", thread.images));
         holder.replies.setText(String.format("%d", thread.replies));
@@ -84,6 +87,7 @@ public class CatalogRecycler extends RecyclerView.Adapter<CatalogRecycler.ViewHo
     static class ViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.catalog_thread_thumbnail)    ImageView thumbnail;
+        @BindView(R.id.catalog_header)              TextView  header;
         @BindView(R.id.catalog_thread_comment)      TextView  comment;
         @BindView(R.id.catalog_thread_number)       TextView  number;
         @BindView(R.id.catalog_thread_images_text)  TextView  images;

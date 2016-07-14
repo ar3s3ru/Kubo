@@ -3,6 +3,9 @@
     style="@style/KuboTheme.CardView.Portrait"
     android:id="@+id/catalog_cardview">
 
+    <TextView style="@style/KuboTheme.CardView.Header"
+        android:id="@+id/catalog_header" />
+
     <RelativeLayout style="@style/KuboTheme.CardView.InnerLayout"
         android:id="@+id/catalog_layout">
 
