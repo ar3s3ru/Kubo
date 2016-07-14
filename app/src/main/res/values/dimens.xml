@@ -11,7 +11,7 @@
     <dimen name="drawable_padding_short">8dp</dimen>
     <dimen name="drawable_padding_long">12dp</dimen>
 
-    <dimen name="generic_items_divider">1dp</dimen>
+    <dimen name="generic_items_divider">2px</dimen>
     <dimen name="generic_margin_short">8dp</dimen>
     <dimen name="generic_margin_long">16dp</dimen>
 
@@ -23,7 +23,8 @@
     <dimen name="card_thumbnail_dim_portrait">112dp</dimen>
     <dimen name="card_icons_div_portrait">4dp</dimen>
 
-    <dimen name="card_header_textsize">12sp</dimen>
+    <dimen name="card_header_textsize">10sp</dimen>
     <dimen name="card_header_height">14dp</dimen>
     <dimen name="card_header_padding_lateral">4dp</dimen>
+    <dimen name="card_header_padding_vertical">2dp</dimen>
 </resources>

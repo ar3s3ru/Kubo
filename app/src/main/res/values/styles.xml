@@ -170,10 +170,12 @@
 
         <item name="android:paddingLeft">@dimen/card_header_padding_lateral</item>
         <item name="android:paddingRight">@dimen/card_header_padding_lateral</item>
+        <!-- <item name="android:paddingTop">@dimen/card_header_padding_vertical</item> -->
+        <item name="android:paddingBottom">@dimen/card_header_padding_vertical</item>
 
         <item name="android:layout_height">@dimen/card_header_height</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:background">@color/colorPrimaryDark</item>
+        <item name="android:background">@color/colorVeryDark</item>
 
         <item name="android:textAppearance">?android:textAppearanceSmallInverse</item>
         <item name="android:textSize">@dimen/card_header_textsize</item>

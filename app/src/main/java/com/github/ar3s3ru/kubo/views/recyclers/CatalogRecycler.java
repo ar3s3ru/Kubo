@@ -1,5 +1,6 @@
 package com.github.ar3s3ru.kubo.views.recyclers;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -8,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.DrawableRequestBuilder;
+import com.bumptech.glide.DrawableTypeRequest;
+import com.bumptech.glide.GifRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.github.ar3s3ru.kubo.R;
 import com.github.ar3s3ru.kubo.backend.models.Thread;
@@ -74,14 +78,28 @@ public class CatalogRecycler extends RecyclerView.Adapter<CatalogRecycler.ViewHo
         }
 
         // TODO: change layout!
-        holder.header.setText(String.format("%s | %d", thread.name, thread.number));
+        holder.header.setText(String.format("%s  |  %d", thread.name, thread.number));
         holder.number.setText(String.format("%d", thread.number));
         holder.images.setText(String.format("%d", thread.images));
         holder.replies.setText(String.format("%d", thread.replies));
 
-        Glide.with(holder.thumbnail.getContext())
-                .load("http://t.4cdn.org/" + mBoard + "/" + thread.properFilename + "s" + thread.fileExtension)
-                .into(holder.thumbnail);
+        downloadImageForHolder(holder.thumbnail, mBoard, thread);
+    }
+
+    private static void downloadImageForHolder(@NonNull ImageView imageView,
+                                               @NonNull String board,
+                                               @NonNull Thread thread) {
+        Glide.with(imageView.getContext())
+                .load(getThumbnailURL(board, thread.properFilename, thread.fileExtension))
+                .error(R.color.colorPrimaryDark)
+                .placeholder(R.color.colorAccent)
+                .into(imageView);
+    }
+
+    private static String getThumbnailURL(@NonNull String board, long fileName,
+                                          @NonNull String fileExtension) {
+        // TODO: consider generalizing behavior
+        return "https://t.4cdn.org/" + board + "/" + fileName + fileExtension;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

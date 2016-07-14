@@ -220,7 +220,6 @@ public class KuboRESTService extends IntentService implements Callback {
      * @param list Downloaded catalog list
      */
     private void handleGetCatalog(List<ThreadsList> list) {
-        Log.e(TAG, list.toString());
         LocalBroadcastManager.getInstance(this).sendBroadcast(
                 new Intent(KuboEvents.CATALOG)
                         .putExtra(KuboEvents.CATALOG_STATUS, true)
