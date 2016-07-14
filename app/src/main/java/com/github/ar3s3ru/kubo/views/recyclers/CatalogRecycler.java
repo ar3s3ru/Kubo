@@ -64,7 +64,7 @@ public class CatalogRecycler extends RecyclerView.Adapter<CatalogRecycler.ViewHo
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new ViewHolder(
                 LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.adapter_catalog, parent, false)
+                    .inflate(R.layout.adapter_catalog2, parent, false)
         );
     }
 
@@ -78,7 +78,7 @@ public class CatalogRecycler extends RecyclerView.Adapter<CatalogRecycler.ViewHo
         }
 
         // TODO: change layout!
-        holder.header.setText(String.format("%s  |  %d", thread.name, thread.number));
+        holder.name.setText(thread.name);
         holder.number.setText(String.format("%d", thread.number));
         holder.images.setText(String.format("%d", thread.images));
         holder.replies.setText(String.format("%d", thread.replies));
@@ -105,9 +105,9 @@ public class CatalogRecycler extends RecyclerView.Adapter<CatalogRecycler.ViewHo
     static class ViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.catalog_thread_thumbnail)    ImageView thumbnail;
-        @BindView(R.id.catalog_header)              TextView  header;
+        @BindView(R.id.catalog_header_name)         TextView  name;
         @BindView(R.id.catalog_thread_comment)      TextView  comment;
-        @BindView(R.id.catalog_thread_number)       TextView  number;
+        @BindView(R.id.catalog_header_number)       TextView  number;
         @BindView(R.id.catalog_thread_images_text)  TextView  images;
         @BindView(R.id.catalog_thread_replies_text) TextView  replies;
 

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:id="@+id/catalog_layout">
+
+    <TextView
+        android:text="Anonymous"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:id="@+id/catalog_header_name"
+        android:textSize="12sp"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textColor="@color/colorBackground"
+        android:background="@color/colorVeryDark"
+        android:paddingBottom="2dp"
+        android:paddingLeft="4dp"
+        android:paddingStart="4dp"
+        android:paddingRight="4dp"
+        android:paddingEnd="4dp"
+        app:layout_constraintLeft_toLeftOf="@+id/catalog_layout"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintTop_toTopOf="@+id/catalog_layout" />
+
+    <TextView
+        android:text="111111111"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:id="@+id/catalog_header_number"
+        android:textSize="12sp"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textColor="@color/colorAccent"
+        android:background="@color/colorVeryDark"
+        android:paddingBottom="2dp"
+        android:paddingLeft="4dp"
+        android:paddingStart="4dp"
+        android:paddingRight="4dp"
+        android:paddingEnd="4dp"
+        app:layout_constraintLeft_toRightOf="@+id/catalog_header_name"
+        app:layout_constraintTop_toTopOf="@+id/catalog_layout" />
+
+    <TextView
+        android:text="100"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/catalog_thread_replies_text"
+        app:layout_constraintLeft_toRightOf="@+id/catalog_thread_replies"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/catalog_thread_divider"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/catalog_layout"
+        android:layout_marginBottom="8dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_replies"
+        android:id="@+id/catalog_thread_replies"
+        app:layout_constraintLeft_toRightOf="@+id/catalog_thread_images_text"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/catalog_thread_divider"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/catalog_layout"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:text="200"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/catalog_thread_images_text"
+        app:layout_constraintLeft_toRightOf="@+id/catalog_thread_images"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/catalog_thread_divider"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/catalog_layout"
+        android:layout_marginBottom="8dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_images"
+        android:id="@+id/catalog_thread_images"
+        app:layout_constraintLeft_toLeftOf="@+id/catalog_layout"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/catalog_thread_divider"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/catalog_layout"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="104dp"
+        android:id="@+id/catalog_thread_comment"
+        android:text="BohText1"
+        app:layout_constraintLeft_toLeftOf="@+id/catalog_layout"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintTop_toTopOf="@+id/catalog_layout"
+        android:layout_marginTop="24dp"
+        app:layout_constraintRight_toLeftOf="@+id/catalog_thread_thumbnail"
+        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintHorizontal_bias="0.95" />
+
+    <ImageView
+        android:layout_width="112dp"
+        android:layout_height="112dp"
+        app:srcCompat="@color/colorPrimary"
+        android:id="@+id/catalog_thread_thumbnail"
+        app:layout_constraintTop_toTopOf="@+id/catalog_layout"
+        android:layout_marginTop="16dp"
+        app:layout_constraintRight_toRightOf="@+id/catalog_layout"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp" />
+    
+    <View android:id="@+id/catalog_thread_divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/dividerColor"
+        app:layout_constraintLeft_toLeftOf="@+id/catalog_layout"
+        app:layout_constraintTop_toBottomOf="@+id/catalog_thread_thumbnail"
+        android:layout_marginTop="16dp"
+        app:layout_constraintRight_toRightOf="@+id/catalog_layout" />
+
+</android.support.constraint.ConstraintLayout>
