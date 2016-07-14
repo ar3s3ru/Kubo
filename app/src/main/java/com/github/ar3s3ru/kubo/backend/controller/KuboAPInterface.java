@@ -3,7 +3,6 @@ package com.github.ar3s3ru.kubo.backend.controller;
 import com.github.ar3s3ru.kubo.backend.models.BoardsList;
 import com.github.ar3s3ru.kubo.backend.models.ThreadsList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;

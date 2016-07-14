@@ -3,12 +3,9 @@ package com.github.ar3s3ru.kubo.modules;
 import android.support.annotation.NonNull;
 
 import com.github.ar3s3ru.kubo.backend.controller.KuboAPInterface;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import javax.inject.Singleton;
 
-import auto.parcelgson.gson.AutoParcelGsonTypeAdapterFactory;
 import dagger.Module;
 import dagger.Provides;
 import retrofit2.Retrofit;
@@ -42,26 +39,15 @@ public class KuboNetModule {
     }
 
     /**
-     * Provides a Gson instance for Retrofit builder creation
-     * @param factory TypeAdapter factory to use for Parcelable reflection
-     * @return Gson instance for Retrofit builder usage
-     */
-    @Provides
-    static Gson provideGson(AutoParcelGsonTypeAdapterFactory factory) {
-        return new GsonBuilder().registerTypeAdapterFactory(factory).create();
-    }
-
-    /**
      * Provide a Retrofit builder instance for REST API access.
-     * @param gson Gson instance
      * @return Retrofit builder instance
      */
     @Provides
     @Singleton
-    Retrofit provideAppRetrofit(Gson gson) {
+    Retrofit provideAppRetrofit() {
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
 

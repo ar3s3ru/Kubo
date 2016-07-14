@@ -12,7 +12,6 @@ import com.github.ar3s3ru.kubo.views.fragments.ThreadsFragment;
 import org.parceler.Parcels;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

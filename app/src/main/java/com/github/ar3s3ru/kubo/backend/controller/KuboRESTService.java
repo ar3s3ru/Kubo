@@ -17,7 +17,6 @@ import com.github.ar3s3ru.kubo.backend.models.ThreadsList;
 
 import org.parceler.Parcels;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;

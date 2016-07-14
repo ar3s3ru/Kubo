@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.github.ar3s3ru.kubo.R;
 import com.github.ar3s3ru.kubo.backend.models.Thread;
 import com.github.ar3s3ru.kubo.backend.models.ThreadsList;
@@ -39,13 +40,15 @@ import butterknife.ButterKnife;
 public class CatalogRecycler extends RecyclerView.Adapter<CatalogRecycler.ViewHolder> {
 
     private List<Thread> mList = new ArrayList<>();
+    private String mBoard;
 
-    public CatalogRecycler(List<ThreadsList> list) {
+    public CatalogRecycler(List<ThreadsList> list, String board) {
         // Populate mList...
         for (ThreadsList tList : list) {
             // ...adding all Thread elements within it
             mList.addAll(tList.threads);
         }
+        mBoard = board;
     }
 
     @Override
@@ -69,6 +72,13 @@ public class CatalogRecycler extends RecyclerView.Adapter<CatalogRecycler.ViewHo
         if (thread.comment != null) {
             holder.comment.setText(Html.fromHtml(thread.comment));
         }
+
+        holder.thumbnail.setMinimumWidth(thread.thumbWidth);
+        holder.thumbnail.setMinimumHeight(thread.thumbHeight);
+
+        Glide.with(holder.thumbnail.getContext())
+                .load("http://t.4cdn.org/" + mBoard + "/" + thread.properFilename + "s" + thread.fileExtension)
+                .into(holder.thumbnail);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

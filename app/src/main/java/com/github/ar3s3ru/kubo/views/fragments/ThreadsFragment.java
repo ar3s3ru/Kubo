@@ -2,7 +2,6 @@ package com.github.ar3s3ru.kubo.views.fragments;
 
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -25,7 +24,6 @@ import com.github.ar3s3ru.kubo.backend.receivers.CatalogReceiver;
 import com.github.ar3s3ru.kubo.views.ContentsActivity;
 import com.github.ar3s3ru.kubo.views.recyclers.CatalogRecycler;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -169,7 +167,7 @@ public class ThreadsFragment extends Fragment {
      */
     public void handleCatalogSuccess(List<ThreadsList> catalog) {
         mLoaded  = true;             // Loaded
-        mAdapter = new CatalogRecycler(catalog);
+        mAdapter = new CatalogRecycler(catalog, mBoardPath);
 
         setUpRecyclerView();
         mViewFlipper.showNext();    // Shows recycler
