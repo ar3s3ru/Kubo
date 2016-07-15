@@ -16,6 +16,8 @@ import com.github.ar3s3ru.kubo.backend.database.tables.KuboTableBoard;
 import com.github.ar3s3ru.kubo.views.ContentsActivity;
 import com.github.ar3s3ru.kubo.views.dialogs.BoardSelectedDialog;
 
+import java.lang.ref.WeakReference;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -42,15 +44,15 @@ public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.
 
     protected static final String TAG = "BoardsListRecycler";
 
-    private final FragmentManager mFragmentManager;
-    private       Cursor          mCursor;
-    private       int             mCount;
+    private final WeakReference<Listener> mListener;
+    private       Cursor                  mCursor;
+    private       int                     mCount;
 
     private boolean isStar;
 
-    public BoardsListRecycler(boolean star, KuboSQLHelper helper, FragmentManager fm) {
-        isStar = star;
-        mFragmentManager = fm;
+    public BoardsListRecycler(boolean star, @NonNull KuboSQLHelper helper, @NonNull Listener listener) {
+        isStar    = star;
+        mListener = new WeakReference<Listener>(listener);
 
         // Updating cursor value
         updateCursor(helper);
@@ -75,7 +77,7 @@ public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.
         return new ViewHolder(
                 LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.adapter_boardslist, parent, false),
-                mFragmentManager, isStar
+                mListener, isStar
         );
     }
 
@@ -143,6 +145,11 @@ public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.
         return null;
     }
 
+    public interface Listener {
+        void onLongClick(int id, int position, boolean starred, @NonNull String title);
+        void onClick(@NonNull String title, @NonNull String path, int id);
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener, View.OnLongClickListener {
 
@@ -150,21 +157,24 @@ public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.
         @BindView(R.id.boardslist_description)     TextView text;
         @BindView(R.id.boardslist_text_noelements) TextView noElems;
 
-        private final FragmentManager mFragmentManager;
-        private final boolean         mStarred;
+        private final WeakReference<Listener> mListener;
+        private final boolean                 mStarred;
 
         // Board path
         private String mPath;
 
-        ViewHolder(View itemView, FragmentManager fm, boolean starred) {
+        ViewHolder(@NonNull View itemView,
+                   @NonNull WeakReference<Listener> listener,
+                   boolean starred) {
+
             super(itemView);
 
             // Binding views
             ButterKnife.bind(this, itemView);
 
             // Setting up private fields
-            mFragmentManager = fm;
-            mStarred         = starred;
+            mListener = listener;
+            mStarred  = starred;
 
             // Setting up itemView onLongClick listener
             itemView.setOnLongClickListener(this);
@@ -175,12 +185,12 @@ public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.
         public boolean onLongClick(View view) {
             // Gets the ItemId (casting is valid because we use int ids)
             final int id = (int) getItemId();
+            // Gets Listener instance
+            final Listener listener = mListener.get();
 
-            if (id != -1) {
+            if (id != -1 && listener != null) {
                 // id is valid, create new Dialog
-                BoardSelectedDialog
-                        .newInstance(id, getAdapterPosition(), mStarred, title.getText().toString())
-                        .show(mFragmentManager, BoardSelectedDialog.TAG);
+                listener.onLongClick(id, getAdapterPosition(), mStarred, title.getText().toString());
                 return true;
             }
 
@@ -190,11 +200,10 @@ public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.
         @Override
         public void onClick(View view) {
             final int id = (int) getItemId();
+            final Listener listener = mListener.get();
 
-            if (id != -1 && mPath != null) {
-                ContentsActivity.startContentsActivity(
-                        view.getContext(), title.getText().toString(), mPath, id
-                );
+            if (id != -1 && listener != null && mPath != null) {
+                listener.onClick(title.getText().toString(), mPath, id);
             }
         }
 

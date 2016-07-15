@@ -54,8 +54,9 @@ import butterknife.ButterKnife;
 
 public class ThreadsFragment extends Fragment implements CatalogRecycler.Listener {
 
-    private static final String TAG  = "ThreadsFragment";
-    private static final String LIST = "com.github.ar3s3ru.kubo.views.fragments.threadsfragment.list";
+    private static final String TAG    = "ThreadsFragment";
+    private static final String LIST   = "com.github.ar3s3ru.kubo.views.fragments.threads.list";
+    private static final String LAYOUT = "com.github.ar3s3ru.kubo.views.fragments.threads.layout";
 
     /** Members variables */
     @BindView(R.id.fragment_threads_viewflipper)  ViewFlipper  mViewFlipper;
@@ -71,6 +72,7 @@ public class ThreadsFragment extends Fragment implements CatalogRecycler.Listene
 
     private CatalogRecycler       mAdapter;
     private CatalogReceiver       mReceiver;
+    private LinearLayoutManager   mLayoutManager;
     private LocalBroadcastManager mBroadcastManager;
 
     public ThreadsFragment() {
@@ -84,9 +86,15 @@ public class ThreadsFragment extends Fragment implements CatalogRecycler.Listene
         // Inject everything from Dagger
         ((KuboApp) getActivity().getApplication()).getAppComponent().inject(this);
 
+        // Create new layout manager
+        mLayoutManager = new LinearLayoutManager(getContext());
+
         // Recover state
-        mList = savedInstanceState == null ? null :
-                (List<ThreadsList>) Parcels.unwrap(savedInstanceState.getParcelable(LIST));
+        if (savedInstanceState == null) { mList = null; }
+        else {
+            mList = Parcels.unwrap(savedInstanceState.getParcelable(LIST));
+            mLayoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(LAYOUT));
+        }
 
         // Create new CatalogReceiver to handle getCatalog(path)
         mReceiver = new CatalogReceiver(this);
@@ -98,6 +106,7 @@ public class ThreadsFragment extends Fragment implements CatalogRecycler.Listene
         super.onSaveInstanceState(outState);
         // Save ThreadsList to avoid downloading
         outState.putParcelable(LIST, Parcels.wrap(mList));
+        outState.putParcelable(LAYOUT, mLayoutManager.onSaveInstanceState());
     }
 
     @Nullable
@@ -116,19 +125,13 @@ public class ThreadsFragment extends Fragment implements CatalogRecycler.Listene
         // Set up ActionBar
         setUpActionBar(((AppCompatActivity) getActivity()).getSupportActionBar());
 
-        if (mList == null) {
-            // Send getCatalog() request
-            startRequestingCatalog(false);
-        } else {
-            // Sets up the RecyclerView
-            setUpRecyclerView();
-        }
+        // Send getCatalog() request
+        if (mList == null) { startRequestingCatalog(false); }
+        // Sets up the RecyclerView
+        else { setUpRecyclerView(); }
 
         // Register Catalog receiver
-        mBroadcastManager.registerReceiver(
-                mReceiver,
-                new IntentFilter(KuboEvents.CATALOG)
-        );
+        mBroadcastManager.registerReceiver(mReceiver, new IntentFilter(KuboEvents.CATALOG));
     }
 
     @Override
@@ -172,7 +175,7 @@ public class ThreadsFragment extends Fragment implements CatalogRecycler.Listene
         mAdapter = new CatalogRecycler(this, mList, mBoardPath);
         // Set up Recycler
         mRecycler.setAdapter(mAdapter);
-        mRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecycler.setLayoutManager(mLayoutManager);
         // Show recycler
         mViewFlipper.showNext();
     }

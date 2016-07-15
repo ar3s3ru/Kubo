@@ -44,7 +44,7 @@ import butterknife.ButterKnife;
  */
 
 public class BoardsActivity extends KuboActivity
-        implements BoardSelectedDialog.Listener, OnMenuTabClickListener {
+        implements BoardSelectedDialog.Listener, OnMenuTabClickListener, BoardsListRecycler.Listener {
 
     @Inject Toast             mToast;
     @Inject KuboSQLHelper     mHelper;
@@ -71,8 +71,8 @@ public class BoardsActivity extends KuboActivity
         ButterKnife.bind(this);
 
         // Setting up adapters
-        mStarAdapter   = new BoardsListRecycler(true, mHelper, getSupportFragmentManager());
-        mUnstarAdapter = new BoardsListRecycler(false, mHelper, getSupportFragmentManager());
+        mStarAdapter   = new BoardsListRecycler(true, mHelper, this);
+        mUnstarAdapter = new BoardsListRecycler(false, mHelper, this);
 
         settingUpBottomBar(savedInstanceState); // Setting up BottomBar
         flagReadyToRecyclers();                 // Set up recyclers
@@ -132,12 +132,23 @@ public class BoardsActivity extends KuboActivity
      */
     @Override
     public void onGoToSelected(String title, boolean starred, int id, int position) {
-        final String path =
-                starred ? mStarAdapter.getItemPath(position) : mUnstarAdapter.getItemPath(position);
+        final String path = starred ?
+                mStarAdapter.getItemPath(position) :
+                mUnstarAdapter.getItemPath(position);
+        // Start new ContentsActivity
+        if (path != null) { onClick(title, path, id); }
+    }
 
-        if (path != null) {
-            ContentsActivity.startContentsActivity(this, title, path, id);
-        }
+    @Override
+    public void onClick(@NonNull String title, @NonNull String path, int id) {
+        ContentsActivity.startContentsActivity(this, title, path, id);
+    }
+
+    @Override
+    public void onLongClick(int id, int position, boolean starred, @NonNull String title) {
+        BoardSelectedDialog
+                .newInstance(id, position, starred, title)
+                .show(getSupportFragmentManager(), BoardSelectedDialog.TAG);
     }
 
     /**

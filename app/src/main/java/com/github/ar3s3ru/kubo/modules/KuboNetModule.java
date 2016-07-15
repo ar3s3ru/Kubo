@@ -1,5 +1,6 @@
 package com.github.ar3s3ru.kubo.modules;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.github.ar3s3ru.kubo.backend.controller.KuboAPInterface;
@@ -8,6 +9,8 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import okhttp3.Cache;
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -38,15 +41,31 @@ public class KuboNetModule {
         baseUrl = url;
     }
 
+    @Provides
+    @Singleton
+    static Cache provideOkHttpCache(Context appContext) {
+        final int cacheSize = 10 * 1024 * 1024; // 10 MiB
+        return new Cache(appContext.getCacheDir(), cacheSize);
+    }
+
+    @Provides
+    @Singleton
+    static OkHttpClient provideOkHttpClient(Cache cache) {
+        return new OkHttpClient.Builder()
+                .cache(cache)
+                .build();
+    }
+
     /**
      * Provide a Retrofit builder instance for REST API access.
      * @return Retrofit builder instance
      */
     @Provides
     @Singleton
-    Retrofit provideAppRetrofit() {
+    Retrofit provideAppRetrofit(OkHttpClient client) {
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)
+                .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
