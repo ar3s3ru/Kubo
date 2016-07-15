@@ -39,7 +39,6 @@ public class BoardSelectedDialog extends DialogFragment implements DialogInterfa
     public static final String TAG = "BoardSelectedDialog";
 
     /** Members variables */
-    private Listener mListener;
     private boolean  mBoardStarred;
     private String   mTitle;
 
@@ -88,15 +87,12 @@ public class BoardSelectedDialog extends DialogFragment implements DialogInterfa
         mTitle        = takeArgs.getString(TITLE);
         mPosition     = takeArgs.getInt(POS);
         mBoardStarred = takeArgs.getBoolean(STAR);
-
-        // BoardsActivity MUST implement Listener
-        mListener = (Listener) getActivity();
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
         builder.setTitle(mTitle)
                 .setNegativeButton(R.string.text_close, null);
@@ -113,6 +109,9 @@ public class BoardSelectedDialog extends DialogFragment implements DialogInterfa
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
+        // BoardsActivity MUST implement Listener
+        final Listener mListener = (Listener) getActivity();
+
         if (which == 0) {
             // Open selected board
             mListener.onGoToSelected(mTitle, mBoardStarred, mID, mPosition);

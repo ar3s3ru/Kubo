@@ -132,7 +132,7 @@ public class BoardsActivity extends KuboActivity
      */
     @Override
     public void onGoToSelected(String title, boolean starred, int id, int position) {
-        String path =
+        final String path =
                 starred ? mStarAdapter.getItemPath(position) : mUnstarAdapter.getItemPath(position);
 
         if (path != null) {

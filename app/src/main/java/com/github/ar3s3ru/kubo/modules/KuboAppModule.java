@@ -33,7 +33,7 @@ import dagger.Provides;
 public class KuboAppModule {
     // The AppModule needs application context to access
     // application-level resources (such as DB, shared preferences, ...)
-    private Context appContext;
+    private final Context appContext;
 
     public KuboAppModule(@NonNull Context appContext) {
         this.appContext = appContext;

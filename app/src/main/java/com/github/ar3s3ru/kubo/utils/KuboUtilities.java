@@ -49,7 +49,7 @@ public class KuboUtilities {
      * @param sharedPrefs Default shared preferences
      */
     public static void disableStartupBoards(@NonNull SharedPreferences sharedPrefs) {
-        SharedPreferences.Editor mEditor = sharedPrefs.edit();
+        final SharedPreferences.Editor mEditor = sharedPrefs.edit();
 
         mEditor.putBoolean(KuboSharedPrefsKeys.KEY_DOWNLOAD_BOARDS, false);
         mEditor.apply();

@@ -34,7 +34,7 @@ import java.util.List;
 
 public class CatalogReceiver extends BroadcastReceiver {
 
-    private WeakReference<ThreadsFragment> mFragment;
+    private final WeakReference<ThreadsFragment> mFragment;
 
     public CatalogReceiver(@NonNull ThreadsFragment threadsFragment) {
         mFragment = new WeakReference<>(threadsFragment);

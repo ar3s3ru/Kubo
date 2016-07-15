@@ -32,7 +32,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Module
 public class KuboNetModule {
     // 4chan REST API endpoint
-    private String baseUrl;
+    private final String baseUrl;
 
     public KuboNetModule(@NonNull String url) {
         baseUrl = url;

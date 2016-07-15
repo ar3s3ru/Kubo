@@ -36,7 +36,7 @@ public class BoardsReceiver extends BroadcastReceiver {
 
     // Maintains a WeakReference to the MainActivity
     // to prevent blocking garbage collection
-    private WeakReference<StartActivity> mActivity;
+    private final WeakReference<StartActivity> mActivity;
 
     public BoardsReceiver(@NonNull StartActivity activity) {
         mActivity = new WeakReference<>(activity);

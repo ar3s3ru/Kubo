@@ -32,13 +32,12 @@ import android.view.View;
  * Simple divider for RecyclerViews.
  */
 public class ListItemDivider extends RecyclerView.ItemDecoration {
-
-    private int   spaceLeft, height;
-    private Paint mPaint;
-    private Rect  mRect;
-
     // Using member variables to deal with onDraw allocations overhead
+    private int spaceLeft, height;
     private int childIdx, childCount;
+
+    private final Paint mPaint;
+    private final Rect  mRect;
 
     private View currentChild;
     private RecyclerView.LayoutParams currentParams;

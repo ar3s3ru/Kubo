@@ -42,14 +42,14 @@ import butterknife.ButterKnife;
 
 public class CatalogRecycler extends RecyclerView.Adapter<CatalogRecycler.ViewHolder> {
 
-    private WeakReference<List<ThreadsList>> mThreadsList;
+    private final WeakReference<List<ThreadsList>> mThreadsList;
 
-    private List<Thread> mList = new ArrayList<>();
-    private String       mBoard;
-    private int          currentPage;
+    private final List<Thread> mList = new ArrayList<>();
+    private final String       mBoard;
+    private       int          currentPage;
 
     private final ChangedPageRunnable mRunnable;
-    private       Handler             mHandler = new Handler();
+    private final Handler             mHandler = new Handler();
 
     public CatalogRecycler(@NonNull Listener listener,
                            @NonNull List<ThreadsList> list,
@@ -82,7 +82,7 @@ public class CatalogRecycler extends RecyclerView.Adapter<CatalogRecycler.ViewHo
     @SuppressWarnings("all")
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Thread thread = mList.get(position);
+        final Thread thread = mList.get(position);
 
         if (thread.comment != null) {
             holder.comment.setText(Html.fromHtml(thread.comment));
@@ -136,11 +136,11 @@ public class CatalogRecycler extends RecyclerView.Adapter<CatalogRecycler.ViewHo
      * @param currentSize Current dataset list size
      */
     private void updateDataset(int currentSize) {
-        List<ThreadsList> wholeList = mThreadsList.get();
+        final List<ThreadsList> wholeList = mThreadsList.get();
 
         if (wholeList != null) {
             if (++currentPage <= wholeList.size() - 1) {
-                ThreadsList newPage = wholeList.get(currentPage);
+                final ThreadsList newPage = wholeList.get(currentPage);
                 mList.addAll(newPage.threads);
 
                 // notifyItemRangeInserted(currentSize + 1, newPage.threads.size());
@@ -168,8 +168,8 @@ public class CatalogRecycler extends RecyclerView.Adapter<CatalogRecycler.ViewHo
     private static class ChangedPageRunnable implements Runnable {
 
         private int pageNumber, fromPosition, toSize;
-        private WeakReference<Listener>        mListener;
-        private WeakReference<CatalogRecycler> mAdapter;
+        private final WeakReference<Listener>        mListener;
+        private final WeakReference<CatalogRecycler> mAdapter;
 
         ChangedPageRunnable(@NonNull Listener listener,
                             @NonNull CatalogRecycler adapter,
@@ -196,10 +196,10 @@ public class CatalogRecycler extends RecyclerView.Adapter<CatalogRecycler.ViewHo
 
         @Override
         public void run() {
-            Listener        listener = mListener.get();
-            CatalogRecycler adapter  = mAdapter.get();
+            final Listener        listener = mListener.get();
+            final CatalogRecycler adapter  = mAdapter.get();
 
-            if (listener != null && mAdapter != null) {
+            if (listener != null && adapter != null) {
                 listener.onChangedPage(pageNumber + 1);
                 adapter.notifyItemRangeInserted(fromPosition, toSize);
                 adapter.notifyDataSetChanged();

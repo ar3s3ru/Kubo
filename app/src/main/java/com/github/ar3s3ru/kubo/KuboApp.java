@@ -35,9 +35,9 @@ public class KuboApp extends Application {
     private KuboAppComponent mAppComponent;
 
     /** Dagger Modules */
-    private KuboNetModule mNetModule = new KuboNetModule("https://api.4chan.org");
-    private KuboAppModule mAppModule = new KuboAppModule(this);
-    private KuboDBModule  mDBModule  = new KuboDBModule();
+    private final KuboNetModule mNetModule = new KuboNetModule("https://api.4chan.org");
+    private final KuboAppModule mAppModule = new KuboAppModule(this);
+    private final KuboDBModule  mDBModule  = new KuboDBModule();
 
     @SuppressWarnings("deprecation")    // Dagger sometimes flags as deprecated some
     @Override                           // modules...

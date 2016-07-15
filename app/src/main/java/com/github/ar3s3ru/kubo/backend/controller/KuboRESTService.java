@@ -191,7 +191,7 @@ public class KuboRESTService extends IntentService implements Callback {
      * @param list Downloaded boards list
      */
     private void handleGetBoards(BoardsList list) {
-        Intent intent = new Intent(KuboEvents.BOARDS);
+        final Intent intent = new Intent(KuboEvents.BOARDS);
 
         try {
             // Adding boards into the database

@@ -42,9 +42,9 @@ public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.
 
     protected static final String TAG = "BoardsListRecycler";
 
-    private FragmentManager mFragmentManager;
-    private Cursor mCursor;
-    private int    mCount;
+    private final FragmentManager mFragmentManager;
+    private       Cursor          mCursor;
+    private       int             mCount;
 
     private boolean isStar;
 
@@ -150,9 +150,11 @@ public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.
         @BindView(R.id.boardslist_description)     TextView text;
         @BindView(R.id.boardslist_text_noelements) TextView noElems;
 
-        private FragmentManager mFragmentManager;
-        private boolean mStarred;
-        private String  mPath;
+        private final FragmentManager mFragmentManager;
+        private final boolean         mStarred;
+
+        // Board path
+        private String mPath;
 
         ViewHolder(View itemView, FragmentManager fm, boolean starred) {
             super(itemView);
@@ -171,7 +173,8 @@ public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.
 
         @Override
         public boolean onLongClick(View view) {
-            int id = (int) getItemId(); // Gets the ItemId (casting is valid because we use int ids)
+            // Gets the ItemId (casting is valid because we use int ids)
+            final int id = (int) getItemId();
 
             if (id != -1) {
                 // id is valid, create new Dialog
@@ -181,13 +184,12 @@ public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.
                 return true;
             }
 
-            // If id is not valid, no longClick is performed
-            return false;
+            return false;   // If id is not valid, no longClick is performed
         }
 
         @Override
         public void onClick(View view) {
-            int id = (int) getItemId();
+            final int id = (int) getItemId();
 
             if (id != -1 && mPath != null) {
                 ContentsActivity.startContentsActivity(
