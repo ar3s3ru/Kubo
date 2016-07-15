@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/KuboTheme.CardView.Portrait"
+    style="@style/KuboTheme.CardView.Grid"
     android:id="@+id/catalog_cardview">
 
-    <include layout="@layout/layout_card_catalog" />
+    <include layout="@layout/layout_card_catalog_grid" />
 
 </android.support.v7.widget.CardView>

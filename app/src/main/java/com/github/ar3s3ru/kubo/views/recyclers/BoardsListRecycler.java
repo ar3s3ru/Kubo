@@ -2,7 +2,6 @@ package com.github.ar3s3ru.kubo.views.recyclers;
 
 import android.database.Cursor;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -13,8 +12,6 @@ import android.widget.TextView;
 import com.github.ar3s3ru.kubo.R;
 import com.github.ar3s3ru.kubo.backend.database.KuboSQLHelper;
 import com.github.ar3s3ru.kubo.backend.database.tables.KuboTableBoard;
-import com.github.ar3s3ru.kubo.views.ContentsActivity;
-import com.github.ar3s3ru.kubo.views.dialogs.BoardSelectedDialog;
 
 import java.lang.ref.WeakReference;
 

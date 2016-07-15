@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.github.ar3s3ru.kubo.backend.database.tables.KuboTableBoard;
+import com.github.ar3s3ru.kubo.backend.database.tables.KuboTableThread;
 
 /**
  * Copyright (C) 2016  Danilo Cianfrone
@@ -35,12 +36,14 @@ public class KuboSQLHelper extends SQLiteOpenHelper {
 
     // Put all the table creators here
     private static final String[] DB_CREATORS = {
-            KuboTableBoard.DB_CREATE
+            KuboTableBoard.DB_CREATE,
+            KuboTableThread.DB_CREATE
     };
 
     // Put all the table destructors here
     private static final String[] DB_DROPS = {
-            KuboTableBoard.DB_DROP
+            KuboTableBoard.DB_DROP,
+            KuboTableThread.DB_DROP
     };
 
     public KuboSQLHelper(Context context) {
@@ -49,7 +52,7 @@ public class KuboSQLHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        for (String DB_DROP : DB_DROPS) {
+        for (final String DB_DROP : DB_DROPS) {
             // TODO: consider using some migration mechanism
             // Destruct all previous tables
             db.execSQL(DB_DROP);
@@ -61,7 +64,7 @@ public class KuboSQLHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        for (String DB_CREATE : DB_CREATORS) {
+        for (final String DB_CREATE : DB_CREATORS) {
             // Construct all tables
             db.execSQL(DB_CREATE);
         }

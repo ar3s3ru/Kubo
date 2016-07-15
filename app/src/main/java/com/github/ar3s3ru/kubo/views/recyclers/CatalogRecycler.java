@@ -75,7 +75,7 @@ public class CatalogRecycler extends RecyclerView.Adapter<CatalogRecycler.ViewHo
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new ViewHolder(
                 LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.adapter_catalog, parent, false)
+                    .inflate(R.layout.adapter_catalog_list, parent, false)
         );
     }
 
@@ -209,12 +209,12 @@ public class CatalogRecycler extends RecyclerView.Adapter<CatalogRecycler.ViewHo
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.catalog_thread_thumbnail)    ImageView thumbnail;
-        @BindView(R.id.catalog_header_name)         TextView  name;
-        @BindView(R.id.catalog_thread_comment)      TextView  comment;
-        @BindView(R.id.catalog_header_number)       TextView  number;
-        @BindView(R.id.catalog_thread_images_text)  TextView  images;
-        @BindView(R.id.catalog_thread_replies_text) TextView  replies;
+        @BindView(R.id.catalog_list_thread_thumbnail)    ImageView thumbnail;
+        @BindView(R.id.catalog_list_header_name)         TextView  name;
+        @BindView(R.id.catalog_list_thread_comment)      TextView  comment;
+        @BindView(R.id.catalog_list_header_number)       TextView  number;
+        @BindView(R.id.catalog_list_thread_images_text)  TextView  images;
+        @BindView(R.id.catalog_list_thread_replies_text) TextView  replies;
 
         ViewHolder(View itemView) {
             super(itemView);

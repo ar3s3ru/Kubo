@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/KuboTheme.CardView.InnerLayout"
+    android:id="@+id/catalog_layout">
+
+    <TextView style="@style/KuboTheme.CardView.Header.Start"
+        android:id="@+id/catalog_list_header_name"
+        app:layout_constraintLeft_toLeftOf="@+id/catalog_layout"
+        app:layout_constraintTop_toTopOf="@+id/catalog_layout" />
+
+    <TextView style="@style/KuboTheme.CardView.Header"
+        android:id="@+id/catalog_list_header_number"
+        app:layout_constraintLeft_toRightOf="@+id/catalog_list_header_name"
+        app:layout_constraintTop_toTopOf="@+id/catalog_layout" />
+
+    <TextView style="@style/KuboTheme.CardView.List.Comment"
+        android:id="@+id/catalog_list_thread_comment"
+        app:layout_constraintLeft_toLeftOf="@+id/catalog_layout"
+        app:layout_constraintTop_toTopOf="@+id/catalog_layout"
+        app:layout_constraintRight_toLeftOf="@+id/catalog_list_thread_thumbnail"
+        app:layout_constraintHorizontal_bias="0.95" />
+
+    <ImageView style="@style/KuboTheme.CardView.List.Thumbnail"
+        android:id="@+id/catalog_list_thread_thumbnail"
+        app:layout_constraintTop_toTopOf="@+id/catalog_layout"
+        app:layout_constraintRight_toRightOf="@+id/catalog_layout" />
+
+    <View style="@style/KuboTheme.CardView.Divider"
+        android:id="@+id/catalog_list_thread_divider"
+        app:layout_constraintLeft_toLeftOf="@+id/catalog_layout"
+        app:layout_constraintTop_toBottomOf="@+id/catalog_list_thread_thumbnail"
+        app:layout_constraintRight_toRightOf="@+id/catalog_layout" />
+
+    <ImageView style="@style/KuboTheme.CardView.List.Icons"
+        android:src="@drawable/ic_images"
+        android:id="@+id/catalog_list_thread_images"
+        app:layout_constraintLeft_toLeftOf="@+id/catalog_layout"
+        app:layout_constraintTop_toBottomOf="@+id/catalog_list_thread_divider"
+        app:layout_constraintBottom_toBottomOf="@+id/catalog_layout" />
+
+    <TextView style="@style/KuboTheme.CardView.List.Texts"
+        android:id="@+id/catalog_list_thread_images_text"
+        app:layout_constraintLeft_toRightOf="@+id/catalog_list_thread_images"
+        app:layout_constraintTop_toBottomOf="@+id/catalog_list_thread_divider"
+        app:layout_constraintBottom_toBottomOf="@+id/catalog_layout" />
+
+    <ImageView style="@style/KuboTheme.CardView.List.Icons"
+        android:src="@drawable/ic_replies"
+        android:id="@+id/catalog_list_thread_replies"
+        app:layout_constraintLeft_toRightOf="@+id/catalog_list_thread_images_text"
+        app:layout_constraintTop_toBottomOf="@+id/catalog_list_thread_divider"
+        app:layout_constraintBottom_toBottomOf="@+id/catalog_layout" />
+
+    <TextView style="@style/KuboTheme.CardView.List.Texts"
+        android:id="@+id/catalog_list_thread_replies_text"
+        app:layout_constraintLeft_toRightOf="@+id/catalog_list_thread_replies"
+        app:layout_constraintTop_toBottomOf="@+id/catalog_list_thread_divider"
+        app:layout_constraintBottom_toBottomOf="@+id/catalog_layout" />
+
+    <ImageView style="@style/KuboTheme.CardView.Settings"
+        android:src="@drawable/ic_bookmark_empty"
+        android:id="@+id/catalog_list_thread_bookmark"
+        app:layout_constraintTop_toBottomOf="@+id/catalog_list_thread_divider"
+        app:layout_constraintRight_toLeftOf="@+id/catalog_list_thread_settings"
+        app:layout_constraintBottom_toBottomOf="@+id/catalog_layout" />
+
+    <ImageView style="@style/KuboTheme.CardView.Settings"
+        android:src="@drawable/ic_settings_horizontal"
+        android:id="@+id/catalog_list_thread_settings"
+        app:layout_constraintTop_toBottomOf="@+id/catalog_list_thread_divider"
+        app:layout_constraintRight_toRightOf="@+id/catalog_layout"
+        app:layout_constraintBottom_toBottomOf="@+id/catalog_layout" />
+
+</android.support.constraint.ConstraintLayout>

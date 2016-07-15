@@ -2,6 +2,7 @@ package com.github.ar3s3ru.kubo.backend.database.tables;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 
 import com.github.ar3s3ru.kubo.backend.database.KuboSQLHelper;
 import com.github.ar3s3ru.kubo.backend.models.Board;
@@ -73,8 +74,8 @@ public class KuboTableBoard {
      * @param value Boolean (yeah...) value to write
      * @return Number of rows affected by the change (should be == 1 if successful)
      */
-    private static int writeStarring(KuboSQLHelper helper, int id, int value) {
-        ContentValues cv = new ContentValues();
+    private static int writeStarring(@NonNull KuboSQLHelper helper, int id, int value) {
+        final ContentValues cv = new ContentValues();
         cv.put(KEY_STARD, value);
 
         return helper.getWritableDatabase().update(TABLE_NAME, cv, "_id=" + id, null);
@@ -86,8 +87,8 @@ public class KuboTableBoard {
      * @param board Board JSON representation to write
      * @return Row primary key if successful, throws SQLException if it fails
      */
-    public static long insertBoard(KuboSQLHelper helper, Board board) {
-        ContentValues cv = new ContentValues();
+    public static long insertBoard(@NonNull KuboSQLHelper helper, @NonNull Board board) {
+        final ContentValues cv = new ContentValues();
 
         cv.put(KEY_BOARD, board.getBoard());
         cv.put(KEY_TITLE, board.getTitle());
@@ -99,7 +100,7 @@ public class KuboTableBoard {
         cv.put(KEY_MIN_HEIGHT, board.getMinImageHeight());
         cv.put(KEY_MAX_FSIZE,  board.getMaxFilesize());
 
-        return helper.getReadableDatabase().insertOrThrow(TABLE_NAME, null, cv);
+        return helper.getWritableDatabase().insertOrThrow(TABLE_NAME, null, cv);
     }
 
     /**
@@ -108,7 +109,7 @@ public class KuboTableBoard {
      * @param id Board row primary key
      * @return true if the operation was successful, false otherwise
      */
-    public static boolean starringBoard(KuboSQLHelper helper, int id) {
+    public static boolean starringBoard(@NonNull KuboSQLHelper helper, int id) {
         // Returns true if only one row is affected from the change
         return writeStarring(helper, id, 1) == 1;
     }
@@ -119,7 +120,7 @@ public class KuboTableBoard {
      * @param id Board row primary key
      * @return true if the operation was successful, false otherwise
      */
-    public static boolean unstarringBoard(KuboSQLHelper helper, int id) {
+    public static boolean unstarringBoard(@NonNull KuboSQLHelper helper, int id) {
         // Same as above
         return writeStarring(helper, id, 0) == 1;
     }
@@ -130,7 +131,7 @@ public class KuboTableBoard {
      * @param id Board row primary key
      * @return Cursor with 1 element (board requested), or no elements
      */
-    public static Cursor getBoard(KuboSQLHelper helper, int id) {
+    public static Cursor getBoard(@NonNull KuboSQLHelper helper, int id) {
         return helper.getWritableDatabase().query(
             TABLE_NAME, null, "_id=" + id, null, null, null, null
         );
@@ -141,7 +142,7 @@ public class KuboTableBoard {
      * @param helper SQLite application helper instance
      * @return Starred boards cursor
      */
-    public static Cursor getStarredBoards(KuboSQLHelper helper) {
+    public static Cursor getStarredBoards(@NonNull KuboSQLHelper helper) {
         return helper.getReadableDatabase().query(
                 TABLE_NAME,             // SELECT FROM tablename
                 null,                   // all columns to return
@@ -155,7 +156,7 @@ public class KuboTableBoard {
      * @param helper SQLite application helper instance
      * @return Unstarred boards cursor
      */
-    public static Cursor getUnstarredBoards(KuboSQLHelper helper) {
+    public static Cursor getUnstarredBoards(@NonNull KuboSQLHelper helper) {
         return helper.getReadableDatabase().query(
                 TABLE_NAME, null, KEY_STARD + "=0", null, null, null, null//, LIMIT_QUERY
                 // LIMIT limitQuery (using pagination to prevent  overusing memory)
@@ -172,7 +173,7 @@ public class KuboTableBoard {
      * @param position Row position in the cursor
      * @return Board primary key
      */
-    public static int getId(Cursor cursor, int position) {
+    public static int getId(@NonNull Cursor cursor, int position) {
         cursor.moveToPosition(position);
         return cursor.getInt(cursor.getColumnIndex("_id"));
     }
@@ -183,7 +184,7 @@ public class KuboTableBoard {
      * @param position Row position in the cursor
      * @return Board field of the row in position
      */
-    public static String getBoard(Cursor cursor, int position) {
+    public static String getBoard(@NonNull Cursor cursor, int position) {
         cursor.moveToPosition(position);
         return cursor.getString(cursor.getColumnIndex(KEY_BOARD));
     }
@@ -194,7 +195,7 @@ public class KuboTableBoard {
      * @param position Row position in the cursor
      * @return Board title of the row in position
      */
-    public static String getTitle(Cursor cursor, int position) {
+    public static String getTitle(@NonNull Cursor cursor, int position) {
         cursor.moveToPosition(position);
         return cursor.getString(cursor.getColumnIndex(KEY_TITLE));
     }
@@ -205,7 +206,7 @@ public class KuboTableBoard {
      * @param position Row position in the cursor
      * @return Board starring status of the row in position
      */
-    public static boolean getStarred(Cursor cursor, int position) {
+    public static boolean getStarred(@NonNull Cursor cursor, int position) {
         cursor.moveToPosition(position);
         return KuboUtilities.convertFromInt(cursor.getInt(cursor.getColumnIndex(KEY_TITLE)));
     }
@@ -216,7 +217,7 @@ public class KuboTableBoard {
      * @param position Row position in the cursor
      * @return Board description of the row in position
      */
-    public static String getMetaDescription(Cursor cursor, int position) {
+    public static String getMetaDescription(@NonNull Cursor cursor, int position) {
         cursor.moveToPosition(position);
         return cursor.getString(cursor.getColumnIndex(KEY_DESCR));
     }
@@ -227,7 +228,7 @@ public class KuboTableBoard {
      * @param position Row position in the cursor
      * @return Board country flags abilitation of the row in position
      */
-    public static boolean getCountryFlags(Cursor cursor, int position) {
+    public static boolean getCountryFlags(@NonNull Cursor cursor, int position) {
         cursor.moveToPosition(position);
         return KuboUtilities.convertFromInt(cursor.getInt(cursor.getColumnIndex(KEY_FLAGS)));
     }
@@ -238,7 +239,7 @@ public class KuboTableBoard {
      * @param position Row position in the cursor
      * @return Board forced anonymous of the row in position
      */
-    public static boolean getForcedAnon(Cursor cursor, int position) {
+    public static boolean getForcedAnon(@NonNull Cursor cursor, int position) {
         cursor.moveToPosition(position);
         return KuboUtilities.convertFromInt(cursor.getInt(cursor.getColumnIndex(KEY_ANON)));
     }
@@ -249,7 +250,7 @@ public class KuboTableBoard {
      * @param position Row position in the cursor
      * @return Board uploading image min width of the row in position
      */
-    public static int getMinWidth(Cursor cursor, int position) {
+    public static int getMinWidth(@NonNull Cursor cursor, int position) {
         cursor.moveToPosition(position);
         return cursor.getInt(cursor.getColumnIndex(KEY_MIN_WIDTH));
     }
@@ -260,7 +261,7 @@ public class KuboTableBoard {
      * @param position Row position in the cursor
      * @return Board uploading image min height of the row in position
      */
-    public static int getMinHeight(Cursor cursor, int position) {
+    public static int getMinHeight(@NonNull Cursor cursor, int position) {
         cursor.moveToPosition(position);
         return cursor.getInt(cursor.getColumnIndex(KEY_MIN_HEIGHT));
     }
@@ -271,7 +272,7 @@ public class KuboTableBoard {
      * @param position Row position in the cursor
      * @return Board uploading image max filesize of the row in position
      */
-    public static int getMaxFilesize(Cursor cursor, int position) {
+    public static int getMaxFilesize(@NonNull Cursor cursor, int position) {
         cursor.moveToPosition(position);
         return cursor.getInt(cursor.getColumnIndex(KEY_MAX_FSIZE));
     }

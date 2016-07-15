@@ -5,10 +5,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.Toolbar;
 
 import com.github.ar3s3ru.kubo.R;
-import com.github.ar3s3ru.kubo.views.fragments.RepliesFragment;
 import com.github.ar3s3ru.kubo.views.fragments.ThreadsFragment;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Copyright (C) 2016  Danilo Cianfrone
@@ -38,8 +43,16 @@ public class ContentsActivity extends KuboActivity {
     // Board title
     private static final String BOARD_TL = "com.github.ar3s3ru.kubo.views.ContentsActivity.board_tl";
 
+    /** Members variables */
+
+    @BindView(R.id.activity_contents_toolbar) Toolbar mToolbar;
+
+    private Drawer  mDrawer;
     private ThreadsFragment threadsFragment;
-    private RepliesFragment repliesFragment;
+    //private RepliesFragment repliesFragment;
+
+    /** MaterialDrawer elements */
+    // TODO: add here
 
     /**
      * Starts ContentsActivity with provided path and id, from defined context
@@ -62,13 +75,21 @@ public class ContentsActivity extends KuboActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contents);
 
+        ButterKnife.bind(this);
+
+        // Set up ActionBar
+        setSupportActionBar(mToolbar);
+
+        // Set up MaterialDrawer
+        setUpNavigationDrawer();
+
         // Get Threads fragment
         threadsFragment = (ThreadsFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.activity_contents_threads_fragment);
 
         // Get Replies fragment
-        repliesFragment = (RepliesFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.activity_contents_replies_fragment);
+        //repliesFragment = (RepliesFragment) getSupportFragmentManager()
+        //        .findFragmentById(R.id.activity_contents_replies_fragment);
 
         // Freshly started activity, sets up member variables accordingly
         setUpContents(
@@ -78,8 +99,21 @@ public class ContentsActivity extends KuboActivity {
         );
     }
 
+
+
     // TODO: Javadoc
     private void setUpContents(String title, String path, int primaryKey) {
         threadsFragment.setUpContents(title, path, primaryKey);
+    }
+
+    // TODO: Javadoc
+    private void setUpNavigationDrawer() {
+        mDrawer = new DrawerBuilder()
+                    .withActivity(this)
+                    .withToolbar(mToolbar)
+                    .withSliderBackgroundColor(
+                            getResources().getColor(R.color.colorVeryDark)
+                    )
+                    .build();
     }
 }

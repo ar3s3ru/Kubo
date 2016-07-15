@@ -1,10 +1,13 @@
 package com.github.ar3s3ru.kubo.views;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
 
@@ -12,8 +15,9 @@ import com.github.ar3s3ru.kubo.KuboApp;
 import com.github.ar3s3ru.kubo.R;
 import com.github.ar3s3ru.kubo.backend.controller.KuboEvents;
 import com.github.ar3s3ru.kubo.backend.controller.KuboRESTService;
-import com.github.ar3s3ru.kubo.backend.receivers.BoardsReceiver;
 import com.github.ar3s3ru.kubo.utils.KuboUtilities;
+
+import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
 
@@ -141,5 +145,40 @@ public class StartActivity extends KuboActivity {
         mToast.setText(errorCode + ": " + error);
         mToast.setDuration(Toast.LENGTH_LONG);
         mToast.show();
+    }
+
+    /**
+     * BroadcastReceiver for getBoards() request.
+     */
+    static class BoardsReceiver extends BroadcastReceiver {
+
+        // Maintains a WeakReference to the MainActivity
+        // to prevent blocking garbage collection
+        private final WeakReference<StartActivity> mActivity;
+
+        BoardsReceiver(@NonNull StartActivity activity) {
+            mActivity = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Gets MainActivity strong reference
+            StartActivity activity = mActivity.get();
+
+            // Handle receive only if the activity still exists
+            if (activity != null) {
+                // Status OK
+                if (intent.getBooleanExtra(KuboEvents.BOARDS_STATUS, false)) {
+                    // Notify download success
+                    activity.handleSuccessfullyDownload();
+                } else {
+                    // Shows error within the activity
+                    activity.handleErrorDownload(
+                            intent.getStringExtra(KuboEvents.BOARDS_ERR),
+                            intent.getIntExtra(KuboEvents.BOARDS_ERRCOD, 0)
+                    );
+                }
+            }
+        }
     }
 }

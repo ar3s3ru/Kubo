@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/KuboTheme.ContentsActivity.Layout"
+<LinearLayout style="@style/KuboTheme.ContentsActivity.Layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_contents_layout">
+    
+    <android.support.v7.widget.Toolbar style="@style/KuboTheme.ContentsActivity.Toolbar"
+        android:id="@+id/activity_contents_toolbar"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        android:elevation="4dp" />
 
     <fragment
         android:id="@+id/activity_contents_threads_fragment"
@@ -9,10 +16,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <fragment
+    <!-- <fragment
         android:id="@+id/activity_contents_replies_fragment"
         android:name="com.github.ar3s3ru.kubo.views.fragments.RepliesFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" /> -->
 
 </LinearLayout>

@@ -6,4 +6,5 @@
     <string name="header_unstarred">Altri</string>
     <string name="text_close">Annulla</string>
     <string name="boards_activity_label">Kubo - Scegli una board</string>
+    <string name="menu_threads_viewmode">Cambia visualizzazione</string>
 </resources>

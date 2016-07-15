@@ -1,5 +1,8 @@
 package com.github.ar3s3ru.kubo.views.fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,10 +11,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -22,11 +29,12 @@ import com.github.ar3s3ru.kubo.R;
 import com.github.ar3s3ru.kubo.backend.controller.KuboEvents;
 import com.github.ar3s3ru.kubo.backend.controller.KuboRESTService;
 import com.github.ar3s3ru.kubo.backend.models.ThreadsList;
-import com.github.ar3s3ru.kubo.backend.receivers.CatalogReceiver;
+import com.github.ar3s3ru.kubo.views.recyclers.CatalogDirectRecycler;
 import com.github.ar3s3ru.kubo.views.recyclers.CatalogRecycler;
 
 import org.parceler.Parcels;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -58,6 +66,12 @@ public class ThreadsFragment extends Fragment implements CatalogRecycler.Listene
     private static final String LIST   = "com.github.ar3s3ru.kubo.views.fragments.threads.list";
     private static final String LAYOUT = "com.github.ar3s3ru.kubo.views.fragments.threads.layout";
 
+    private static final int IC_GRID = R.drawable.ic_grid;
+    private static final int IC_LIST = R.drawable.ic_list;
+
+    private static final int GRID_COLUMNS = 2;
+    private static final int LIST_COLUMNS = 1;
+
     /** Members variables */
     @BindView(R.id.fragment_threads_viewflipper)  ViewFlipper  mViewFlipper;
     @BindView(R.id.fragment_threads_recyclerview) RecyclerView mRecycler;
@@ -67,12 +81,14 @@ public class ThreadsFragment extends Fragment implements CatalogRecycler.Listene
     private String  mBoardTitle;
     private String  mBoardPath;
     private int     mBoardPrimaryKey;
+    private boolean isGridView = false;
 
     private List<ThreadsList> mList;
 
-    private CatalogRecycler       mAdapter;
+    // (uses pagination) private CatalogRecycler mAdapter;
+    private CatalogDirectRecycler mAdapter;
     private CatalogReceiver       mReceiver;
-    private LinearLayoutManager   mLayoutManager;
+    private GridLayoutManager     mLayoutManager;
     private LocalBroadcastManager mBroadcastManager;
 
     public ThreadsFragment() {
@@ -83,11 +99,14 @@ public class ThreadsFragment extends Fragment implements CatalogRecycler.Listene
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // For rendering menu
+        setHasOptionsMenu(true);
+
         // Inject everything from Dagger
         ((KuboApp) getActivity().getApplication()).getAppComponent().inject(this);
 
         // Create new layout manager
-        mLayoutManager = new LinearLayoutManager(getContext());
+        mLayoutManager = new GridLayoutManager(getContext(), LIST_COLUMNS);
 
         // Recover state
         if (savedInstanceState == null) { mList = null; }
@@ -142,6 +161,22 @@ public class ThreadsFragment extends Fragment implements CatalogRecycler.Listene
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.threads_fragment_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.threads_menu_viewmode:
+                onChangeViewMode(item);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     public void onChangedPage(int pageNumber) {
         mToast.setText("Page " + pageNumber);
         mToast.setGravity(Gravity.CENTER, 0, 0);
@@ -170,14 +205,54 @@ public class ThreadsFragment extends Fragment implements CatalogRecycler.Listene
         KuboRESTService.getCatalog(getContext(), mBoardPath);
     }
 
+    // TODO: Javadoc
     private void setUpRecyclerView() {
         // Set up adapter
-        mAdapter = new CatalogRecycler(this, mList, mBoardPath);
+        // (with pagination) mAdapter = new CatalogRecycler(this, mList, mBoardPath);
+        mAdapter = new CatalogDirectRecycler(mList, mBoardPath);
         // Set up Recycler
         mRecycler.setAdapter(mAdapter);
         mRecycler.setLayoutManager(mLayoutManager);
         // Show recycler
         mViewFlipper.showNext();
+    }
+
+    private void onChangeViewMode(@NonNull MenuItem item) {
+        if (isGridView) {
+            item.setIcon(IC_GRID);
+            // TODO: handle list view
+            mAdapter.setListViewType();
+            mLayoutManager.setSpanCount(LIST_COLUMNS);
+        } else {
+            item.setIcon(IC_LIST);
+            // TODO: handle grid view
+            mAdapter.setGridViewType();
+            mLayoutManager.setSpanCount(GRID_COLUMNS);
+        }
+
+        // Change isGridView value
+        isGridView = !isGridView;
+    }
+
+    /**
+     * Handle successful HTTP call of getCatalog(path)
+     * @param catalog Catalog result
+     */
+    private void handleCatalogSuccess(List<ThreadsList> catalog) {
+        mList = catalog;
+        setUpRecyclerView();
+    }
+
+    /**
+     * Handle error on getCatalog(path) HTTP call
+     * @param error Error string encoded
+     * @param errorCode Error HTTP code
+     */
+    private void handleCatalogError(String error, int errorCode) {
+        mToast.setText(errorCode + ": " + error);
+        mToast.setGravity(Gravity.BOTTOM, 0, 0);
+        mToast.setDuration(Toast.LENGTH_LONG);
+        mToast.show();
     }
 
     // TODO: Javadoc
@@ -194,23 +269,39 @@ public class ThreadsFragment extends Fragment implements CatalogRecycler.Listene
     }
 
     /**
-     * Handle successful HTTP call of getCatalog(path)
-     * @param catalog Catalog result
+     * BroadcastReceiver for getCatalog() request.
      */
-    public void handleCatalogSuccess(List<ThreadsList> catalog) {
-        mList = catalog;
-        setUpRecyclerView();
+    static class CatalogReceiver extends BroadcastReceiver {
+
+        private final WeakReference<ThreadsFragment> mFragment;
+
+        CatalogReceiver(@NonNull ThreadsFragment threadsFragment) {
+            mFragment = new WeakReference<>(threadsFragment);
+        }
+
+        @SuppressWarnings("unchecked")  // Annoia eh...
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ThreadsFragment threadsFragment = mFragment.get();
+
+            if (threadsFragment != null) {
+                if (intent.getBooleanExtra(KuboEvents.CATALOG_STATUS, false)) {
+                    // Success
+                    threadsFragment.handleCatalogSuccess(
+                            // Cast should work... :-/
+                            (List<ThreadsList>) Parcels.unwrap(
+                                    intent.getParcelableExtra(KuboEvents.CATALOG_RESULT)
+                            )
+                    );
+                } else {
+                    // Shows error within the activity
+                    threadsFragment.handleCatalogError(
+                            intent.getStringExtra(KuboEvents.BOARDS_ERR),
+                            intent.getIntExtra(KuboEvents.BOARDS_ERRCOD, 0)
+                    );
+                }
+            }
+        }
     }
 
-    /**
-     * Handle error on getCatalog(path) HTTP call
-     * @param error Error string encoded
-     * @param errorCode Error HTTP code
-     */
-    public void handleCatalogError(String error, int errorCode) {
-        mToast.setText(errorCode + ": " + error);
-        mToast.setGravity(Gravity.BOTTOM, 0, 0);
-        mToast.setDuration(Toast.LENGTH_LONG);
-        mToast.show();
-    }
 }

@@ -55,14 +55,20 @@
     </style>
 
     <!-- ContentsActivity style -->
-    <style name="KuboTheme.ContentsActivity" parent="KuboTheme">
+    <style name="KuboTheme.ContentsActivity" parent="KuboTheme.NoActionBar">
         <!-- TODO: populate this -->
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
     </style>
     
     <style name="KuboTheme.ContentsActivity.Layout" parent="KuboTheme.ContentsActivity">
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="KuboTheme.ContentsActivity.Toolbar">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:orientation">horizontal</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
+        <item name="android:background">@color/colorPrimary</item>
     </style>
     
     <style name="KuboTheme.ContentsActivity.Separator">
@@ -150,18 +156,27 @@
         <item name="cardCornerRadius">@dimen/card_corner_radius</item>
     </style>
 
-    <style name="KuboTheme.CardView.Divider">
-        <item name="android:background">@color/dividerColor</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">@dimen/generic_items_divider</item>
-        <item name="android:layout_marginTop">@dimen/card_lateral_margin</item>
-    </style>
-
     <style name="KuboTheme.CardView.InnerLayout">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:clickable">true</item>
         <item name="android:foreground">?android:selectableItemBackground</item>
+    </style>
+
+    <style name="KuboTheme.CardView.Settings">
+        <item name="android:layout_marginRight">@dimen/card_lateral_inner_margin</item>
+        <item name="android:layout_marginTop">@dimen/card_lateral_inner_margin</item>
+        <item name="android:layout_marginBottom">@dimen/card_lateral_inner_margin</item>
+
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="KuboTheme.CardView.Divider">
+        <item name="android:background">@color/dividerColor</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/generic_items_divider</item>
+        <item name="android:layout_marginTop">@dimen/card_lateral_margin</item>
     </style>
 
     <style name="KuboTheme.CardView.Header">
@@ -185,7 +200,7 @@
         <item name="android:background">@drawable/background_left_corner</item>
     </style>
 
-    <style name="KuboTheme.CardView.Portrait" parent="KuboTheme.CardView">
+    <style name="KuboTheme.CardView.List" parent="KuboTheme.CardView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_marginTop">@dimen/card_vertical_divider_margin</item>
         <item name="android:layout_marginBottom">@dimen/card_vertical_divider_margin</item>
@@ -193,7 +208,7 @@
         <item name="android:layout_marginRight">@dimen/card_lateral_margin</item>
     </style>
 
-    <style name="KuboTheme.CardView.Portrait.Thumbnail">
+    <style name="KuboTheme.CardView.List.Thumbnail">
         <item name="android:layout_width">@dimen/card_thumbnail_dim_portrait</item>
         <item name="android:layout_height">@dimen/card_thumbnail_dim_portrait</item>
 
@@ -203,7 +218,7 @@
         <item name="android:scaleType">centerCrop</item>
     </style>
 
-    <style name="KuboTheme.CardView.Portrait.Comment">
+    <style name="KuboTheme.CardView.List.Comment">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/card_comment_dim_portrait</item>
 
@@ -216,7 +231,7 @@
         <item name="android:ellipsize">end</item>
     </style>
 
-    <style name="KuboTheme.CardView.Portrait.Status">
+    <style name="KuboTheme.CardView.List.Status">
         <item name="android:layout_marginLeft">@dimen/card_lateral_inner_margin</item>
         <item name="android:layout_marginTop">@dimen/card_lateral_inner_margin</item>
         <item name="android:layout_marginBottom">@dimen/card_lateral_inner_margin</item>
@@ -225,19 +240,23 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="KuboTheme.CardView.Portrait.Settings">
-        <item name="android:layout_marginRight">@dimen/card_lateral_inner_margin</item>
-        <item name="android:layout_marginTop">@dimen/card_lateral_inner_margin</item>
-        <item name="android:layout_marginBottom">@dimen/card_lateral_inner_margin</item>
+    <style name="KuboTheme.CardView.List.Icons" parent="KuboTheme.CardView.List.Status" />
 
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+    <style name="KuboTheme.CardView.List.Texts" parent="KuboTheme.CardView.List.Status">
+        <item name="android:textAppearance">?android:textAppearanceSmall</item>
     </style>
 
-    <style name="KuboTheme.CardView.Portrait.Icons" parent="KuboTheme.CardView.Portrait.Status" />
+    <style name="KuboTheme.CardView.Grid" parent="KuboTheme.CardView.List">
+        <item name="android:layout_marginLeft">@dimen/card_lateral_inner_margin</item>
+        <item name="android:layout_marginRight">@dimen/card_lateral_inner_margin</item>
+    </style>
 
-    <style name="KuboTheme.CardView.Portrait.Texts" parent="KuboTheme.CardView.Portrait.Status">
-        <item name="android:textAppearance">?android:textAppearanceSmall</item>
+    <style name="KuboTheme.CardView.Grid.Thumbnail">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/card_thumbnail_dim_portrait</item>
+        <item name="android:layout_marginBottom">@dimen/card_lateral_inner_margin</item>
+        <item name="android:src">@color/colorVeryDark</item>
+        <item name="android:scaleType">centerCrop</item>
     </style>
 
 </resources>

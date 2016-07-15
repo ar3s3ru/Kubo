@@ -26,7 +26,8 @@
             android:name=".views.BoardsActivity"
             android:label="@string/boards_activity_label" />
 
-        <activity android:name=".views.ContentsActivity" />
+        <activity android:name=".views.ContentsActivity"
+            android:theme="@style/KuboTheme.ContentsActivity" />
 
         <service
             android:name=".backend.controller.KuboRESTService"
