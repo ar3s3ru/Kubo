@@ -7,8 +7,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +23,9 @@ import com.github.ar3s3ru.kubo.backend.controller.KuboEvents;
 import com.github.ar3s3ru.kubo.backend.controller.KuboRESTService;
 import com.github.ar3s3ru.kubo.backend.models.ThreadsList;
 import com.github.ar3s3ru.kubo.backend.receivers.CatalogReceiver;
-import com.github.ar3s3ru.kubo.views.ContentsActivity;
 import com.github.ar3s3ru.kubo.views.recyclers.CatalogRecycler;
+
+import org.parceler.Parcels;
 
 import java.util.List;
 
@@ -49,9 +52,10 @@ import butterknife.ButterKnife;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-public class ThreadsFragment extends Fragment {
+public class ThreadsFragment extends Fragment implements CatalogRecycler.Listener {
 
-    private static final String TAG = "ThreadsFragment";
+    private static final String TAG  = "ThreadsFragment";
+    private static final String LIST = "com.github.ar3s3ru.kubo.views.fragments.threadsfragment.list";
 
     /** Members variables */
     @BindView(R.id.fragment_threads_viewflipper)  ViewFlipper  mViewFlipper;
@@ -62,7 +66,8 @@ public class ThreadsFragment extends Fragment {
     private String  mBoardTitle;
     private String  mBoardPath;
     private int     mBoardPrimaryKey;
-    private boolean mLoaded = false;
+
+    private List<ThreadsList> mList;
 
     private CatalogRecycler       mAdapter;
     private CatalogReceiver       mReceiver;
@@ -79,9 +84,20 @@ public class ThreadsFragment extends Fragment {
         // Inject everything from Dagger
         ((KuboApp) getActivity().getApplication()).getAppComponent().inject(this);
 
+        // Recover state
+        mList = savedInstanceState == null ? null :
+                (List<ThreadsList>) Parcels.unwrap(savedInstanceState.getParcelable(LIST));
+
         // Create new CatalogReceiver to handle getCatalog(path)
         mReceiver = new CatalogReceiver(this);
         mBroadcastManager = LocalBroadcastManager.getInstance(getContext());
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Save ThreadsList to avoid downloading
+        outState.putParcelable(LIST, Parcels.wrap(mList));
     }
 
     @Nullable
@@ -98,13 +114,13 @@ public class ThreadsFragment extends Fragment {
         super.onResume();
 
         // Set up ActionBar
-        setUpActionBar(((ContentsActivity) getActivity()).getSupportActionBar());
+        setUpActionBar(((AppCompatActivity) getActivity()).getSupportActionBar());
 
-        if (!mLoaded) {
+        if (mList == null) {
             // Send getCatalog() request
             startRequestingCatalog(false);
-        } else if (mAdapter != null) {
-            // Sets up the RecyclerView (adapter is already created)
+        } else {
+            // Sets up the RecyclerView
             setUpRecyclerView();
         }
 
@@ -120,6 +136,14 @@ public class ThreadsFragment extends Fragment {
         super.onPause();
         // Unregister Catalog receiver
         mBroadcastManager.unregisterReceiver(mReceiver);
+    }
+
+    @Override
+    public void onChangedPage(int pageNumber) {
+        mToast.setText("Page " + pageNumber);
+        mToast.setGravity(Gravity.CENTER, 0, 0);
+        mToast.setDuration(Toast.LENGTH_SHORT);
+        mToast.show();
     }
 
     /**
@@ -144,8 +168,13 @@ public class ThreadsFragment extends Fragment {
     }
 
     private void setUpRecyclerView() {
+        // Set up adapter
+        mAdapter = new CatalogRecycler(this, mList, mBoardPath);
+        // Set up Recycler
         mRecycler.setAdapter(mAdapter);
         mRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        // Show recycler
+        mViewFlipper.showNext();
     }
 
     // TODO: Javadoc
@@ -166,11 +195,8 @@ public class ThreadsFragment extends Fragment {
      * @param catalog Catalog result
      */
     public void handleCatalogSuccess(List<ThreadsList> catalog) {
-        mLoaded  = true;             // Loaded
-        mAdapter = new CatalogRecycler(catalog, mBoardPath);
-
+        mList = catalog;
         setUpRecyclerView();
-        mViewFlipper.showNext();    // Shows recycler
     }
 
     /**
@@ -180,6 +206,7 @@ public class ThreadsFragment extends Fragment {
      */
     public void handleCatalogError(String error, int errorCode) {
         mToast.setText(errorCode + ": " + error);
+        mToast.setGravity(Gravity.BOTTOM, 0, 0);
         mToast.setDuration(Toast.LENGTH_LONG);
         mToast.show();
     }

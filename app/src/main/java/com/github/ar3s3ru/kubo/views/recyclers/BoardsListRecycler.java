@@ -37,6 +37,7 @@ import butterknife.ButterKnife;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
+// TODO: implement two different viewtypes (http://stackoverflow.com/questions/25914003/recyclerview-and-handling-different-type-of-row-inflation)
 public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.ViewHolder> {
 
     protected static final String TAG = "BoardsListRecycler";
@@ -195,6 +196,10 @@ public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.
             }
         }
 
+        /**
+         * Setter for Board path
+         * @param path New Board path
+         */
         public void setPath(@NonNull String path) {
             mPath = path;
         }

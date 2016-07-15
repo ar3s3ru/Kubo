@@ -19,12 +19,15 @@
     <dimen name="card_lateral_margin">16dp</dimen>
     <dimen name="card_lateral_inner_margin">8dp</dimen>
     <dimen name="card_vertical_divider_margin">8dp</dimen>
+    <dimen name="card_vertical_thumbnail_margin">16dp</dimen>
+    <dimen name="card_vertical_comment_margin">24dp</dimen>
 
+    <dimen name="card_comment_dim_portrait">104dp</dimen>
     <dimen name="card_thumbnail_dim_portrait">112dp</dimen>
     <dimen name="card_icons_div_portrait">4dp</dimen>
 
-    <dimen name="card_header_textsize">10sp</dimen>
-    <dimen name="card_header_height">14dp</dimen>
+    <dimen name="card_header_textsize">12sp</dimen>
+    <dimen name="card_header_height">16dp</dimen>
     <dimen name="card_header_padding_lateral">4dp</dimen>
     <dimen name="card_header_padding_vertical">2dp</dimen>
 </resources>
