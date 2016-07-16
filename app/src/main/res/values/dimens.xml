@@ -15,7 +15,7 @@
     <dimen name="generic_margin_short">8dp</dimen>
     <dimen name="generic_margin_long">16dp</dimen>
 
-    <dimen name="card_corner_radius">2dp</dimen>
+    <dimen name="card_corner_radius">4dp</dimen>
     <dimen name="card_lateral_margin">16dp</dimen>
     <dimen name="card_lateral_inner_margin">8dp</dimen>
     <dimen name="card_vertical_divider_margin">8dp</dimen>

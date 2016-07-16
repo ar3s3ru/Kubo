@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import com.github.ar3s3ru.kubo.backend.database.KuboSQLHelper;
 import com.github.ar3s3ru.kubo.backend.models.Thread;
 
+import java.util.TreeSet;
+
 /**
  * Copyright (C) 2016  Danilo Cianfrone
  * <p>
@@ -25,6 +27,7 @@ import com.github.ar3s3ru.kubo.backend.models.Thread;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
+// TODO: whole Javadoc
 public class KuboTableThread {
     private static final String TABLE_NAME = "thread";
 
@@ -48,23 +51,23 @@ public class KuboTableThread {
             + DB_NUMBER + ", " + DB_COMMENT + ", " + DB_IMAGE  + ", "
             + DB_EXTENS + ", " + DB_LASTUP  + ", " + DB_AUTHOR + ");";
 
-    public static long followThread(@NonNull KuboSQLHelper helper, @NonNull Thread thread) {
-        final ContentValues cv = new ContentValues();
-
-        cv.put(KEY_NUMBER,  thread.number);
-        cv.put(KEY_COMMENT, thread.comment);
-        cv.put(KEY_IMAGE,   thread.properFilename);
-        cv.put(KEY_EXTENS,  thread.fileExtension);
-        cv.put(KEY_LASTUP,  thread.UNIXtime);
-        cv.put(KEY_AUTHOR,  thread.name);
-
-        return helper.getWritableDatabase().insertOrThrow(TABLE_NAME, null, cv);
-    }
+    /** Getters */
 
     public static Cursor getFollowedThreads(@NonNull KuboSQLHelper helper) {
         return helper.getReadableDatabase().query(
                 TABLE_NAME, null, null, null, null, null, null
         );
+    }
+
+    public static TreeSet<Integer> getFollowedThreadsSet(@NonNull KuboSQLHelper helper) {
+        final Cursor cursor = getFollowedThreads(helper);
+        final TreeSet<Integer> set = new TreeSet<>();
+
+        for (int i = 0; i < cursor.getCount(); i++) {
+            set.add(getThreadNumber(cursor, i));
+        }
+
+        return set;
     }
 
     public static int getThreadNumber(@NonNull Cursor cursor, int position) {
@@ -95,5 +98,27 @@ public class KuboTableThread {
     public static String getAuthor(@NonNull Cursor cursor, int position) {
         cursor.moveToPosition(position);
         return cursor.getString(cursor.getColumnIndex(KEY_AUTHOR));
+    }
+
+    /** Setters */
+    // TODO: implement observables
+
+    public static long setFollowingThread(@NonNull KuboSQLHelper helper, @NonNull Thread thread) {
+        final ContentValues cv = new ContentValues();
+
+        cv.put(KEY_NUMBER,  thread.number);
+        cv.put(KEY_COMMENT, thread.comment);
+        cv.put(KEY_IMAGE,   thread.properFilename);
+        cv.put(KEY_EXTENS,  thread.fileExtension);
+        cv.put(KEY_LASTUP,  thread.UNIXtime);
+        cv.put(KEY_AUTHOR,  thread.name);
+
+        return helper.getWritableDatabase().insertOrThrow(TABLE_NAME, null, cv);
+    }
+
+    public static int setUnfollowingThread(@NonNull KuboSQLHelper helper, int threadNumber) {
+        return helper.getWritableDatabase().delete(
+                TABLE_NAME, KEY_NUMBER + "=" + threadNumber, null
+        );
     }
 }

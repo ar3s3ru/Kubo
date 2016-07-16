@@ -1,9 +1,9 @@
 package com.github.ar3s3ru.kubo.views.recyclers;
 
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +12,15 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.github.ar3s3ru.kubo.R;
+import com.github.ar3s3ru.kubo.backend.database.KuboSQLHelper;
+import com.github.ar3s3ru.kubo.backend.database.tables.KuboTableThread;
 import com.github.ar3s3ru.kubo.backend.models.Thread;
 import com.github.ar3s3ru.kubo.backend.models.ThreadsList;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,15 +48,19 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
 
     private static final int VIEWTYPE_LIST = 0;
     private static final int VIEWTYPE_GRID = 1;
+    private static final int BOOKMARK_KEY  = -1;
 
-    private final List<Thread> oList   = new ArrayList<>();     // Original untouched list
-    private final String       mBoard;
+    private final TreeSet<Integer> mFollowed;                  // Followed threads
+    private final List<Thread>     oList = new ArrayList<>();  // Original untouched list
+
+    private final String mBoard;
     private final WeakReference<OnClickListener> mListener;
 
     private int          mViewType = VIEWTYPE_LIST; // Current view type
     private List<Thread> mList     = oList;         // Original filterable list
 
     public CatalogDirectRecycler(@NonNull OnClickListener listener,
+                                 @NonNull KuboSQLHelper helper,
                                  @NonNull List<ThreadsList> list,
                                  @NonNull String board) {
         // Add pages
@@ -62,7 +69,8 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
         }
 
         // Setting board string
-        mBoard = board;
+        mBoard    = board;
+        mFollowed = KuboTableThread.getFollowedThreadsSet(helper);
         mListener = new WeakReference<>(listener);
 
         // For ID usage
@@ -108,10 +116,13 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
     public void onBindViewHolder(ViewHolder holder, int position) {
         final Thread thread = mList.get(position);
 
+        // Set bookmark icon
+        setBookmarkIcon(holder.bookmark, mFollowed.contains(thread.number));
+
         if (holder instanceof ListViewHolder) {
-            onBindListViewHolder((ListViewHolder) holder, thread, mBoard);
+            onBindListViewHolder((ListViewHolder) holder, thread);
         } else if (holder instanceof GridViewHolder) {
-            onBindGridViewHolder((GridViewHolder) holder, thread, mBoard);
+            onBindGridViewHolder((GridViewHolder) holder, thread);
         }
     }
 
@@ -125,16 +136,29 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
     }
 
     /**
+     * Sets bookmark icon depending on the bookmark status
+     * @param imageView Bookmark ImageView object
+     * @param bookmark True if needs to set bookmark, false if needs to remove it
+     */
+    private static void setBookmarkIcon(@NonNull ImageView imageView, boolean bookmark) {
+        imageView.setImageDrawable(
+                ContextCompat.getDrawable(
+                        imageView.getContext(),
+                        bookmark ? R.drawable.ic_bookmark_full : R.drawable.ic_bookmark_empty
+                )
+        );
+        imageView.setTag(BOOKMARK_KEY, bookmark);
+    }
+
+    /**
      * Download Thread thumbnail image
      * @param imageView ImageView for thumbnail display
-     * @param board Board path
      * @param thread Thread object
      */
-    private static void downloadImageForHolder(@NonNull ImageView imageView,
-                                               @NonNull String board,
-                                               @NonNull Thread thread) {
+    private void downloadImageForHolder(@NonNull ImageView imageView,
+                                        @NonNull Thread thread) {
         Glide.with(imageView.getContext())
-                .load(getThumbnailURL(board, thread.properFilename, thread.fileExtension))
+                .load(getThumbnailURL(thread.fileExtension, thread.properFilename))
                 .error(R.color.colorPrimaryDark)
                 .placeholder(R.color.colorAccent)
                 .into(imageView);
@@ -142,27 +166,23 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
 
     /**
      * Get image string URL for thumbnail downloading
-     * @param board Board path
      * @param fileName Thumbnail filename
      * @param fileExtension Thumbnail file extension
      * @return
      */
-    private static String getThumbnailURL(@NonNull String board, long fileName,
-                                          @NonNull String fileExtension) {
+    private String getThumbnailURL(@NonNull String fileExtension, long fileName) {
         // TODO: consider generalizing behavior
-        return "https://t.4cdn.org/" + board + "/" + fileName + fileExtension;
+        return "https://t.4cdn.org/" + mBoard + "/" + fileName + fileExtension;
     }
 
     /**
      * Binder routine for ListViewHolder
      * @param holder ListViewHolder instance
      * @param thread Thread object
-     * @param board Board path
      */
     @SuppressWarnings("all")
-    private static void onBindListViewHolder(@NonNull ListViewHolder holder,
-                                             @NonNull Thread thread,
-                                             @NonNull String board) {
+    private void onBindListViewHolder(@NonNull ListViewHolder holder,
+                                      @NonNull Thread thread) {
         if (thread.comment != null) {
             holder.comment.setText(Html.fromHtml(thread.comment));
         }
@@ -173,21 +193,30 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
         holder.images.setText(String.format("%d", thread.images));
         holder.replies.setText(String.format("%d", thread.replies));
 
-        downloadImageForHolder(holder.thumbnail, board, thread);
+        downloadImageForHolder(holder.thumbnail, thread);
     }
 
     /**
      * Binder routine for GridViewHolder
      * @param holder GridViewHolder instance
      * @param thread Thread object
-     * @param board Board path
      */
     @SuppressWarnings("all")
-    private static void onBindGridViewHolder(@NonNull GridViewHolder holder,
-                                             @NonNull Thread thread,
-                                             @NonNull String board) {
+    private void onBindGridViewHolder(@NonNull GridViewHolder holder,
+                                      @NonNull Thread thread) {
         holder.number.setText(String.format("%d", thread.number));
-        downloadImageForHolder(holder.thumbnail, board, thread);
+        holder.name.setText(thread.name);
+
+        downloadImageForHolder(holder.thumbnail, thread);
+    }
+
+    /**
+     * Gets Thread object at a certain position into the adapter
+     * @param position Thread position into the adapter
+     * @return Position related Thread object
+     */
+    public Thread getThread(int position) {
+        return mList.get(position);
     }
 
     /**
@@ -231,27 +260,68 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
         notifyDataSetChanged();
     }
 
-    public interface OnClickListener {
-        void onClick(int threadNumber);
+    /**
+     * Set the thread as followed into the adapter (necessary for bookmark displaying)
+     * @param threadNumber Thread number
+     */
+    public void setFollowing(int threadNumber) {
+        mFollowed.add(threadNumber);
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    /**
+     * Set the thread as followed into the adapter (necessary for bookmark displaying)
+     * @param threadNumber Thread number
+     */
+    public void setUnfollowing(int threadNumber) {
+        mFollowed.remove(threadNumber);
+    }
 
-        protected WeakReference<OnClickListener> listener;
+    public interface OnClickListener {
+        void onClick(int threadNumber);
+        void onFollowingThread(int position, int threadNumber);
+        void onUnfollowingThread(int threadNumber);
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener {
+
+        @BindView(R.id.catalog_layout)          ViewGroup layout;
+        @BindView(R.id.catalog_thread_bookmark) ImageView bookmark;
+        @BindView(R.id.catalog_thread_settings) ImageView settings;
+
+        WeakReference<OnClickListener> listener;
 
         ViewHolder(@NonNull WeakReference<OnClickListener> listener,
                    @NonNull View itemView) {
             super(itemView);
+            ButterKnife.bind(this, itemView);
+
             this.listener = listener;
+            layout.setOnClickListener(this);
+            bookmark.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
             final OnClickListener listener = this.listener.get();
-            Log.e("SHIT", Boolean.toString(listener == null));
-
+            // Calling listener callback
             if (listener != null) {
-                listener.onClick((int) getItemId());
+                if (view.getId() == bookmark.getId()) {
+                    // Clicked bookmark
+                    handleBookmarkClicked(listener);
+                } else {
+                    listener.onClick((int) getItemId());
+                }
+            }
+        }
+
+        private void handleBookmarkClicked(@NonNull OnClickListener listener) {
+            if ((boolean) bookmark.getTag(BOOKMARK_KEY)) {
+                CatalogDirectRecycler.setBookmarkIcon(bookmark, false);
+                listener.onUnfollowingThread((int) getItemId());
+            } else {
+                CatalogDirectRecycler.setBookmarkIcon(bookmark, true);
+                listener.onFollowingThread(getAdapterPosition(), (int) getItemId());
             }
         }
     }
@@ -261,7 +331,6 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
      */
     static class ListViewHolder extends CatalogDirectRecycler.ViewHolder {
 
-        @BindView(R.id.catalog_layout)                   ViewGroup layout;
         @BindView(R.id.catalog_list_thread_thumbnail)    ImageView thumbnail;
         @BindView(R.id.catalog_list_header_name)         TextView  name;
         @BindView(R.id.catalog_list_thread_comment)      TextView  comment;
@@ -272,9 +341,6 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
         ListViewHolder(@NonNull WeakReference<OnClickListener> listener,
                        @NonNull View itemView) {
             super(listener, itemView);
-            ButterKnife.bind(this, itemView);
-
-            layout.setOnClickListener(this);
         }
     }
 
@@ -283,18 +349,13 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
      */
     static class GridViewHolder extends CatalogDirectRecycler.ViewHolder {
 
-        @BindView(R.id.catalog_grid_layout)           ViewGroup layout;
         @BindView(R.id.catalog_grid_thread_thumbnail) ImageView thumbnail;
-        @BindView(R.id.catalog_grid_thread_bookmark)  ImageView bookmark;
-        @BindView(R.id.catalog_grid_thread_settings)  ImageView settings;
         @BindView(R.id.catalog_grid_thread_number)    TextView  number;
+        @BindView(R.id.catalog_grid_thread_name)      TextView  name;
 
         GridViewHolder(@NonNull WeakReference<OnClickListener> listener,
                        @NonNull View itemView) {
             super(listener, itemView);
-            ButterKnife.bind(this, itemView);
-
-            layout.setOnClickListener(this);
         }
     }
 }

@@ -2,10 +2,12 @@ package com.github.ar3s3ru.kubo.backend.database.tables;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 
 import com.github.ar3s3ru.kubo.backend.database.KuboSQLHelper;
 import com.github.ar3s3ru.kubo.backend.models.Board;
+import com.github.ar3s3ru.kubo.backend.models.BoardsList;
 import com.github.ar3s3ru.kubo.utils.KuboUtilities;
 
 /**
@@ -83,11 +85,11 @@ public class KuboTableBoard {
 
     /**
      * Insert a new Board row into the database
-     * @param helper SQLite application helper instance
+     * @param db SQLite application writable database instance
      * @param board Board JSON representation to write
      * @return Row primary key if successful, throws SQLException if it fails
      */
-    public static long insertBoard(@NonNull KuboSQLHelper helper, @NonNull Board board) {
+    private static long insertBoard(@NonNull SQLiteDatabase db, @NonNull Board board) {
         final ContentValues cv = new ContentValues();
 
         cv.put(KEY_BOARD, board.getBoard());
@@ -100,7 +102,25 @@ public class KuboTableBoard {
         cv.put(KEY_MIN_HEIGHT, board.getMinImageHeight());
         cv.put(KEY_MAX_FSIZE,  board.getMaxFilesize());
 
-        return helper.getWritableDatabase().insertOrThrow(TABLE_NAME, null, cv);
+        return db.insertOrThrow(TABLE_NAME, null, cv);
+    }
+
+    /**
+     * Insert a list of Board rows into the database
+     * @param helper SQLite application helper instance
+     * @param list Board list to insert into the database
+     */
+    public static void insertBoards(@NonNull KuboSQLHelper helper, @NonNull BoardsList list) {
+        final SQLiteDatabase mDB = helper.getWritableDatabase();
+        // Starts here
+        mDB.beginTransaction();
+        // Insert boards (watch out for SQLExceptions)
+        for (Board board : list.getBoards()) {
+            insertBoard(mDB, board);
+        }
+        // Ends here
+        mDB.setTransactionSuccessful();
+        mDB.endTransaction();
     }
 
     /**

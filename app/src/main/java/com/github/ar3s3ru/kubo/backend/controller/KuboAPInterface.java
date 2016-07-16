@@ -1,6 +1,7 @@
 package com.github.ar3s3ru.kubo.backend.controller;
 
 import com.github.ar3s3ru.kubo.backend.models.BoardsList;
+import com.github.ar3s3ru.kubo.backend.models.RepliesList;
 import com.github.ar3s3ru.kubo.backend.models.ThreadsList;
 
 import java.util.List;
@@ -40,9 +41,18 @@ public interface KuboAPInterface {
 
     /**
      * Get JSON representation of 4chan alive threads (a.k.a catalog)
-     * @param board Board path
+     * @param board Board in which the thread is located
      * @return Call object with Threads JSON representation
      */
     @GET("{board}/catalog.json")
     Call<List<ThreadsList>> getCatalog(@Path("board") String board);
+
+    /**
+     * Get JSON representation of replies to a certain 4chan thread into a board
+     * @param board Board in which the thread is located
+     * @param threadNumber Thread of which we want replies of
+     * @return Call object with Replies JSON representation
+     */
+    @GET("{board}/thread/{thread}.json")
+    Call<RepliesList> getReplies(@Path("board") String board, @Path("thread") int threadNumber);
 }

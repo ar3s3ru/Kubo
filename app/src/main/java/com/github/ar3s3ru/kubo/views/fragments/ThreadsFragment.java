@@ -14,7 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,6 +27,8 @@ import com.github.ar3s3ru.kubo.KuboApp;
 import com.github.ar3s3ru.kubo.R;
 import com.github.ar3s3ru.kubo.backend.controller.KuboEvents;
 import com.github.ar3s3ru.kubo.backend.controller.KuboRESTService;
+import com.github.ar3s3ru.kubo.backend.database.KuboSQLHelper;
+import com.github.ar3s3ru.kubo.backend.database.tables.KuboTableThread;
 import com.github.ar3s3ru.kubo.backend.models.ThreadsList;
 import com.github.ar3s3ru.kubo.views.recyclers.CatalogDirectRecycler;
 
@@ -77,6 +78,7 @@ public class ThreadsFragment extends Fragment
     @BindView(R.id.fragment_threads_recyclerview) RecyclerView mRecycler;
 
     @Inject Toast mToast;
+    @Inject KuboSQLHelper mHelper;
 
     private String  mBoardTitle;
     private String  mBoardPath;
@@ -85,7 +87,6 @@ public class ThreadsFragment extends Fragment
 
     private List<ThreadsList> mList;
 
-    // (uses pagination) private CatalogRecycler mAdapter;
     private CatalogDirectRecycler mAdapter;
     private CatalogReceiver       mReceiver;
     private GridLayoutManager     mLayoutManager;
@@ -195,6 +196,18 @@ public class ThreadsFragment extends Fragment
     }
 
     @Override
+    public void onUnfollowingThread(int threadNumber) {
+        KuboTableThread.setUnfollowingThread(mHelper, threadNumber);
+        mAdapter.setUnfollowing(threadNumber);
+    }
+
+    @Override
+    public void onFollowingThread(int position, int threadNumber) {
+        KuboTableThread.setFollowingThread(mHelper, mAdapter.getThread(position));
+        mAdapter.setFollowing(threadNumber);
+    }
+
+    @Override
     public boolean onQueryTextSubmit(String query) {
         return false;
     }
@@ -235,8 +248,7 @@ public class ThreadsFragment extends Fragment
     // TODO: Javadoc
     private void setUpRecyclerView() {
         // Set up adapter
-        // (with pagination) mAdapter = new CatalogRecycler(this, mList, mBoardPath);
-        mAdapter = new CatalogDirectRecycler(this, mList, mBoardPath);
+        mAdapter = new CatalogDirectRecycler(this, mHelper, mList, mBoardPath);
         // Set up Recycler
         mRecycler.setAdapter(mAdapter);
         mRecycler.setLayoutManager(mLayoutManager);

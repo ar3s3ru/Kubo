@@ -11,8 +11,8 @@ import android.util.Log;
 import com.github.ar3s3ru.kubo.KuboApp;
 import com.github.ar3s3ru.kubo.backend.database.KuboSQLHelper;
 import com.github.ar3s3ru.kubo.backend.database.tables.KuboTableBoard;
-import com.github.ar3s3ru.kubo.backend.models.Board;
 import com.github.ar3s3ru.kubo.backend.models.BoardsList;
+import com.github.ar3s3ru.kubo.backend.models.RepliesList;
 import com.github.ar3s3ru.kubo.backend.models.ThreadsList;
 
 import org.parceler.Parcels;
@@ -55,18 +55,24 @@ public class KuboRESTService extends IntentService implements Callback {
      * Enqueue calls recevied through the intent
      * @param intent Request intent
      */
+    @SuppressWarnings("unchecked")
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
-            final String action = intent.getAction();
-
-            switch (action) {
+            switch (intent.getAction()) {
                 case KuboRESTIntents.GET_BOARDS:
                     mAPInterface.getBoards().enqueue(this);
                     break;
                 case KuboRESTIntents.GET_CATALOG:
-                    String path = intent.getStringExtra(KuboRESTIntents.GET_CATALOG_PATH);
-                    mAPInterface.getCatalog(path).enqueue(this);
+                    mAPInterface.getCatalog(
+                            intent.getStringExtra(KuboRESTIntents.GET_CATALOG_PATH)
+                    ).enqueue(this);
+                    break;
+                case KuboRESTIntents.GET_REPLIES:
+                    mAPInterface.getReplies(
+                            intent.getStringExtra(KuboRESTIntents.GET_REPLIES_PATH),
+                            intent.getIntExtra(KuboRESTIntents.GET_REPLIES_NUMBER, 0)
+                    ).enqueue(this);
                     break;
             }
         }
@@ -77,6 +83,7 @@ public class KuboRESTService extends IntentService implements Callback {
      * @param call Retrofit HTTP call object
      * @param response Retrofit HTTP response object
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void onResponse(Call call, Response response) {
         if (response.isSuccessful()) {
@@ -86,9 +93,11 @@ public class KuboRESTService extends IntentService implements Callback {
                 handleGetBoards((BoardsList) response.body());
             } else if (response.body() instanceof List &&
                        ((List) response.body()).get(0) instanceof ThreadsList) {
-                // TODO: unchecked casts revising
                 // Handle List<ThreadsList>
                 handleGetCatalog((List<ThreadsList>) response.body());
+            } else if (response.body() instanceof RepliesList) {
+                // Handle RepliesList
+
             } else {
                 // Handle no events recognized
                 Log.e(TAG, "No event recognized, from call: " + call.toString());
@@ -120,13 +129,13 @@ public class KuboRESTService extends IntentService implements Callback {
     }
 
     /**
-     *
-     * @param action
-     * @param statusTag
-     * @param errorTag
-     * @param errcodTag
-     * @param response
-     * @return
+     * Returns a new Intent for an error response callback
+     * @param action Event action
+     * @param statusTag Event status tag
+     * @param errorTag Event error tag
+     * @param errcodTag Event error code tag
+     * @param response Error response string
+     * @return Intent for error response callback
      */
     private static Intent newErrorIntent(@NonNull String action,
                                          @NonNull String statusTag,
@@ -137,26 +146,6 @@ public class KuboRESTService extends IntentService implements Callback {
                 .putExtra(statusTag, false)
                 .putExtra(errorTag, response.errorBody().toString())
                 .putExtra(errcodTag, response.code());
-    }
-
-    /**
-     * Makes a getBoards() request to the IntentService
-     * @param context UI context (Activity, Fragment, ...)
-     */
-    public static void getBoards(@NonNull Context context) {
-        context.startService(newIntent(context, KuboRESTIntents.GET_BOARDS));
-    }
-
-    /**
-     * Makes a getCatalog(path) request to the IntentService
-     * @param context UI context (Activity, Fragment, ...)
-     * @param path Board request catalog path
-     */
-    public static void getCatalog(@NonNull Context context, @NonNull String path) {
-        context.startService(
-                newIntent(context, KuboRESTIntents.GET_CATALOG)
-                .putExtra(KuboRESTIntents.GET_CATALOG_PATH, path) // Path argument
-        );
     }
 
     /**
@@ -178,6 +167,9 @@ public class KuboRESTService extends IntentService implements Callback {
             // getCatalog() error
             intent = newErrorIntent(KuboEvents.CATALOG, KuboEvents.CATALOG_STATUS,
                     KuboEvents.CATALOG_ERROR, KuboEvents.CATALOG_ERRCOD, response);
+        } else if (response.body() instanceof RepliesList) {
+            intent = newErrorIntent(KuboEvents.REPLIES, KuboEvents.REPLIES_STATUS,
+                    KuboEvents.REPLIES_ERROR, KuboEvents.REPLIES_ERRCOD, response);
         }
 
         if (intent != null) {
@@ -192,18 +184,14 @@ public class KuboRESTService extends IntentService implements Callback {
      */
     private void handleGetBoards(BoardsList list) {
         final Intent intent = new Intent(KuboEvents.BOARDS);
-
+        // There could be a SQLException if the unique constraints are not satisfied
         try {
             // Adding boards into the database
-            for (Board board : list.getBoards()) {
-                KuboTableBoard.insertBoard(mDBHelper, board);
-            }
-
+            KuboTableBoard.insertBoards(mDBHelper, list);
             // Everything went good :-)
             LocalBroadcastManager
                     .getInstance(this)
                     .sendBroadcast(intent.putExtra(KuboEvents.BOARDS_STATUS, true));
-
         } catch (SQLException ex) {
             // Oh... Database refused to oblige
             LocalBroadcastManager
@@ -224,6 +212,54 @@ public class KuboRESTService extends IntentService implements Callback {
                 new Intent(KuboEvents.CATALOG)
                         .putExtra(KuboEvents.CATALOG_STATUS, true)
                         .putExtra(KuboEvents.CATALOG_RESULT, Parcels.wrap(list))
+        );
+    }
+
+    /**
+     * Handle successful HTTP response to getReplies(path, number) callback
+     * @param list Downloaded thread replies list
+     */
+    private void handleGetReplies(RepliesList list) {
+        LocalBroadcastManager.getInstance(this).sendBroadcast(
+                new Intent(KuboEvents.BOARDS)
+                        .putExtra(KuboEvents.BOARDS_STATUS, true)
+                        .putExtra(KuboEvents.REPLIES_RESULT, Parcels.wrap(list))
+        );
+    }
+
+    /**
+     * Makes a getBoards() request to the IntentService
+     * @param context UI context (Activity, Fragment, ...)
+     */
+    public static void getBoards(@NonNull Context context) {
+        context.startService(newIntent(context, KuboRESTIntents.GET_BOARDS));
+    }
+
+    /**
+     * Makes a getCatalog(path) request to the IntentService
+     * @param context UI context (Activity, Fragment, ...)
+     * @param path Board request catalog path
+     */
+    public static void getCatalog(@NonNull Context context, @NonNull String path) {
+        context.startService(
+                newIntent(context, KuboRESTIntents.GET_CATALOG)
+                        .putExtra(KuboRESTIntents.GET_CATALOG_PATH, path) // Path argument
+        );
+    }
+
+    /**
+     * Makes a getReplies(path, number) request to the IntentService
+     * @param context UI context (Activity, Fragment, ...)
+     * @param path Board in which requested thread resides on
+     * @param threadNumber Requested thread number
+     */
+    public static void getReplies(@NonNull Context context,
+                                  @NonNull String path,
+                                  int threadNumber) {
+        context.startService(
+                newIntent(context, KuboRESTIntents.GET_REPLIES)
+                    .putExtra(KuboRESTIntents.GET_REPLIES_PATH, path)
+                    .putExtra(KuboRESTIntents.GET_REPLIES_NUMBER, threadNumber)
         );
     }
 }

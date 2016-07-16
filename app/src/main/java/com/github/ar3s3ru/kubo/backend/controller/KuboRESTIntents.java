@@ -23,8 +23,15 @@ package com.github.ar3s3ru.kubo.backend.controller;
  * as requests directed to the IntentService.
  */
 class KuboRESTIntents {
+    /** getBoards() request */
     final static String GET_BOARDS  = "com.github.ar3s3ru.kubo.api.getboards";
-    final static String GET_CATALOG = "com.github.ar3s3ru.kubo.api.getcatalog";
 
+    /** getCatalog(path) request */
+    final static String GET_CATALOG      = "com.github.ar3s3ru.kubo.api.getcatalog";
     final static String GET_CATALOG_PATH = "com.github.ar3s3ru.kubo.api.getcatalog.path";
+
+    /** getReplies(path, number) request */
+    final static String GET_REPLIES        = "com.github.ar3s3ru.kubo.api.getreplies";
+    final static String GET_REPLIES_PATH   = "com.github.ar3s3ru.kubo.api.getreplies.path";
+    final static String GET_REPLIES_NUMBER = "com.github.ar3s3ru.kubo.api.getreplies.number";
 }

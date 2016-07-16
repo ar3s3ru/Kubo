@@ -61,14 +61,14 @@
 
     <ImageView style="@style/KuboTheme.CardView.Settings.Bookmark"
         android:src="@drawable/ic_bookmark_empty"
-        android:id="@+id/catalog_list_thread_bookmark"
+        android:id="@+id/catalog_thread_bookmark"
         app:layout_constraintTop_toBottomOf="@+id/catalog_list_thread_divider"
-        app:layout_constraintRight_toLeftOf="@+id/catalog_list_thread_settings"
+        app:layout_constraintRight_toLeftOf="@+id/catalog_thread_settings"
         app:layout_constraintBottom_toBottomOf="@+id/catalog_layout" />
 
     <ImageView style="@style/KuboTheme.CardView.Settings"
         android:src="@drawable/ic_settings_horizontal"
-        android:id="@+id/catalog_list_thread_settings"
+        android:id="@+id/catalog_thread_settings"
         app:layout_constraintTop_toBottomOf="@+id/catalog_list_thread_divider"
         app:layout_constraintRight_toRightOf="@+id/catalog_layout"
         app:layout_constraintBottom_toBottomOf="@+id/catalog_layout" />

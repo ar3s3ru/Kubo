@@ -24,6 +24,7 @@ import org.parceler.Parcel;
 
 @Parcel
 public class Reply {
+
     @SerializedName("no")
     public int number;
 
@@ -42,29 +43,11 @@ public class Reply {
     @SerializedName("ext")
     public String fileExtension;
 
-    @SerializedName("w")
-    public int width;
-
-    @SerializedName("h")
-    public int height;
-
-    @SerializedName("tn_w")
-    public int thumbWidth;
-
-    @SerializedName("tn_h")
-    public int thumbHeight;
-
     @SerializedName("tim")
     public long properFilename;
 
     @SerializedName("time")
     public long UNIXtime;
-
-    @SerializedName("md5")
-    public String MD5hash;
-
-    @SerializedName("fsize")
-    public int fileSize;
 
     @SerializedName("resto")
     public int replyTo;
@@ -78,14 +61,8 @@ public class Reply {
                 ", comment='" + comment + '\'' +
                 ", originalFilename='" + originalFilename + '\'' +
                 ", fileExtension='" + fileExtension + '\'' +
-                ", width=" + width +
-                ", height=" + height +
-                ", thumbWidth=" + thumbWidth +
-                ", thumbHeight=" + thumbHeight +
                 ", properFilename=" + properFilename +
                 ", UNIXtime=" + UNIXtime +
-                ", MD5hash='" + MD5hash + '\'' +
-                ", fileSize=" + fileSize +
                 ", replyTo=" + replyTo +
                 '}';
     }
