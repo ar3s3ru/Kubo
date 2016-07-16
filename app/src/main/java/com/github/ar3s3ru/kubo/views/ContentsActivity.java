@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import com.github.ar3s3ru.kubo.R;
 import com.github.ar3s3ru.kubo.views.fragments.RepliesFragment;
 import com.github.ar3s3ru.kubo.views.fragments.ThreadsFragment;
+import com.github.ar3s3ru.kubo.views.recyclers.CatalogDirectRecycler;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 
@@ -48,7 +49,7 @@ public class ContentsActivity extends KuboActivity implements ThreadsFragment.Li
 
     @BindView(R.id.activity_contents_toolbar) Toolbar mToolbar;
 
-    private Drawer  mDrawer;
+    private Drawer mDrawer;
     private ThreadsFragment threadsFragment;
     private RepliesFragment repliesFragment;
 
@@ -102,6 +103,11 @@ public class ContentsActivity extends KuboActivity implements ThreadsFragment.Li
     @Override
     public void onThreadClick(@NonNull String board, int threadNumber) {
         // TODO: change fragment or send repliesFragment an intent
+    }
+
+    @Override
+    public void onChangeFollowingState() {
+        // TODO: change NavigationDrawer contents (i.e. update Cursor)
     }
 
     // TODO: Javadoc

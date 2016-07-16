@@ -190,21 +190,25 @@ public class ThreadsFragment extends Fragment
 
     @Override
     public void onClick(int threadNumber) {
-        mToast.setText("Thread number " + threadNumber + " clicked!");
-        mToast.setDuration(Toast.LENGTH_SHORT);
-        mToast.show();
+        ((Listener) getActivity()).onThreadClick(mBoardPath, threadNumber);
     }
 
     @Override
     public void onUnfollowingThread(int threadNumber) {
         KuboTableThread.setUnfollowingThread(mHelper, threadNumber);
         mAdapter.setUnfollowing(threadNumber);
+
+        // Notifying Activity
+        ((Listener) getActivity()).onChangeFollowingState();
     }
 
     @Override
     public void onFollowingThread(int position, int threadNumber) {
         KuboTableThread.setFollowingThread(mHelper, mAdapter.getThread(position));
         mAdapter.setFollowing(threadNumber);
+
+        // Notifying Activity
+        ((Listener) getActivity()).onChangeFollowingState();
     }
 
     @Override
@@ -317,6 +321,7 @@ public class ThreadsFragment extends Fragment
          * @param threadNumber Thread number
          */
         void onThreadClick(@NonNull String board, int threadNumber);
+        void onChangeFollowingState();
     }
 
     /**
