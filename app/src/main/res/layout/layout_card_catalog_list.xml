@@ -59,7 +59,7 @@
         app:layout_constraintTop_toBottomOf="@+id/catalog_list_thread_divider"
         app:layout_constraintBottom_toBottomOf="@+id/catalog_layout" />
 
-    <ImageView style="@style/KuboTheme.CardView.Settings"
+    <ImageView style="@style/KuboTheme.CardView.Settings.Bookmark"
         android:src="@drawable/ic_bookmark_empty"
         android:id="@+id/catalog_list_thread_bookmark"
         app:layout_constraintTop_toBottomOf="@+id/catalog_list_thread_divider"

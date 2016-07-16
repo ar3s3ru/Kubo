@@ -3,6 +3,7 @@ package com.github.ar3s3ru.kubo.views.recyclers;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import com.github.ar3s3ru.kubo.R;
 import com.github.ar3s3ru.kubo.backend.models.Thread;
 import com.github.ar3s3ru.kubo.backend.models.ThreadsList;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,25 +40,38 @@ import butterknife.ButterKnife;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-public class CatalogDirectRecycler extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRecycler.ViewHolder>
+    implements View.OnClickListener {
 
     private static final int VIEWTYPE_LIST = 0;
     private static final int VIEWTYPE_GRID = 1;
 
-    private final List<Thread> mList = new ArrayList<>();
+    private final List<Thread> oList   = new ArrayList<>();     // Original untouched list
     private final String       mBoard;
+    private final WeakReference<OnClickListener> mListener;
 
-    private int mViewType = VIEWTYPE_LIST;
+    private int          mViewType = VIEWTYPE_LIST; // Current view type
+    private List<Thread> mList     = oList;         // Original filterable list
 
-    public CatalogDirectRecycler(@NonNull List<ThreadsList> list,
+    public CatalogDirectRecycler(@NonNull OnClickListener listener,
+                                 @NonNull List<ThreadsList> list,
                                  @NonNull String board) {
         // Add pages
         for (ThreadsList threadList : list) {
-            mList.addAll(threadList.threads);
+            oList.addAll(threadList.threads);
         }
 
         // Setting board string
         mBoard = board;
+        mListener = new WeakReference<>(listener);
+
+        // For ID usage
+        setHasStableIds(true);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return mList.get(position).number;
     }
 
     @Override
@@ -70,15 +85,17 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case VIEWTYPE_LIST:
                 return new ListViewHolder(
+                        mListener,
                         LayoutInflater.from(parent.getContext())
                                 .inflate(R.layout.adapter_catalog_list, parent, false)
                 );
             case VIEWTYPE_GRID:
                 return new GridViewHolder(
+                        mListener,
                         LayoutInflater.from(parent.getContext())
                                 .inflate(R.layout.adapter_catalog_grid, parent, false)
                 );
@@ -88,13 +105,22 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, int position) {
         final Thread thread = mList.get(position);
 
         if (holder instanceof ListViewHolder) {
             onBindListViewHolder((ListViewHolder) holder, thread, mBoard);
         } else if (holder instanceof GridViewHolder) {
             onBindGridViewHolder((GridViewHolder) holder, thread, mBoard);
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        final OnClickListener listener = mListener.get();
+
+        if (listener != null) {
+            listener.onClick(view.getId());
         }
     }
 
@@ -127,6 +153,12 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<RecyclerView.Vie
         return "https://t.4cdn.org/" + board + "/" + fileName + fileExtension;
     }
 
+    /**
+     * Binder routine for ListViewHolder
+     * @param holder ListViewHolder instance
+     * @param thread Thread object
+     * @param board Board path
+     */
     @SuppressWarnings("all")
     private static void onBindListViewHolder(@NonNull ListViewHolder holder,
                                              @NonNull Thread thread,
@@ -144,25 +176,92 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<RecyclerView.Vie
         downloadImageForHolder(holder.thumbnail, board, thread);
     }
 
+    /**
+     * Binder routine for GridViewHolder
+     * @param holder GridViewHolder instance
+     * @param thread Thread object
+     * @param board Board path
+     */
     @SuppressWarnings("all")
     private static void onBindGridViewHolder(@NonNull GridViewHolder holder,
                                              @NonNull Thread thread,
                                              @NonNull String board) {
+        holder.number.setText(String.format("%d", thread.number));
         downloadImageForHolder(holder.thumbnail, board, thread);
     }
 
+    /**
+     * Sets the adapter view type to Grid
+     */
     public void setGridViewType() {
         mViewType = VIEWTYPE_GRID;
         notifyDataSetChanged();
     }
 
+    /**
+     * Sets the adapter view type to List
+     */
     public void setListViewType() {
         mViewType = VIEWTYPE_LIST;
         notifyDataSetChanged();
     }
 
-    static class ListViewHolder extends RecyclerView.ViewHolder {
+    /**
+     * Invoke this method when need to perform a search against thread comments
+     * @param query Query to search against thread comments
+     */
+    public void onQueryText(@NonNull String query) {
+        mList = new ArrayList<>();
 
+        for (Thread th : oList) {
+            // Filtering
+            if (th.comment != null && th.comment.contains(query)) {
+                mList.add(th);
+            }
+        }
+        // Notifying new data
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Invoke this method when need to restore original dataset
+     */
+    public void onClearText() {
+        mList = oList;
+        notifyDataSetChanged();
+    }
+
+    public interface OnClickListener {
+        void onClick(int threadNumber);
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        protected WeakReference<OnClickListener> listener;
+
+        ViewHolder(@NonNull WeakReference<OnClickListener> listener,
+                   @NonNull View itemView) {
+            super(itemView);
+            this.listener = listener;
+        }
+
+        @Override
+        public void onClick(View view) {
+            final OnClickListener listener = this.listener.get();
+            Log.e("SHIT", Boolean.toString(listener == null));
+
+            if (listener != null) {
+                listener.onClick((int) getItemId());
+            }
+        }
+    }
+
+    /**
+     * ViewHolder for list displaying.
+     */
+    static class ListViewHolder extends CatalogDirectRecycler.ViewHolder {
+
+        @BindView(R.id.catalog_layout)                   ViewGroup layout;
         @BindView(R.id.catalog_list_thread_thumbnail)    ImageView thumbnail;
         @BindView(R.id.catalog_list_header_name)         TextView  name;
         @BindView(R.id.catalog_list_thread_comment)      TextView  comment;
@@ -170,21 +269,32 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<RecyclerView.Vie
         @BindView(R.id.catalog_list_thread_images_text)  TextView  images;
         @BindView(R.id.catalog_list_thread_replies_text) TextView  replies;
 
-        ListViewHolder(View itemView) {
-            super(itemView);
+        ListViewHolder(@NonNull WeakReference<OnClickListener> listener,
+                       @NonNull View itemView) {
+            super(listener, itemView);
             ButterKnife.bind(this, itemView);
+
+            layout.setOnClickListener(this);
         }
     }
 
-    static class GridViewHolder extends RecyclerView.ViewHolder {
+    /**
+     * ViewHolder for grid displaying.
+     */
+    static class GridViewHolder extends CatalogDirectRecycler.ViewHolder {
 
+        @BindView(R.id.catalog_grid_layout)           ViewGroup layout;
         @BindView(R.id.catalog_grid_thread_thumbnail) ImageView thumbnail;
         @BindView(R.id.catalog_grid_thread_bookmark)  ImageView bookmark;
         @BindView(R.id.catalog_grid_thread_settings)  ImageView settings;
+        @BindView(R.id.catalog_grid_thread_number)    TextView  number;
 
-        GridViewHolder(View itemView) {
-            super(itemView);
+        GridViewHolder(@NonNull WeakReference<OnClickListener> listener,
+                       @NonNull View itemView) {
+            super(listener, itemView);
             ButterKnife.bind(this, itemView);
+
+            layout.setOnClickListener(this);
         }
     }
 }

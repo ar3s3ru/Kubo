@@ -6,4 +6,5 @@
     <string name="text_close">Close</string>
     <string name="boards_activity_label">Kubo - Select a board</string>
     <string name="menu_threads_viewmode">Switch view mode</string>
+    <string name="menu_threads_search">Search</string>
 </resources>

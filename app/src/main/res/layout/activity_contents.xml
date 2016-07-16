@@ -11,15 +11,9 @@
         android:elevation="4dp" />
 
     <fragment
-        android:id="@+id/activity_contents_threads_fragment"
+        android:id="@+id/activity_contents_fragment_master"
         android:name="com.github.ar3s3ru.kubo.views.fragments.ThreadsFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-    <!-- <fragment
-        android:id="@+id/activity_contents_replies_fragment"
-        android:name="com.github.ar3s3ru.kubo.views.fragments.RepliesFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" /> -->
 
 </LinearLayout>

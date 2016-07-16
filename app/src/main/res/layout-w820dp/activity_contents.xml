@@ -4,20 +4,20 @@
     android:id="@+id/activity_contents_layout">
 
     <fragment
-        android:id="@+id/activity_contents_threads_fragment"
+        android:id="@+id/activity_contents_fragment_master"
+        android:name="com.github.ar3s3ru.kubo.views.fragments.ThreadsFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="2"
-        android:name="com.github.ar3s3ru.kubo.views.fragments.ThreadsFragment" />
+        android:layout_weight="2" />
     
     <View style="@style/KuboTheme.ContentsActivity.Separator"
         android:id="@+id/activity_contents_separator" />
 
     <fragment
-        android:id="@+id/activity_contents_replies_fragment"
+        android:id="@+id/activity_contents_fragment_detail"
+        android:name="com.github.ar3s3ru.kubo.views.fragments.RepliesFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="3"
-        android:name="com.github.ar3s3ru.kubo.views.fragments.RepliesFragment" />
+        android:layout_weight="3" />
 
 </LinearLayout>

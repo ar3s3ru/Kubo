@@ -12,8 +12,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,7 +30,6 @@ import com.github.ar3s3ru.kubo.backend.controller.KuboEvents;
 import com.github.ar3s3ru.kubo.backend.controller.KuboRESTService;
 import com.github.ar3s3ru.kubo.backend.models.ThreadsList;
 import com.github.ar3s3ru.kubo.views.recyclers.CatalogDirectRecycler;
-import com.github.ar3s3ru.kubo.views.recyclers.CatalogRecycler;
 
 import org.parceler.Parcels;
 
@@ -60,7 +59,8 @@ import butterknife.ButterKnife;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-public class ThreadsFragment extends Fragment implements CatalogRecycler.Listener {
+public class ThreadsFragment extends Fragment
+        implements CatalogDirectRecycler.OnClickListener, SearchView.OnQueryTextListener {
 
     private static final String TAG    = "ThreadsFragment";
     private static final String LIST   = "com.github.ar3s3ru.kubo.views.fragments.threads.list";
@@ -108,13 +108,6 @@ public class ThreadsFragment extends Fragment implements CatalogRecycler.Listene
         // Create new layout manager
         mLayoutManager = new GridLayoutManager(getContext(), LIST_COLUMNS);
 
-        // Recover state
-        if (savedInstanceState == null) { mList = null; }
-        else {
-            mList = Parcels.unwrap(savedInstanceState.getParcelable(LIST));
-            mLayoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(LAYOUT));
-        }
-
         // Create new CatalogReceiver to handle getCatalog(path)
         mReceiver = new CatalogReceiver(this);
         mBroadcastManager = LocalBroadcastManager.getInstance(getContext());
@@ -134,6 +127,14 @@ public class ThreadsFragment extends Fragment implements CatalogRecycler.Listene
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_threads, container, false);
         ButterKnife.bind(this, view);
+
+        // Recover state
+        if (savedInstanceState == null) { mList = null; }
+        else {
+            mList = Parcels.unwrap(savedInstanceState.getParcelable(LIST));
+            mLayoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(LAYOUT));
+        }
+
         return view;
     }
 
@@ -143,6 +144,9 @@ public class ThreadsFragment extends Fragment implements CatalogRecycler.Listene
 
         // Set up ActionBar
         setUpActionBar(((AppCompatActivity) getActivity()).getSupportActionBar());
+
+        // Always displaying first child when creating the view
+        mViewFlipper.setDisplayedChild(0);
 
         // Send getCatalog() request
         if (mList == null) { startRequestingCatalog(false); }
@@ -163,6 +167,11 @@ public class ThreadsFragment extends Fragment implements CatalogRecycler.Listene
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.threads_fragment_menu, menu);
+        // Retrieving search menu item
+        final MenuItem   item       = menu.findItem(R.id.threads_menu_search);
+        final SearchView searchView = (SearchView) item.getActionView();
+        // Setting up SearchView
+        searchView.setOnQueryTextListener(this);
     }
 
     @Override
@@ -171,22 +180,40 @@ public class ThreadsFragment extends Fragment implements CatalogRecycler.Listene
             case R.id.threads_menu_viewmode:
                 onChangeViewMode(item);
                 return true;
+            case R.id.threads_menu_search:
+
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
     @Override
-    public void onChangedPage(int pageNumber) {
-        mToast.setText("Page " + pageNumber);
-        mToast.setGravity(Gravity.CENTER, 0, 0);
+    public void onClick(int threadNumber) {
+        mToast.setText("Thread number " + threadNumber + " clicked!");
         mToast.setDuration(Toast.LENGTH_SHORT);
         mToast.show();
     }
 
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        if (newText.equals("")) {
+            // Restore original dataset
+            mAdapter.onClearText();
+        } else {
+            // Perform filtering
+            mAdapter.onQueryText(newText);
+        }
+        return true;
+    }
+
     /**
      * Sets up ActionBar title
-     * @param actionBar ActionBar support v7
+     * @param actionBar ActionBar support xv7
      */
     private void setUpActionBar(@Nullable ActionBar actionBar) {
         if (actionBar != null) {
@@ -209,7 +236,7 @@ public class ThreadsFragment extends Fragment implements CatalogRecycler.Listene
     private void setUpRecyclerView() {
         // Set up adapter
         // (with pagination) mAdapter = new CatalogRecycler(this, mList, mBoardPath);
-        mAdapter = new CatalogDirectRecycler(mList, mBoardPath);
+        mAdapter = new CatalogDirectRecycler(this, mList, mBoardPath);
         // Set up Recycler
         mRecycler.setAdapter(mAdapter);
         mRecycler.setLayoutManager(mLayoutManager);
@@ -217,15 +244,16 @@ public class ThreadsFragment extends Fragment implements CatalogRecycler.Listene
         mViewFlipper.showNext();
     }
 
+    // TODO: Javadoc
     private void onChangeViewMode(@NonNull MenuItem item) {
         if (isGridView) {
             item.setIcon(IC_GRID);
-            // TODO: handle list view
+            // Handle list view
             mAdapter.setListViewType();
             mLayoutManager.setSpanCount(LIST_COLUMNS);
         } else {
             item.setIcon(IC_LIST);
-            // TODO: handle grid view
+            // Handle grid view
             mAdapter.setGridViewType();
             mLayoutManager.setSpanCount(GRID_COLUMNS);
         }
@@ -250,7 +278,6 @@ public class ThreadsFragment extends Fragment implements CatalogRecycler.Listene
      */
     private void handleCatalogError(String error, int errorCode) {
         mToast.setText(errorCode + ": " + error);
-        mToast.setGravity(Gravity.BOTTOM, 0, 0);
         mToast.setDuration(Toast.LENGTH_LONG);
         mToast.show();
     }
@@ -266,6 +293,18 @@ public class ThreadsFragment extends Fragment implements CatalogRecycler.Listene
     public void updateContents(String title, String path, int primaryKey) {
         setUpContents(title, path, primaryKey);
         startRequestingCatalog(true);
+    }
+
+    /**
+     * Listener for ThreadsFragment callbacks to the activity.
+     */
+    public interface Listener {
+        /**
+         * Callback when thread clicking is performed
+         * @param board Board name
+         * @param threadNumber Thread number
+         */
+        void onThreadClick(@NonNull String board, int threadNumber);
     }
 
     /**

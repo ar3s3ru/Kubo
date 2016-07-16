@@ -11,16 +11,22 @@
         app:layout_constraintRight_toRightOf="@+id/catalog_grid_layout"
         app:layout_constraintBottom_toTopOf="@+id/catalog_grid_thread_settings" />
 
-    <ImageView style="@style/KuboTheme.CardView.Settings"
+    <ImageView style="@style/KuboTheme.CardView.Settings.Bookmark"
         android:src="@drawable/ic_bookmark_empty"
         android:id="@+id/catalog_grid_thread_bookmark"
-        app:layout_constraintRight_toRightOf="@+id/catalog_grid_layout"
+        app:layout_constraintRight_toLeftOf="@+id/catalog_grid_thread_settings"
         app:layout_constraintBottom_toBottomOf="@+id/catalog_grid_layout" />
 
     <ImageView style="@style/KuboTheme.CardView.Settings"
         android:src="@drawable/ic_settings_horizontal"
         android:id="@+id/catalog_grid_thread_settings"
-        app:layout_constraintRight_toLeftOf="@+id/catalog_grid_thread_bookmark"
+        app:layout_constraintRight_toRightOf="@+id/catalog_grid_layout"
+        app:layout_constraintBottom_toBottomOf="@+id/catalog_grid_layout" />
+
+    <TextView style="@style/KuboTheme.CardView.Header"
+        android:background="@drawable/background_right_complete"
+        android:id="@+id/catalog_grid_thread_number"
+        app:layout_constraintLeft_toLeftOf="@+id/catalog_grid_layout"
         app:layout_constraintBottom_toBottomOf="@+id/catalog_grid_layout" />
 
 </android.support.constraint.ConstraintLayout>

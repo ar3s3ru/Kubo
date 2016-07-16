@@ -172,6 +172,10 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <style name="KuboTheme.CardView.Settings.Bookmark" parent="KuboTheme.CardView.Settings">
+        <item name="android:layout_marginRight">@dimen/card_lateral_margin</item>
+    </style>
+
     <style name="KuboTheme.CardView.Divider">
         <item name="android:background">@color/dividerColor</item>
         <item name="android:layout_width">match_parent</item>

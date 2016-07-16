@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 
 import com.github.ar3s3ru.kubo.R;
+import com.github.ar3s3ru.kubo.views.fragments.RepliesFragment;
 import com.github.ar3s3ru.kubo.views.fragments.ThreadsFragment;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
@@ -33,7 +35,7 @@ import butterknife.ButterKnife;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-public class ContentsActivity extends KuboActivity {
+public class ContentsActivity extends KuboActivity implements ThreadsFragment.Listener {
     // Activity TAG
     private static final String TAG = "ContentsActivity";
     // Board primary key
@@ -49,7 +51,7 @@ public class ContentsActivity extends KuboActivity {
 
     private Drawer  mDrawer;
     private ThreadsFragment threadsFragment;
-    //private RepliesFragment repliesFragment;
+    private RepliesFragment repliesFragment;
 
     /** MaterialDrawer elements */
     // TODO: add here
@@ -83,13 +85,12 @@ public class ContentsActivity extends KuboActivity {
         // Set up MaterialDrawer
         setUpNavigationDrawer();
 
-        // Get Threads fragment
+        // Get showed fragments
         threadsFragment = (ThreadsFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.activity_contents_threads_fragment);
+                .findFragmentById(R.id.activity_contents_fragment_master);
 
-        // Get Replies fragment
-        //repliesFragment = (RepliesFragment) getSupportFragmentManager()
-        //        .findFragmentById(R.id.activity_contents_replies_fragment);
+        repliesFragment = (RepliesFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.activity_contents_fragment_detail);
 
         // Freshly started activity, sets up member variables accordingly
         setUpContents(
@@ -99,7 +100,10 @@ public class ContentsActivity extends KuboActivity {
         );
     }
 
-
+    @Override
+    public void onThreadClick(@NonNull String board, int threadNumber) {
+        // TODO: change fragment or send repliesFragment an intent
+    }
 
     // TODO: Javadoc
     private void setUpContents(String title, String path, int primaryKey) {
