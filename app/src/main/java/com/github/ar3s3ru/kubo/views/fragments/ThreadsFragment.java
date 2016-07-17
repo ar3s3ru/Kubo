@@ -67,12 +67,16 @@ public class ThreadsFragment extends Fragment implements CatalogDirectRecycler.O
     private static final String TAG    = "ThreadsFragment";
     private static final String LIST   = "com.github.ar3s3ru.kubo.views.fragments.threads.list";
     private static final String LAYOUT = "com.github.ar3s3ru.kubo.views.fragments.threads.layout";
+    private static final String PATH   = "com.github.ar3s3ru.kubo.views.fragments.threads.path";
+    private static final String TITLE  = "com.github.ar3s3ru.kubo.views.fragments.threads.title";
 
     private static final int IC_GRID = R.drawable.ic_grid;
     private static final int IC_LIST = R.drawable.ic_list;
 
     private static final int GRID_COLUMNS = 2;
     private static final int LIST_COLUMNS = 1;
+
+    private static final IntentFilter mFilter = new IntentFilter(KuboEvents.CATALOG);
 
     /** Members variables */
     @BindView(R.id.fragment_threads_viewflipper)  ViewFlipper        mViewFlipper;
@@ -95,7 +99,19 @@ public class ThreadsFragment extends Fragment implements CatalogDirectRecycler.O
     private LocalBroadcastManager mBroadcastManager;
 
     public ThreadsFragment() {
-        // Empty constructor
+        // Empty constructor...
+    }
+
+    public static ThreadsFragment newInstance(@NonNull String boardTitle,
+                                              @NonNull String boardPath) {
+        ThreadsFragment threadsFragment = new ThreadsFragment();
+        Bundle args = new Bundle();
+
+        args.putString(PATH, boardPath);
+        args.putString(TITLE, boardTitle);
+
+        threadsFragment.setArguments(args);
+        return threadsFragment;
     }
 
     @Override
@@ -107,6 +123,10 @@ public class ThreadsFragment extends Fragment implements CatalogDirectRecycler.O
 
         // Inject everything from Dagger
         ((KuboApp) getActivity().getApplication()).getAppComponent().inject(this);
+
+        // Get required arguments
+        mBoardPath  = getArguments().getString(PATH);
+        mBoardTitle = getArguments().getString(TITLE);
 
         // Create new layout manager
         mLayoutManager = new GridLayoutManager(getContext(), LIST_COLUMNS);
@@ -132,8 +152,7 @@ public class ThreadsFragment extends Fragment implements CatalogDirectRecycler.O
         ButterKnife.bind(this, view);
 
         // Recover state
-        if (savedInstanceState == null) { mList = null; }
-        else {
+        if (savedInstanceState != null) {
             mList = Parcels.unwrap(savedInstanceState.getParcelable(LIST));
             mLayoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(LAYOUT));
         }
@@ -153,14 +172,13 @@ public class ThreadsFragment extends Fragment implements CatalogDirectRecycler.O
 
         // Always displaying first child when creating the view
         mViewFlipper.setDisplayedChild(0);
+        // Register Catalog receiver
+        mBroadcastManager.registerReceiver(mReceiver, mFilter);
 
         // Send getCatalog() request
         if (mList == null) { startRequestingCatalog(false); }
-        // Sets up the RecyclerView
+        // mList is not null, but maybe there is no adapter...
         else { setUpRecyclerView(); }
-
-        // Register Catalog receiver
-        mBroadcastManager.registerReceiver(mReceiver, new IntentFilter(KuboEvents.CATALOG));
     }
 
     @Override
@@ -187,7 +205,7 @@ public class ThreadsFragment extends Fragment implements CatalogDirectRecycler.O
                 onChangeViewMode(item);
                 return true;
             case R.id.threads_menu_search:
-
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -200,7 +218,9 @@ public class ThreadsFragment extends Fragment implements CatalogDirectRecycler.O
 
     @Override
     public void onClick(int threadNumber) {
-        ((Listener) getActivity()).onThreadClick(mBoardPath, threadNumber);
+        ((Listener) getActivity()).onThreadClick(
+                mBoardPath, threadNumber, mAdapter.isFollowing(threadNumber)
+        );
     }
 
     @Override
@@ -261,7 +281,7 @@ public class ThreadsFragment extends Fragment implements CatalogDirectRecycler.O
 
     // TODO: Javadoc
     private void setUpRecyclerView() {
-        if (mSwiper.isRefreshing()) {
+        if (mAdapter != null || mSwiper.isRefreshing()) {
             mAdapter.setList(mList);
             mSwiper.setRefreshing(false);
         } else {
@@ -271,7 +291,7 @@ public class ThreadsFragment extends Fragment implements CatalogDirectRecycler.O
 
         // Set up Recycler
         mRecycler.setAdapter(mAdapter);
-        mRecycler.setLayoutManager(mLayoutManager);
+        mRecycler.setLayoutManager(new GridLayoutManager(getContext(), isGridView ? GRID_COLUMNS : LIST_COLUMNS));
         // Show recycler
         mViewFlipper.showNext();
     }
@@ -282,12 +302,12 @@ public class ThreadsFragment extends Fragment implements CatalogDirectRecycler.O
             item.setIcon(IC_GRID);
             // Handle list view
             mAdapter.setListViewType();
-            mLayoutManager.setSpanCount(LIST_COLUMNS);
+            ((GridLayoutManager) mRecycler.getLayoutManager()).setSpanCount(LIST_COLUMNS);
         } else {
             item.setIcon(IC_LIST);
             // Handle grid view
             mAdapter.setGridViewType();
-            mLayoutManager.setSpanCount(GRID_COLUMNS);
+            ((GridLayoutManager) mRecycler.getLayoutManager()).setSpanCount(GRID_COLUMNS);
         }
 
         // Change isGridView value
@@ -316,8 +336,8 @@ public class ThreadsFragment extends Fragment implements CatalogDirectRecycler.O
 
     // TODO: Javadoc
     public void setUpContents(@NonNull String title, @NonNull String path) {
-        mBoardTitle      = title;
-        mBoardPath       = path;
+        mBoardTitle = title;
+        mBoardPath  = path;
     }
 
     // TODO: Javadoc
@@ -334,8 +354,13 @@ public class ThreadsFragment extends Fragment implements CatalogDirectRecycler.O
          * Callback when thread clicking is performed
          * @param board Board name
          * @param threadNumber Thread number
+         * @param followed true if thread is followed, false otherwise
          */
-        void onThreadClick(@NonNull String board, int threadNumber);
+        void onThreadClick(@NonNull String board, int threadNumber, boolean followed);
+
+        /**
+         * Callback executed when changing a thread's follow state
+         */
         void onChangeFollowingState();
     }
 
@@ -365,7 +390,7 @@ public class ThreadsFragment extends Fragment implements CatalogDirectRecycler.O
                             )
                     );
                 } else {
-                    // Shows error within the activity
+                    // Error, handle into the fragment
                     threadsFragment.handleCatalogError(
                             intent.getStringExtra(KuboEvents.BOARDS_ERR),
                             intent.getIntExtra(KuboEvents.BOARDS_ERRCOD, 0)

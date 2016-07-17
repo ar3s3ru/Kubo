@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/replies_post_layout">
+
+    <ImageView
+        android:id="@+id/replies_post_thumbnail"
+        android:src="@color/accent"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        app:layout_constraintRight_toRightOf="@id/replies_post_layout"
+        app:layout_constraintTop_toTopOf="@+id/replies_post_layout" />
+
+    <TextView
+        android:id="@+id/replies_post_name"
+        android:text="PROVANAME"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textSize="12sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        app:layout_constraintTop_toTopOf="@+id/replies_post_layout"
+        app:layout_constraintLeft_toLeftOf="@+id/replies_post_layout" />
+
+    <TextView
+        android:id="@+id/replies_post_number"
+        android:text="01234566123"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textSize="12sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintTop_toTopOf="@+id/replies_post_layout"
+        app:layout_constraintLeft_toRightOf="@+id/replies_post_name" />
+
+    <TextView
+        android:id="@+id/replies_post_comment"
+        android:text="PROVAPOSTPROVAPOSTPROVAPOST"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="61dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/replies_post_name"
+        app:layout_constraintRight_toLeftOf="@+id/replies_post_thumbnail"
+        app:layout_constraintLeft_toLeftOf="@+id/replies_post_layout"
+        app:layout_constraintBottom_toBottomOf="@+id/replies_post_layout" />
+
+</android.support.constraint.ConstraintLayout>

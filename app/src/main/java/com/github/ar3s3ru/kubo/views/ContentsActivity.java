@@ -5,10 +5,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import com.github.ar3s3ru.kubo.R;
-import com.github.ar3s3ru.kubo.utils.KuboUtilities;
+import com.github.ar3s3ru.kubo.backend.database.tables.KuboTableThread;
 import com.github.ar3s3ru.kubo.views.fragments.RepliesFragment;
 import com.github.ar3s3ru.kubo.views.fragments.ThreadsFragment;
 import com.mikepenz.materialdrawer.Drawer;
@@ -47,9 +50,8 @@ public class ContentsActivity extends KuboActivity implements ThreadsFragment.Li
 
     @BindView(R.id.activity_contents_toolbar) Toolbar mToolbar;
 
-    private Drawer mDrawer;
-    private ThreadsFragment threadsFragment;
-    private RepliesFragment repliesFragment;
+    private Drawer   mDrawer;
+    private Fragment mFragment;
 
     /** MaterialDrawer elements */
     // TODO: add here
@@ -82,36 +84,55 @@ public class ContentsActivity extends KuboActivity implements ThreadsFragment.Li
         // Set up MaterialDrawer
         setUpNavigationDrawer();
 
-        // Get showed fragments
-        threadsFragment = (ThreadsFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.activity_contents_fragment_master);
-
-        repliesFragment = (RepliesFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.activity_contents_fragment_detail);
-
-        // Freshly started activity, sets up member variables accordingly
-        setUpContents(
+        // Construct fragments
+        mFragment = ThreadsFragment.newInstance(
                 getIntent().getStringExtra(BOARD_TL),
                 getIntent().getStringExtra(BOARD_ID)
         );
+
+        getSupportFragmentManager().beginTransaction().add(
+            R.id.activity_contents_fragment_container, mFragment
+        ).commitNow();
+
+        // Freshly started activity, sets up member variables accordingly
+//        setUpContents(
+//                getIntent().getStringExtra(BOARD_TL),
+//                getIntent().getStringExtra(BOARD_ID)
+//        );
     }
 
     @Override
-    public void onThreadClick(@NonNull String board, int threadNumber) {
+    public void onBackPressed() {
+        if (!getSupportFragmentManager().popBackStackImmediate()) {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void onThreadClick(@NonNull String board, int threadNumber, boolean followed) {
         // TODO: change fragment or send repliesFragment an intent
+        RepliesFragment repliesFragment = RepliesFragment.newInstance(board, threadNumber);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
+        Log.e(TAG, "onThreadClick: board=" + board + ",threadNumber=" + threadNumber + ",followed=" + followed);
+
+        ft.replace(R.id.activity_contents_fragment_container, repliesFragment);
+        ft.addToBackStack("boh");
+
+        ft.commit();
     }
 
     @Override
     public void onChangeFollowingState() {
         // TODO: change NavigationDrawer contents
         // Notifying following threads received
-        KuboUtilities.notifyFollowingThreadsChanged(this);
+        KuboTableThread.notifyFollowingThreadsChanged(this);
     }
 
-    // TODO: Javadoc
-    private void setUpContents(String title, String path) {
-        threadsFragment.setUpContents(title, path);
-    }
+//    // TODO: Javadoc
+//    private void setUpContents(String title, String path) {
+//        threadsFragment.setUpContents(title, path);
+//    }
 
     // TODO: Javadoc
     private void setUpNavigationDrawer() {

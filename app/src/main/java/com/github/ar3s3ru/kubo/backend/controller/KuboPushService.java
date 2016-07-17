@@ -29,8 +29,6 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import javax.inject.Inject;
 
@@ -114,8 +112,7 @@ public class KuboPushService extends Service {
 
         private HashMap<String, ArrayList<Modification>> mReferences;
 
-        private boolean    changedFavorites = true;
-        private final Lock lock             = new ReentrantLock();
+        private boolean changedFavorites = true;
 
         private Cursor actualCursor;
 
@@ -135,19 +132,25 @@ public class KuboPushService extends Service {
         @Override
         public void run() {
             while (!isInterrupted()) {
-                /** Locking */  lock.lock();
-                // Some thread has been unfollowed... or it is first cycle run
-                if (changedFavorites) {
-                    // Closing actual cursor if is not null
-                    if (actualCursor != null) { actualCursor.close(); }
-                    // Grabbing initial followed threads
-                    actualCursor = KuboTableThread.getFollowedThreads(mHelper);
-                    // Building initial references
-                    buildReferences();
-                    // Not changed at all
-                    changedFavorites = false;
+                synchronized (this) {
+                    /** Locking */
+
+                    // Some thread has been unfollowed... or it is first cycle run
+                    if (changedFavorites) {
+                        // Closing actual cursor if is not null
+                        if (actualCursor != null) {
+                            actualCursor.close();
+                        }
+                        // Grabbing initial followed threads
+                        actualCursor = KuboTableThread.getFollowedThreads(mHelper);
+                        // Building initial references
+                        buildReferences();
+                        // Not changed at all
+                        changedFavorites = false;
+                    }
+
+                    /** Unlocking */
                 }
-                /** Unlocking */ lock.unlock();
 
                 // Traverse all the references map and update
                 for (String board : mReferences.keySet()) {
@@ -249,10 +252,8 @@ public class KuboPushService extends Service {
             }
         }
 
-        void notifyChangedFollowedThreads() {
-            /** Locking */   lock.lock();
+        synchronized void notifyChangedFollowedThreads() {
             changedFavorites = true;
-            /** Unlocking */ lock.unlock();
         }
     }
 }

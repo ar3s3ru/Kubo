@@ -10,9 +10,8 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         android:elevation="4dp" />
 
-    <fragment
-        android:id="@+id/activity_contents_fragment_master"
-        android:name="com.github.ar3s3ru.kubo.views.fragments.ThreadsFragment"
+    <FrameLayout
+        android:id="@+id/activity_contents_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

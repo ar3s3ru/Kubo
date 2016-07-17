@@ -46,15 +46,16 @@ import butterknife.ButterKnife;
 public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRecycler.ViewHolder>
     implements View.OnClickListener {
 
-    private static final int VIEWTYPE_LIST = 0;
-    private static final int VIEWTYPE_GRID = 1;
+    public static final int VIEWTYPE_LIST = 0;
+    public static final int VIEWTYPE_GRID = 1;
+
     private static final int BOOKMARK_KEY  = -1;
 
     private final TreeSet<Integer> mFollowed;                  // Followed threads
     private final List<Thread>     oList = new ArrayList<>();  // Original untouched list
 
-    private final String mBoard;
-    private final WeakReference<OnClickListener> mListener;
+    private static String mBoard;
+    private final  WeakReference<OnClickListener> mListener;
 
     private int          mViewType = VIEWTYPE_LIST; // Current view type
     private List<Thread> mList     = oList;         // Original filterable list
@@ -115,15 +116,10 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final Thread thread = mList.get(position);
-
         // Set bookmark icon
         setBookmarkIcon(holder.bookmark, mFollowed.contains(thread.number));
-
-        if (holder instanceof ListViewHolder) {
-            onBindListViewHolder((ListViewHolder) holder, thread);
-        } else if (holder instanceof GridViewHolder) {
-            onBindGridViewHolder((GridViewHolder) holder, thread);
-        }
+        // Bind ViewHolder
+        holder.onBindViewHolder(thread);
     }
 
     @Override
@@ -155,8 +151,8 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
      * @param imageView ImageView for thumbnail display
      * @param thread Thread object
      */
-    private void downloadImageForHolder(@NonNull ImageView imageView,
-                                        @NonNull Thread thread) {
+    private static void downloadImageForHolder(@NonNull ImageView imageView,
+                                               @NonNull Thread thread) {
         Glide.with(imageView.getContext())
                 .load(getThumbnailURL(thread.properFilename))
                 .error(R.color.colorPrimaryDark)
@@ -169,42 +165,8 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
      * @param fileName Thumbnail filename
      * @return Thumbnail URL string
      */
-    private String getThumbnailURL(long fileName) {
+    private static String getThumbnailURL(long fileName) {
         return "https://t.4cdn.org/" + mBoard + "/" + fileName + "s.jpg";
-    }
-
-    /**
-     * Binder routine for ListViewHolder
-     * @param holder ListViewHolder instance
-     * @param thread Thread object
-     */
-    @SuppressWarnings("all")
-    private void onBindListViewHolder(@NonNull ListViewHolder holder,
-                                      @NonNull Thread thread) {
-        if (thread.comment != null) {
-            holder.comment.setText(Html.fromHtml(thread.comment));
-        }
-
-        holder.name.setText(thread.name);
-        holder.number.setText(String.format("%d", thread.number));
-        holder.images.setText(String.format("%d", thread.images));
-        holder.replies.setText(String.format("%d", thread.replies));
-
-        downloadImageForHolder(holder.thumbnail, thread);
-    }
-
-    /**
-     * Binder routine for GridViewHolder
-     * @param holder GridViewHolder instance
-     * @param thread Thread object
-     */
-    @SuppressWarnings("all")
-    private void onBindGridViewHolder(@NonNull GridViewHolder holder,
-                                      @NonNull Thread thread) {
-        holder.number.setText(String.format("%d", thread.number));
-        holder.name.setText(thread.name);
-
-        downloadImageForHolder(holder.thumbnail, thread);
     }
 
     /**
@@ -278,6 +240,15 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
     }
 
     /**
+     * Specifies if a certain thread into the adapter is flagged as followed
+     * @param threadNumber Thread number
+     * @return true if thread is followed, false otherwise
+     */
+    public boolean isFollowing(int threadNumber) {
+        return mFollowed.contains(threadNumber);
+    }
+
+    /**
      * Set the thread as followed into the adapter (necessary for bookmark displaying)
      * @param threadNumber Thread number
      */
@@ -299,7 +270,7 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
         void onUnfollowingThread(int threadNumber);
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder
+    static abstract class ViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
         @BindView(R.id.catalog_layout)          ViewGroup layout;
@@ -342,6 +313,9 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
                 listener.onFollowingThread(getAdapterPosition(), (int) getItemId());
             }
         }
+
+        // TODO: Javadoc
+        abstract void onBindViewHolder(@NonNull Thread thread);
     }
 
     /**
@@ -360,6 +334,25 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
                        @NonNull View itemView) {
             super(listener, itemView);
         }
+
+        /**
+         * Binder routine for ListViewHolder
+         * @param thread Thread object
+         */
+        @SuppressWarnings("all")
+        @Override
+        void onBindViewHolder(@NonNull Thread thread) {
+            if (thread.comment != null) {
+                comment.setText(Html.fromHtml(thread.comment));
+            }
+
+            name.setText(thread.name);
+            number.setText(String.format("%d", thread.number));
+            images.setText(String.format("%d", thread.images));
+            replies.setText(String.format("%d", thread.replies));
+
+            CatalogDirectRecycler.downloadImageForHolder(thumbnail, thread);
+        }
     }
 
     /**
@@ -374,6 +367,19 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
         GridViewHolder(@NonNull WeakReference<OnClickListener> listener,
                        @NonNull View itemView) {
             super(listener, itemView);
+        }
+
+        /**
+         * Binder routine for GridViewHolder
+         * @param thread Thread object
+         */
+        @SuppressWarnings("all")
+        @Override
+        void onBindViewHolder(@NonNull Thread thread) {
+            number.setText(String.format("%d", thread.number));
+            name.setText(thread.name);
+
+            CatalogDirectRecycler.downloadImageForHolder(thumbnail, thread);
         }
     }
 }

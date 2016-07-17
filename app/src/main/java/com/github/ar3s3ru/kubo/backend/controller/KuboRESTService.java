@@ -97,7 +97,7 @@ public class KuboRESTService extends IntentService implements Callback {
                 handleGetCatalog((List<ThreadsList>) response.body());
             } else if (response.body() instanceof RepliesList) {
                 // Handle RepliesList
-
+                handleGetReplies((RepliesList) response.body());
             } else {
                 // Handle no events recognized
                 Log.e(TAG, "No event recognized, from call: " + call.toString());
@@ -221,8 +221,8 @@ public class KuboRESTService extends IntentService implements Callback {
      */
     private void handleGetReplies(RepliesList list) {
         LocalBroadcastManager.getInstance(this).sendBroadcast(
-                new Intent(KuboEvents.BOARDS)
-                        .putExtra(KuboEvents.BOARDS_STATUS, true)
+                new Intent(KuboEvents.REPLIES)
+                        .putExtra(KuboEvents.REPLIES_STATUS, true)
                         .putExtra(KuboEvents.REPLIES_RESULT, Parcels.wrap(list))
         );
     }
