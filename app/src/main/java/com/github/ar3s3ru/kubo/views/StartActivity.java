@@ -57,11 +57,6 @@ public class StartActivity extends KuboActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
 

@@ -44,4 +44,5 @@ dependencies {
     compile('com.mikepenz:materialdrawer:5.3.6@aar') {
         transitive = true
     }
+    compile 'com.android.support:support-v4:24.0.0'
 }

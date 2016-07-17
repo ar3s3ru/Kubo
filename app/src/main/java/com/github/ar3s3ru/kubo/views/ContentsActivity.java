@@ -8,9 +8,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 
 import com.github.ar3s3ru.kubo.R;
+import com.github.ar3s3ru.kubo.utils.KuboUtilities;
 import com.github.ar3s3ru.kubo.views.fragments.RepliesFragment;
 import com.github.ar3s3ru.kubo.views.fragments.ThreadsFragment;
-import com.github.ar3s3ru.kubo.views.recyclers.CatalogDirectRecycler;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 
@@ -38,8 +38,6 @@ import butterknife.ButterKnife;
 public class ContentsActivity extends KuboActivity implements ThreadsFragment.Listener {
     // Activity TAG
     private static final String TAG = "ContentsActivity";
-    // Board primary key
-    private static final String BOARD_PK = "com.github.ar3s3ru.kubo.views.ContentsActivity.board_pk";
     // Board path id
     private static final String BOARD_ID = "com.github.ar3s3ru.kubo.views.ContentsActivity.board_id";
     // Board title
@@ -57,16 +55,15 @@ public class ContentsActivity extends KuboActivity implements ThreadsFragment.Li
     // TODO: add here
 
     /**
-     * Starts ContentsActivity with provided path and id, from defined context
+     * Starts ContentsActivity with provided path, from defined context
      * @param context Starting context
      * @param path Board path
-     * @param id Board id
      */
-    public static void startContentsActivity(@NonNull Context context, @NonNull String title,
-                                             @NonNull String path, int id) {
+    public static void startContentsActivity(@NonNull Context context,
+                                             @NonNull String title,
+                                             @NonNull String path) {
         context.startActivity(
                 new Intent(context, ContentsActivity.class)
-                        .putExtra(BOARD_PK, id)
                         .putExtra(BOARD_ID, path)
                         .putExtra(BOARD_TL, title)
         );
@@ -95,8 +92,7 @@ public class ContentsActivity extends KuboActivity implements ThreadsFragment.Li
         // Freshly started activity, sets up member variables accordingly
         setUpContents(
                 getIntent().getStringExtra(BOARD_TL),
-                getIntent().getStringExtra(BOARD_ID),
-                getIntent().getIntExtra(BOARD_PK, -1)
+                getIntent().getStringExtra(BOARD_ID)
         );
     }
 
@@ -107,12 +103,14 @@ public class ContentsActivity extends KuboActivity implements ThreadsFragment.Li
 
     @Override
     public void onChangeFollowingState() {
-        // TODO: change NavigationDrawer contents (i.e. update Cursor)
+        // TODO: change NavigationDrawer contents
+        // Notifying following threads received
+        KuboUtilities.notifyFollowingThreadsChanged(this);
     }
 
     // TODO: Javadoc
-    private void setUpContents(String title, String path, int primaryKey) {
-        threadsFragment.setUpContents(title, path, primaryKey);
+    private void setUpContents(String title, String path) {
+        threadsFragment.setUpContents(title, path);
     }
 
     // TODO: Javadoc

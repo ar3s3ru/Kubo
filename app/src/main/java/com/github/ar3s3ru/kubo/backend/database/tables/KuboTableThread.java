@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.support.annotation.NonNull;
 
 import com.github.ar3s3ru.kubo.backend.database.KuboSQLHelper;
+import com.github.ar3s3ru.kubo.backend.models.Modification;
 import com.github.ar3s3ru.kubo.backend.models.Thread;
 
 import java.util.TreeSet;
@@ -31,6 +32,7 @@ import java.util.TreeSet;
 public class KuboTableThread {
     private static final String TABLE_NAME = "thread";
 
+    private static final String KEY_BOARD   = "board";
     private static final String KEY_NUMBER  = "number";
     private static final String KEY_COMMENT = "comment";
     private static final String KEY_IMAGE   = "image";
@@ -38,6 +40,7 @@ public class KuboTableThread {
     private static final String KEY_LASTUP  = "last_up";
     private static final String KEY_AUTHOR  = "author";
 
+    private static final String DB_BOARD   = KEY_BOARD   + " text not null";
     private static final String DB_NUMBER  = KEY_NUMBER  + " integer not null unique";
     private static final String DB_COMMENT = KEY_COMMENT + " text";
     private static final String DB_IMAGE   = KEY_IMAGE   + " integer not null unique";
@@ -48,8 +51,8 @@ public class KuboTableThread {
     public static final String DB_DROP   = "DROP TABLE IF EXISTS " + TABLE_NAME;
     public static final String DB_CREATE = "create table " + TABLE_NAME
             + " (_id integer primary key autoincrement, "
-            + DB_NUMBER + ", " + DB_COMMENT + ", " + DB_IMAGE  + ", "
-            + DB_EXTENS + ", " + DB_LASTUP  + ", " + DB_AUTHOR + ");";
+            + DB_BOARD  + ", " + DB_NUMBER  + ", " + DB_COMMENT + ", " + DB_IMAGE  + ", "
+            + DB_EXTENS + ", " + DB_LASTUP  + ", " + DB_AUTHOR  + ");";
 
     /** Getters */
 
@@ -67,7 +70,13 @@ public class KuboTableThread {
             set.add(getThreadNumber(cursor, i));
         }
 
+        cursor.close();
         return set;
+    }
+
+    public static String getThreadBoard(@NonNull Cursor cursor, int position) {
+        cursor.moveToPosition(position);
+        return cursor.getString(cursor.getColumnIndex(KEY_BOARD));
     }
 
     public static int getThreadNumber(@NonNull Cursor cursor, int position) {
@@ -101,11 +110,14 @@ public class KuboTableThread {
     }
 
     /** Setters */
-    // TODO: implement observables
+    // TODO: Javadoc
 
-    public static long setFollowingThread(@NonNull KuboSQLHelper helper, @NonNull Thread thread) {
+    public static long setFollowingThread(@NonNull KuboSQLHelper helper,
+                                          @NonNull Thread thread,
+                                          @NonNull String board) {
         final ContentValues cv = new ContentValues();
 
+        cv.put(KEY_BOARD,   board);
         cv.put(KEY_NUMBER,  thread.number);
         cv.put(KEY_COMMENT, thread.comment);
         cv.put(KEY_IMAGE,   thread.properFilename);
@@ -119,6 +131,15 @@ public class KuboTableThread {
     public static int setUnfollowingThread(@NonNull KuboSQLHelper helper, int threadNumber) {
         return helper.getWritableDatabase().delete(
                 TABLE_NAME, KEY_NUMBER + "=" + threadNumber, null
+        );
+    }
+
+    public static int updateLastUpdated(@NonNull KuboSQLHelper helper, @NonNull Modification mod) {
+        ContentValues cv = new ContentValues();
+        cv.put(KEY_LASTUP, mod.lastModified);
+
+        return helper.getWritableDatabase().update(
+            TABLE_NAME, cv, KEY_NUMBER + "=" + mod.threadNumber, null
         );
     }
 }

@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -60,8 +61,8 @@ import butterknife.ButterKnife;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-public class ThreadsFragment extends Fragment
-        implements CatalogDirectRecycler.OnClickListener, SearchView.OnQueryTextListener {
+public class ThreadsFragment extends Fragment implements CatalogDirectRecycler.OnClickListener,
+        SearchView.OnQueryTextListener, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG    = "ThreadsFragment";
     private static final String LIST   = "com.github.ar3s3ru.kubo.views.fragments.threads.list";
@@ -74,16 +75,17 @@ public class ThreadsFragment extends Fragment
     private static final int LIST_COLUMNS = 1;
 
     /** Members variables */
-    @BindView(R.id.fragment_threads_viewflipper)  ViewFlipper  mViewFlipper;
-    @BindView(R.id.fragment_threads_recyclerview) RecyclerView mRecycler;
+    @BindView(R.id.fragment_threads_viewflipper)  ViewFlipper        mViewFlipper;
+    @BindView(R.id.fragment_threads_recyclerview) RecyclerView       mRecycler;
+    @BindView(R.id.fragment_threads_swiper)       SwipeRefreshLayout mSwiper;
 
     @Inject Toast mToast;
     @Inject KuboSQLHelper mHelper;
 
     private String  mBoardTitle;
     private String  mBoardPath;
-    private int     mBoardPrimaryKey;
-    private boolean isGridView = false;
+
+    private boolean isGridView  = false;
 
     private List<ThreadsList> mList;
 
@@ -135,6 +137,9 @@ public class ThreadsFragment extends Fragment
             mList = Parcels.unwrap(savedInstanceState.getParcelable(LIST));
             mLayoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(LAYOUT));
         }
+
+        // Set swipe callback
+        mSwiper.setOnRefreshListener(this);
 
         return view;
     }
@@ -189,6 +194,11 @@ public class ThreadsFragment extends Fragment
     }
 
     @Override
+    public void onRefresh() {
+        startRequestingCatalog(true);
+    }
+
+    @Override
     public void onClick(int threadNumber) {
         ((Listener) getActivity()).onThreadClick(mBoardPath, threadNumber);
     }
@@ -204,7 +214,7 @@ public class ThreadsFragment extends Fragment
 
     @Override
     public void onFollowingThread(int position, int threadNumber) {
-        KuboTableThread.setFollowingThread(mHelper, mAdapter.getThread(position));
+        KuboTableThread.setFollowingThread(mHelper, mAdapter.getThread(position), mBoardPath);
         mAdapter.setFollowing(threadNumber);
 
         // Notifying Activity
@@ -251,8 +261,14 @@ public class ThreadsFragment extends Fragment
 
     // TODO: Javadoc
     private void setUpRecyclerView() {
-        // Set up adapter
-        mAdapter = new CatalogDirectRecycler(this, mHelper, mList, mBoardPath);
+        if (mSwiper.isRefreshing()) {
+            mAdapter.setList(mList);
+            mSwiper.setRefreshing(false);
+        } else {
+            // Set up adapter
+            mAdapter = new CatalogDirectRecycler(this, mHelper, mList, mBoardPath);
+        }
+
         // Set up Recycler
         mRecycler.setAdapter(mAdapter);
         mRecycler.setLayoutManager(mLayoutManager);
@@ -299,15 +315,14 @@ public class ThreadsFragment extends Fragment
     }
 
     // TODO: Javadoc
-    public void setUpContents(@NonNull String title, @NonNull String path, int primaryKey) {
+    public void setUpContents(@NonNull String title, @NonNull String path) {
         mBoardTitle      = title;
         mBoardPath       = path;
-        mBoardPrimaryKey = primaryKey;
     }
 
     // TODO: Javadoc
-    public void updateContents(String title, String path, int primaryKey) {
-        setUpContents(title, path, primaryKey);
+    public void updateContents(String title, String path) {
+        setUpContents(title, path);
         startRequestingCatalog(true);
     }
 

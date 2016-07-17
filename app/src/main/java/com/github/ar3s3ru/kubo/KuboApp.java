@@ -1,7 +1,9 @@
 package com.github.ar3s3ru.kubo;
 
 import android.app.Application;
+import android.content.Intent;
 
+import com.github.ar3s3ru.kubo.backend.controller.KuboPushService;
 import com.github.ar3s3ru.kubo.components.DaggerKuboAppComponent;
 import com.github.ar3s3ru.kubo.components.DaggerKuboNetComponent;
 import com.github.ar3s3ru.kubo.components.KuboAppComponent;
@@ -28,6 +30,9 @@ import com.github.ar3s3ru.kubo.modules.KuboNetModule;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
+/**
+ * Application class for Kubo.
+ */
 public class KuboApp extends Application {
 
     /** Dagger Components */
@@ -54,6 +59,17 @@ public class KuboApp extends Application {
                 .kuboAppModule(mAppModule)
                 .kuboDBModule(mDBModule)
                 .build();
+
+        // Start PushService
+        startService(new Intent(this, KuboPushService.class));
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+
+        // Stop PushService
+        stopService(new Intent(this, KuboPushService.class));
     }
 
     /**

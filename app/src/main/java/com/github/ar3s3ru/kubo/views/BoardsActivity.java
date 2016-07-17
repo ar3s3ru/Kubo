@@ -127,21 +127,20 @@ public class BoardsActivity extends KuboActivity
     /**
      * Board selected, starts intent to ThreadsActivity
      * @param starred If board selected is starred or not
-     * @param id Board id
      * @param position Board position into the adapter
      */
     @Override
-    public void onGoToSelected(String title, boolean starred, int id, int position) {
+    public void onGoToSelected(String title, boolean starred, int position) {
         final String path = starred ?
                 mStarAdapter.getItemPath(position) :
                 mUnstarAdapter.getItemPath(position);
         // Start new ContentsActivity
-        if (path != null) { onClick(title, path, id); }
+        if (path != null) { onClick(title, path); }
     }
 
     @Override
-    public void onClick(@NonNull String title, @NonNull String path, int id) {
-        ContentsActivity.startContentsActivity(this, title, path, id);
+    public void onClick(@NonNull String title, @NonNull String path) {
+        ContentsActivity.startContentsActivity(this, title, path);
     }
 
     @Override

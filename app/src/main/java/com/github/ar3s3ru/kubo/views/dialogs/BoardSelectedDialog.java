@@ -114,7 +114,7 @@ public class BoardSelectedDialog extends DialogFragment implements DialogInterfa
 
         if (which == 0) {
             // Open selected board
-            mListener.onGoToSelected(mTitle, mBoardStarred, mID, mPosition);
+            mListener.onGoToSelected(mTitle, mBoardStarred, mPosition);
         } else if (mBoardStarred) {
             // Unstarring
             mListener.onUnstarSelected(mID, mPosition);
@@ -125,7 +125,7 @@ public class BoardSelectedDialog extends DialogFragment implements DialogInterfa
     }
 
     public interface Listener {
-        void onGoToSelected(String title, boolean starred, int id, int position);
+        void onGoToSelected(String title, boolean starred, int position);
         void onStarSelected(int id, int position);
         void onUnstarSelected(int id, int position);
     }

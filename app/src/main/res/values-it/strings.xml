@@ -8,4 +8,5 @@
     <string name="boards_activity_label">Kubo - Scegli una board</string>
     <string name="menu_threads_viewmode">Cambia visualizzazione</string>
     <string name="menu_threads_search">Cerca</string>
+    <string name="notification_text">Nuovi messaggi!</string>
 </resources>

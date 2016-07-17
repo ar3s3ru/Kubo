@@ -33,7 +33,7 @@ import android.view.View;
  */
 public class ListItemDivider extends RecyclerView.ItemDecoration {
     // Using member variables to deal with onDraw allocations overhead
-    private int spaceLeft, height;
+    private final int spaceLeft, height;
     private int childIdx, childCount;
 
     private final Paint mPaint;

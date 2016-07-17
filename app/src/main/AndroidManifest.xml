@@ -5,34 +5,34 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".KuboApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/KuboTheme"
-        android:name=".KuboApp">
-
+        android:theme="@style/KuboTheme">
         <activity
             android:name=".views.StartActivity"
             android:noHistory="true"
             android:theme="@style/KuboTheme.StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".views.BoardsActivity"
             android:label="@string/boards_activity_label" />
-
-        <activity android:name=".views.ContentsActivity"
+        <activity
+            android:name=".views.ContentsActivity"
             android:theme="@style/KuboTheme.ContentsActivity" />
-
         <service
             android:name=".backend.controller.KuboRESTService"
             android:exported="false" />
-
+        <service
+            android:name=".backend.controller.KuboPushService"
+            android:exported="false" />
     </application>
 
 </manifest>

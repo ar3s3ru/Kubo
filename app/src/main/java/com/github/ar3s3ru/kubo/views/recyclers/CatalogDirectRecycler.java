@@ -158,7 +158,7 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
     private void downloadImageForHolder(@NonNull ImageView imageView,
                                         @NonNull Thread thread) {
         Glide.with(imageView.getContext())
-                .load(getThumbnailURL(thread.fileExtension, thread.properFilename))
+                .load(getThumbnailURL(thread.properFilename))
                 .error(R.color.colorPrimaryDark)
                 .placeholder(R.color.colorAccent)
                 .into(imageView);
@@ -167,12 +167,10 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
     /**
      * Get image string URL for thumbnail downloading
      * @param fileName Thumbnail filename
-     * @param fileExtension Thumbnail file extension
-     * @return
+     * @return Thumbnail URL string
      */
-    private String getThumbnailURL(@NonNull String fileExtension, long fileName) {
-        // TODO: consider generalizing behavior
-        return "https://t.4cdn.org/" + mBoard + "/" + fileName + fileExtension;
+    private String getThumbnailURL(long fileName) {
+        return "https://t.4cdn.org/" + mBoard + "/" + fileName + "s.jpg";
     }
 
     /**
@@ -187,7 +185,6 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
             holder.comment.setText(Html.fromHtml(thread.comment));
         }
 
-        // TODO: change layout!
         holder.name.setText(thread.name);
         holder.number.setText(String.format("%d", thread.number));
         holder.images.setText(String.format("%d", thread.images));
@@ -208,6 +205,26 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
         holder.name.setText(thread.name);
 
         downloadImageForHolder(holder.thumbnail, thread);
+    }
+
+    /**
+     * Set a new ThreadsList list as adapter dataset
+     * @param list New threads list
+     */
+    public void setList(@NonNull List<ThreadsList> list) {
+
+        // Clear old list
+        oList.clear();
+
+        // Add pages
+        for (ThreadsList threadList : list) {
+            oList.addAll(threadList.threads);
+        }
+
+        // Setting up filtered list
+        mList = oList;
+        // Notifying changes
+        notifyDataSetChanged();
     }
 
     /**
@@ -289,7 +306,7 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
         @BindView(R.id.catalog_thread_bookmark) ImageView bookmark;
         @BindView(R.id.catalog_thread_settings) ImageView settings;
 
-        WeakReference<OnClickListener> listener;
+        final WeakReference<OnClickListener> listener;
 
         ViewHolder(@NonNull WeakReference<OnClickListener> listener,
                    @NonNull View itemView) {
@@ -315,6 +332,7 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
             }
         }
 
+        // TODO: Javadoc
         private void handleBookmarkClicked(@NonNull OnClickListener listener) {
             if ((boolean) bookmark.getTag(BOOKMARK_KEY)) {
                 CatalogDirectRecycler.setBookmarkIcon(bookmark, false);

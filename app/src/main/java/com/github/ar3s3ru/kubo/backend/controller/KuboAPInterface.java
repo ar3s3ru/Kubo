@@ -1,6 +1,7 @@
 package com.github.ar3s3ru.kubo.backend.controller;
 
 import com.github.ar3s3ru.kubo.backend.models.BoardsList;
+import com.github.ar3s3ru.kubo.backend.models.ModificationList;
 import com.github.ar3s3ru.kubo.backend.models.RepliesList;
 import com.github.ar3s3ru.kubo.backend.models.ThreadsList;
 
@@ -55,4 +56,12 @@ public interface KuboAPInterface {
      */
     @GET("{board}/thread/{thread}.json")
     Call<RepliesList> getReplies(@Path("board") String board, @Path("thread") int threadNumber);
+
+    /**
+     * Get JSON representation of board's threads last modification list
+     * @param board Board path
+     * @return List of threads' last modification
+     */
+    @GET("{board}/threads.json")
+    Call<List<ModificationList>> getUpdates(@Path("board") String board);
 }

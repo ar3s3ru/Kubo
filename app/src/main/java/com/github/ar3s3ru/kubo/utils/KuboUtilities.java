@@ -1,7 +1,12 @@
 package com.github.ar3s3ru.kubo.utils;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
+
+import com.github.ar3s3ru.kubo.backend.controller.KuboEvents;
 
 /**
  * Copyright (C) 2016  Danilo Cianfrone
@@ -33,6 +38,17 @@ public class KuboUtilities {
      */
     public static boolean convertFromInt(int value) {
         return value != 0;
+    }
+
+    /**
+     * Notify the application PushService and other components listening that following threads
+     * has been updated, therefore all the actual queries needs to be re-done
+     * @param context Application context to send local broadcast message
+     */
+    // TODO: move it
+    public static void notifyFollowingThreadsChanged(@NonNull Context context) {
+        LocalBroadcastManager.getInstance(context)
+                .sendBroadcast(new Intent(KuboEvents.FOLLOWING_UPDATE));
     }
 
     /**

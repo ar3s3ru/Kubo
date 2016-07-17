@@ -45,11 +45,11 @@ public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.
     private       Cursor                  mCursor;
     private       int                     mCount;
 
-    private boolean isStar;
+    private final boolean isStar;
 
     public BoardsListRecycler(boolean star, @NonNull KuboSQLHelper helper, @NonNull Listener listener) {
         isStar    = star;
-        mListener = new WeakReference<Listener>(listener);
+        mListener = new WeakReference<>(listener);
 
         // Updating cursor value
         updateCursor(helper);
@@ -144,7 +144,7 @@ public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.
 
     public interface Listener {
         void onLongClick(int id, int position, boolean starred, @NonNull String title);
-        void onClick(@NonNull String title, @NonNull String path, int id);
+        void onClick(@NonNull String title, @NonNull String path);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder
@@ -200,7 +200,7 @@ public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.
             final Listener listener = mListener.get();
 
             if (id != -1 && listener != null && mPath != null) {
-                listener.onClick(title.getText().toString(), mPath, id);
+                listener.onClick(title.getText().toString(), mPath);
             }
         }
 

@@ -39,6 +39,7 @@ public class KuboEvents {
     public static final String CATALOG_STATUS = "com.github.ar3s3ru.kubo.event.catalog.status";
     public static final String CATALOG_RESULT = "com.github.ar3s3ru.kubo.event.catalog.result";
 
+    // TODO: ERROR HANDLING!
     public static final String CATALOG_ERROR  = "com.github.ar3s3ru.kubo.event.catalog.error";
     public static final String CATALOG_ERRCOD = "com.github.ar3s3ru.kubo.event.catalog.errcod";
 
@@ -49,6 +50,12 @@ public class KuboEvents {
     public static final String REPLIES_STATUS = "com.github.ar3s3ru.kubo.event.replies.status";
     public static final String REPLIES_RESULT = "com.github.ar3s3ru.kubo.event.replies.result";
 
+    // TODO: ERROR HANDLING!
     public static final String REPLIES_ERROR  = "com.github.ar3s3ru.kubo.event.replies.error";
     public static final String REPLIES_ERRCOD = "com.github.ar3s3ru.kubo.event.replies.errcod";
+
+    /**
+     * Notifying followed thread update
+     */
+    public static final String FOLLOWING_UPDATE = "com.github.ar3s3ru.kubo.event.update.follow";
 }

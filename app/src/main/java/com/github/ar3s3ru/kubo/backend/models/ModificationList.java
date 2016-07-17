@@ -1,14 +1,8 @@
-package com.github.ar3s3ru.kubo.components;
+package com.github.ar3s3ru.kubo.backend.models;
 
-import com.github.ar3s3ru.kubo.backend.controller.KuboPushService;
-import com.github.ar3s3ru.kubo.backend.controller.KuboRESTService;
-import com.github.ar3s3ru.kubo.modules.KuboAppModule;
-import com.github.ar3s3ru.kubo.modules.KuboDBModule;
-import com.github.ar3s3ru.kubo.modules.KuboNetModule;
+import com.google.gson.annotations.SerializedName;
 
-import javax.inject.Singleton;
-
-import dagger.Component;
+import java.util.List;
 
 /**
  * Copyright (C) 2016  Danilo Cianfrone
@@ -28,9 +22,10 @@ import dagger.Component;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-@Singleton
-@Component(modules = {KuboAppModule.class, KuboNetModule.class, KuboDBModule.class})
-public interface KuboNetComponent {
-    void inject(KuboRESTService service);
-    void inject(KuboPushService service);
+public class ModificationList {
+    @SerializedName("page")
+    public int page;
+
+    @SerializedName("threads")
+    public List<Modification> threads;
 }
