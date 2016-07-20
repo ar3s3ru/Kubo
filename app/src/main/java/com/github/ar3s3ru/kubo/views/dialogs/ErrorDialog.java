@@ -9,6 +9,8 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 
+import com.github.ar3s3ru.kubo.R;
+
 /**
  * Copyright (C) 2016  Danilo Cianfrone
  * <p>
@@ -82,9 +84,9 @@ public class ErrorDialog extends DialogFragment implements DialogInterface.OnCli
         mErrorCode  = takeArgs.getInt(CODE, 0);
 
         return builder.setTitle("Ops...")
-                    .setMessage("Error (" + mErrorCode + "): " + mError)
-                    .setPositiveButton("Retry", this)
-                    .setNegativeButton("Exit", this)
+                    .setMessage(getResources().getString(R.string.error_dialog_message, mErrorCode, mError))
+                    .setPositiveButton(R.string.error_dialog_positive, this)
+                    .setNegativeButton(R.string.error_dialog_negative, this)
                     .create();
     }
 

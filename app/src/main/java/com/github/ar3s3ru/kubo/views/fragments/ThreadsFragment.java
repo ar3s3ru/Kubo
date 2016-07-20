@@ -234,6 +234,10 @@ public class ThreadsFragment extends Fragment implements CatalogDirectRecycler.O
         startRequestingCatalog();
     }
 
+    /**
+     * Adapter callback to notify a thread click, so propagate it to the Listener/Activity
+     * @param threadNumber Clicked thread number
+     */
     @Override
     public void onClick(int threadNumber) {
         // Thread clicked, callback to the activity to create a RepliesFragment
@@ -242,6 +246,10 @@ public class ThreadsFragment extends Fragment implements CatalogDirectRecycler.O
         );
     }
 
+    /**
+     * Callback for unfollowed thread state change
+     * @param threadNumber Unfollowed thread number
+     */
     @Override
     public void onUnfollowingThread(int threadNumber) {
         // Change database and adapter state
@@ -252,6 +260,11 @@ public class ThreadsFragment extends Fragment implements CatalogDirectRecycler.O
         ((Listener) getActivity()).onChangeFollowingState();
     }
 
+    /**
+     * Callback for followed thread state change
+     * @param position Followed thread position into the adapter
+     * @param threadNumber Followed thread number
+     */
     @Override
     public void onFollowingThread(int position, int threadNumber) {
         // Change database and adapter state
@@ -350,8 +363,8 @@ public class ThreadsFragment extends Fragment implements CatalogDirectRecycler.O
         // Error received, show a dialog
         ErrorDialog.newInstance(
                 intent,
-                intent.getStringExtra(KuboEvents.BOARDS_ERR),
-                intent.getIntExtra(KuboEvents.BOARDS_ERRCOD, 0)
+                intent.getStringExtra(KuboEvents.CATALOG_ERROR),
+                intent.getIntExtra(KuboEvents.CATALOG_ERRCOD, 0)
         ).show(getActivity().getSupportFragmentManager(), ErrorDialog.TAG);
     }
 

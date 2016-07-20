@@ -117,7 +117,7 @@ public class KuboRESTService extends IntentService implements Callback {
     @Override
     public void onFailure(Call call, Throwable t) {
         t.printStackTrace();
-        handleErrors(call, t.getMessage(), 500);
+        handleErrors(call, t.getMessage(), -1);
     }
 
     /**
@@ -152,7 +152,9 @@ public class KuboRESTService extends IntentService implements Callback {
 
     /**
      * Handle failed HTTP responses (300/400/500 codes).
-     * @param call Failed HTTP call
+     * @param call Failed HTTP Retrofit call
+     * @param error String encoded error
+     * @param errorCode HTTP error code
      */
     private void handleErrors(@NonNull Call call, @NonNull String error, int errorCode) {
         // Intent to send
@@ -171,9 +173,11 @@ public class KuboRESTService extends IntentService implements Callback {
             // getCatalog() error
             intent = newErrorIntent(KuboEvents.CATALOG, KuboEvents.CATALOG_STATUS,
                     KuboEvents.CATALOG_ERROR, KuboEvents.CATALOG_ERRCOD, error, errorCode);
+            // ---------------------------------------------------------------- //
         } else if (listSegments.get(listSegments.size() - 2).equals("thread")) {
             intent = newErrorIntent(KuboEvents.REPLIES, KuboEvents.REPLIES_STATUS,
                     KuboEvents.REPLIES_ERROR, KuboEvents.REPLIES_ERRCOD, error, errorCode);
+            // ---------------------------------------------------------------- //
         }
 
         if (intent != null) {
@@ -196,6 +200,7 @@ public class KuboRESTService extends IntentService implements Callback {
             LocalBroadcastManager
                     .getInstance(this)
                     .sendBroadcast(intent.putExtra(KuboEvents.BOARDS_STATUS, true));
+            // ---------------------------------------------------------------- //
         } catch (SQLException ex) {
             // Oh... Database refused to oblige
             LocalBroadcastManager

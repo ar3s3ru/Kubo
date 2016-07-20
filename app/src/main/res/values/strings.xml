@@ -8,4 +8,8 @@
     <string name="menu_threads_viewmode">Switch view mode</string>
     <string name="menu_threads_search">Search</string>
     <string name="notification_text">New messages!</string>
+    <string name="menu_replies_bookmark">Bookmark</string>
+    <string name="error_dialog_positive">Retry</string>
+    <string name="error_dialog_negative">Exit</string>
+    <string name="error_dialog_message">There has been an error.\\nError code %1$d: %2$s</string>
 </resources>

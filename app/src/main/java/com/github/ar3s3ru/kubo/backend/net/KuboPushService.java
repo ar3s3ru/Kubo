@@ -34,7 +34,9 @@ import javax.inject.Inject;
 
 import retrofit2.Response;
 
-// TODO: Javadoc
+/**
+ * Android Service for Push notifications.
+ */
 public class KuboPushService extends Service  {
 
     private static final String TAG = "KuboPushService";
@@ -78,6 +80,9 @@ public class KuboPushService extends Service  {
         mThread.interrupt();
     }
 
+    /**
+     * BroadcastReceiver for (un)favorite threads changes.
+     */
     private static class FavoriteThreadChangedReceiver extends BroadcastReceiver {
 
         private final WeakReference<PushThread> rThread;
@@ -97,6 +102,11 @@ public class KuboPushService extends Service  {
         }
     }
 
+    /**
+     * Thread subclass for concurrent execution of updates routine
+     * (it downloads a list of threads' modification time and check them against
+     * followed threads' last modification time - updates them if necessary).
+     */
     private static class PushThread extends Thread {
 
         private static final int    WAITING_TIME    = 10000;  // 10 seconds
@@ -107,10 +117,12 @@ public class KuboPushService extends Service  {
         private final KuboSQLHelper       mHelper;
         private final NotificationManager mNotifManager;
 
+        // We use an HashMap to store all the followed threads for a certain board path,
+        // and iterate through it for update checks
         private HashMap<String, ArrayList<Modification>> mReferences;
-
+        // Flags if a notifyChangedFollowedThreads() has been issued
         private boolean changedFavorites = true;
-
+        // Actual followed threads' cursor
         private Cursor actualCursor;
 
         PushThread(@NonNull Context serviceContext,
@@ -134,10 +146,6 @@ public class KuboPushService extends Service  {
 
                     // Some thread has been unfollowed... or it is first cycle run
                     if (changedFavorites) {
-                        // Closing actual cursor if is not null
-                        if (actualCursor != null) {
-                            actualCursor.close();
-                        }
                         // Grabbing initial followed threads
                         actualCursor = KuboTableThread.getFollowedThreads(mHelper);
                         // Building initial references
@@ -175,9 +183,14 @@ public class KuboPushService extends Service  {
         }
 
         // TODO: move it to KuboTableThread?
+        /**
+         * Builds a References HashMap from the followed threads' cursor,
+         * then close the said cursor ('cause we don't need it anymore).
+         */
         private void buildReferences() {
             // New HashMap to use
             mReferences = new HashMap<>();
+
             // Looking up the actual cursor
             for (int i = 0; i < actualCursor.getCount(); i++) {
                 final String            board = KuboTableThread.getThreadBoard(actualCursor, i);
@@ -193,20 +206,39 @@ public class KuboPushService extends Service  {
                         KuboTableThread.getLastUpdate(actualCursor, i)
                 ));
             }
+
+            // Close the cursor
+            actualCursor.close();
         }
 
+        /**
+         * Sends a notification to the user with a PendingIntent
+         * for the specified thread
+         * @param board Board path
+         * @param threadNumber Updated thread number
+         */
         private void sendNotification(@NonNull String board, int threadNumber) {
+            // New intent
             Intent intent = ContentsActivity.newContentsActivityIntent(
                     sContext, board, board, threadNumber
             );
+            // New pending intent (FLAG_UPDATE_CURRENT updates the previous Activity intent)
             PendingIntent pIntent = PendingIntent.getActivity(
                     sContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT
             );
+            // New app notification
             Notification notif = buildNotification(pIntent, board, threadNumber);
-
+            // Send notification to the NotificationManager
             mNotifManager.notify(threadNumber, notif);
         }
 
+        /**
+         * Build an app notification from a PendingIntent
+         * @param intent PendingIntent used for notification
+         * @param board Board path used for title
+         * @param threadNumber Thread number used for title
+         * @return New app notification ready to be sent to the NotificationManager
+         */
         private Notification buildNotification(@NonNull PendingIntent intent,
                                                @NonNull String board,
                                                int threadNumber) {
@@ -221,15 +253,24 @@ public class KuboPushService extends Service  {
                     .build();
         }
 
+        /**
+         * Response handler for the HTTP API calling
+         * @param response HTTP Retrofit response
+         * @param board Board path
+         */
         private void handleApiCalling(@NonNull Response<List<ModificationList>> response,
                                       @NonNull String board) {
+
             if (response.isSuccessful()) {
+                // New modification list (downloaded)
                 final List<ModificationList>  list  = response.body();
+                // List of followed threads' last modification
                 final ArrayList<Modification> lMods = mReferences.get(board);
 
+                // Check all modifications
                 for (ModificationList mlist : list) {
-                    // Check all modifications
                     for (Modification mod : mlist.threads) {
+                        // ------------------------------------------------------ //
                         final int idx = lMods.indexOf(mod);
                         // If following threads are into mlist, idx != -1
                         if (idx != - 1) {
@@ -245,6 +286,7 @@ public class KuboPushService extends Service  {
                                 sendNotification(board, mod.threadNumber);
                             }
                         }
+                        // ------------------------------------------------------ //
                     }
                 }
 
@@ -253,6 +295,10 @@ public class KuboPushService extends Service  {
             }
         }
 
+        /**
+         * Notifies that a thread has been followed/unfollowed, so for the next update cycle
+         * the thread should rebuild its references
+         */
         synchronized void notifyChangedFollowedThreads() {
             changedFavorites = true;
         }

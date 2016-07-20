@@ -83,15 +83,17 @@ public class RepliesFragment extends Fragment {
     }
 
     /**
-     *
-     * @param board
-     * @param threadNumber
-     * @return
+     * Return a new instance of RepliesFragment to show posts of the thread located into
+     * /{board}/{threadNumber}
+     * @param board Board path
+     * @param threadNumber Thread number
+     * @return New RepliesFragment instance
      */
     public static RepliesFragment newInstance(@NonNull String board, int threadNumber) {
         RepliesFragment fragment = new RepliesFragment();
         Bundle args = new Bundle();
 
+        // Set arguments
         args.putString(BOARD, board);
         args.putInt(THNUM, threadNumber);
 
@@ -193,8 +195,8 @@ public class RepliesFragment extends Fragment {
     }
 
     /**
-     *
-     * @param replies
+     * Sets up the recycler adapter with the specified replies list
+     * @param replies New replies list
      */
     private void setUpRecyclerAdapter(@NonNull RepliesList replies) {
         // Update mList with the new replies
@@ -214,16 +216,17 @@ public class RepliesFragment extends Fragment {
     }
 
     /**
-     *
+     * Handles an HTTP replies download success by setting up/refreshing the (existing) adapter
      * @param replies
      */
     private void handleRepliesSuccess(@NonNull RepliesList replies) {
+        // Update (or set up) the adapter
         setUpRecyclerAdapter(replies);
     }
 
     /**
-     *
-     * @param intent
+     * Handle an HTTP failure response with a new ErrorDialog for user notification
+     * @param intent Intent used from the BroadcastReceiver
      */
     private void handleRepliesError(@NonNull Intent intent) {
         ErrorDialog.newInstance(
@@ -234,9 +237,9 @@ public class RepliesFragment extends Fragment {
     }
 
     /**
-     *
-     * @param board
-     * @param threadNumber
+     * Update state contents of the RepliesFragment (which is not already destroyed)
+     * @param board Board path
+     * @param threadNumber Thread number
      */
     public void updateContents(@NonNull String board, int threadNumber) {
         // Update new contents
@@ -247,6 +250,10 @@ public class RepliesFragment extends Fragment {
         // If the fragment is visible, calls onResume which handles notification cancel
         // and adapter dataset update
         if (isVisible()) { onResume(); }
+    }
+
+    public interface Listener {
+        
     }
 
     /**

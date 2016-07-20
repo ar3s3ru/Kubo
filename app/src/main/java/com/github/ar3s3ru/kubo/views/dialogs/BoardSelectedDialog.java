@@ -92,9 +92,11 @@ public class BoardSelectedDialog extends DialogFragment implements DialogInterfa
                 .setNegativeButton(R.string.text_close, null);
 
         if (mBoardStarred) {
+            // Select starred board options
             builder.setItems(R.array.star_board_selected_actions, this);
         }
         else {
+            // Select unstarred board options
             builder.setItems(R.array.unstar_board_selected_actions, this);
         }
 
