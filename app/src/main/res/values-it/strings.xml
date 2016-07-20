@@ -2,8 +2,8 @@
 <resources>
     <string name="app_name">Kubo</string>
     <string name="no_elements">Non ci sono elementi qui...</string>
-    <string name="header_starred">Preferiti</string>
-    <string name="header_unstarred">Altri</string>
+    <string name="header_favorites">Preferiti</string>
+    <string name="header_unfavorites">Altri</string>
     <string name="text_close">Annulla</string>
     <string name="boards_activity_label">Kubo - Scegli una board</string>
     <string name="menu_threads_viewmode">Cambia visualizzazione</string>
@@ -13,4 +13,5 @@
     <string name="error_dialog_positive">Riprova</string>
     <string name="error_dialog_negative">Esci</string>
     <string name="error_dialog_message">C\'è stato un errore.\\nCodice errore %1$d: %2$s</string>
+    <string name="replies_menu_followed">Seguito</string>
 </resources>

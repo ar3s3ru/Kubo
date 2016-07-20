@@ -139,11 +139,28 @@ public class BoardsListRecycler extends RecyclerView.Adapter<BoardsListRecycler.
         if (position >= 0 && position < mCount) {
             return KuboTableBoard.getBoard(mCursor, position);
         }
+        // Return null if position is not into the list bounds
         return null;
     }
 
+    /**
+     * Adapter listener for onClick and onLongClick callbacks propagation.
+     */
     public interface Listener {
-        void onLongClick(int id, int position, boolean starred, @NonNull String title);
+        /**
+         * Callback for onLongClick listener
+         * @param id Board id
+         * @param position Board position into the adapter dataset
+         * @param favorited True if the board is favorited, false otherwise
+         * @param title Board title
+         */
+        void onLongClick(int id, int position, boolean favorited, @NonNull String title);
+
+        /**
+         * Callback for onClick listener
+         * @param title Board title
+         * @param path Board path
+         */
         void onClick(@NonNull String title, @NonNull String path);
     }
 

@@ -12,6 +12,6 @@
     <color name="notifyTextColor">#757575</color>
     <color name="titleTextColor">#006064</color>
 
-    <color name="colorStarredTab">#ffab40</color>
-    <color name="colorUnstarredTab">#00838F</color>
+    <color name="colorFavoriteTab">#ffab40</color>
+    <color name="colorUnfavoriteTab">#00838F</color>
 </resources>

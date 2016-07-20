@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Kubo</string>
     <string name="no_elements">There are no elements here...</string>
-    <string name="header_starred">Starred</string>
-    <string name="header_unstarred">Others</string>
+    <string name="header_favorites">Favorites</string>
+    <string name="header_unfavorites">Others</string>
     <string name="text_close">Close</string>
     <string name="boards_activity_label">Kubo - Select a board</string>
     <string name="menu_threads_viewmode">Switch view mode</string>
@@ -12,4 +12,5 @@
     <string name="error_dialog_positive">Retry</string>
     <string name="error_dialog_negative">Exit</string>
     <string name="error_dialog_message">There has been an error.\\nError code %1$d: %2$s</string>
+    <string name="replies_menu_followed">Followed</string>
 </resources>

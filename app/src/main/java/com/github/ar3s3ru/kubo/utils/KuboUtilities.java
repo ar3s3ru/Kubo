@@ -32,6 +32,16 @@ import com.squareup.picasso.Picasso;
  * As such, SharedPreferences relevant routines are declared here.
  */
 public class KuboUtilities {
+
+    /**
+     * Get image string URL for thumbnail downloading
+     * @param fileName Thumbnail filename
+     * @return Thumbnail URL string
+     */
+    private static String getThumbnailURL(@NonNull String board, long fileName) {
+        return "https://i.4cdn.org/" + board + "/" + fileName + "s.jpg";
+    }
+
     /**
      * Converts an integer into a boolean, C-way
      * @param value integer "boolean" value
@@ -61,15 +71,6 @@ public class KuboUtilities {
                     .placeholder(R.color.colorAccent)
                     .into(imageView);
         }
-    }
-
-    /**
-     * Get image string URL for thumbnail downloading
-     * @param fileName Thumbnail filename
-     * @return Thumbnail URL string
-     */
-    public static String getThumbnailURL(@NonNull String board, long fileName) {
-        return "https://i.4cdn.org/" + board + "/" + fileName + "s.jpg";
     }
 
     /**

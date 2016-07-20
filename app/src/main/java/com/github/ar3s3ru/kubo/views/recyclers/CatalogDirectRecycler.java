@@ -46,8 +46,8 @@ import butterknife.ButterKnife;
 public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRecycler.ViewHolder>
     implements View.OnClickListener {
 
-    public static final int VIEWTYPE_LIST = 0;
-    public static final int VIEWTYPE_GRID = 1;
+    private static final int VIEWTYPE_LIST = 0;
+    private static final int VIEWTYPE_GRID = 1;
 
     private static final int BOOKMARK_KEY  = -1;
 
@@ -241,12 +241,34 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
         mFollowed.remove(threadNumber);
     }
 
+    /**
+     * Listener interface for onClick events propagation and handling
+     */
     public interface OnClickListener {
+
+        /**
+         * Callback for thread clicking
+         * @param threadNumber Clicked thread number
+         */
         void onClick(int threadNumber);
+
+        /**
+         * Callback for thread state change into 'Following'
+         * @param position Thread position into the adapter dataset
+         * @param threadNumber Thread number
+         */
         void onFollowingThread(int position, int threadNumber);
+
+        /**
+         * Callback for thread state change into 'Unfollowing'
+         * @param threadNumber Thread number
+         */
         void onUnfollowingThread(int threadNumber);
     }
 
+    /**
+     * Abstract ViewHolder for the Catalog adapter
+     */
     static abstract class ViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
@@ -280,18 +302,26 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
             }
         }
 
-        // TODO: Javadoc
+        /**
+         * Handle bookmark icon click
+         * @param listener Listener for event handling (should be the ThreadsFragment)
+         */
         private void handleBookmarkClicked(@NonNull OnClickListener listener) {
+            // Is followed, now unfollow
             if ((boolean) bookmark.getTag(BOOKMARK_KEY)) {
                 CatalogDirectRecycler.setBookmarkIcon(bookmark, false);
                 listener.onUnfollowingThread((int) getItemId());
             } else {
+                // Is unfollowed, now follow
                 CatalogDirectRecycler.setBookmarkIcon(bookmark, true);
                 listener.onFollowingThread(getAdapterPosition(), (int) getItemId());
             }
         }
 
-        // TODO: Javadoc
+        /**
+         * Abstract method for ViewHolder binding (called into Adapter.onBindViewHolder)
+         * @param thread Thread object to bind
+         */
         abstract void onBindViewHolder(@NonNull Thread thread);
     }
 

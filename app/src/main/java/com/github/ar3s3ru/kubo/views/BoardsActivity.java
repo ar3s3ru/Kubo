@@ -51,12 +51,12 @@ public class BoardsActivity extends KuboActivity
     @Inject SharedPreferences mSharedPrefs;
 
     @BindView(R.id.activity_main_recyclerview_star_boards)
-    RecyclerView mStarRecycler;
+    RecyclerView mFavoriteRecycler;
 
     @BindView(R.id.activity_main_recyclerview_unstar_boards)
-    RecyclerView mUnstarRecycler;
+    RecyclerView mUnfavoriteRecycler;
 
-    private BoardsListRecycler mStarAdapter, mUnstarAdapter;
+    private BoardsListRecycler mFavoriteAdapter, mUnfavoriteAdapter;
     private BottomBar mBottomBar;
 
     @Override
@@ -71,8 +71,8 @@ public class BoardsActivity extends KuboActivity
         ButterKnife.bind(this);
 
         // Setting up adapters
-        mStarAdapter   = new BoardsListRecycler(true, mHelper, this);
-        mUnstarAdapter = new BoardsListRecycler(false, mHelper, this);
+        mFavoriteAdapter = new BoardsListRecycler(true, mHelper, this);
+        mUnfavoriteAdapter = new BoardsListRecycler(false, mHelper, this);
 
         settingUpBottomBar(savedInstanceState); // Setting up BottomBar
         flagReadyToRecyclers();                 // Set up recyclers
@@ -87,53 +87,53 @@ public class BoardsActivity extends KuboActivity
     @Override
     public void onMenuTabReSelected(@IdRes int menuItemId) {
         // On tab reselection, go up
-        if (menuItemId == R.id.boards_activity_menu_starred) {
-            mStarRecycler.smoothScrollToPosition(0);
-        } else if (menuItemId == R.id.boards_activity_menu_unstarred) {
-            mUnstarRecycler.smoothScrollToPosition(0);
+        if (menuItemId == R.id.boards_activity_menu_favorites) {
+            mFavoriteRecycler.smoothScrollToPosition(0);
+        } else if (menuItemId == R.id.boards_activity_menu_unfavorites) {
+            mUnfavoriteRecycler.smoothScrollToPosition(0);
         }
     }
 
     @Override
     public void onMenuTabSelected(@IdRes int menuItemId) {
         // Change RecyclerViews visibility
-        if (menuItemId == R.id.boards_activity_menu_starred) {
-            switchVisibility(mUnstarRecycler, mStarRecycler);
-        } else if (menuItemId == R.id.boards_activity_menu_unstarred) {
-            switchVisibility(mStarRecycler, mUnstarRecycler);
+        if (menuItemId == R.id.boards_activity_menu_favorites) {
+            switchVisibility(mUnfavoriteRecycler, mFavoriteRecycler);
+        } else if (menuItemId == R.id.boards_activity_menu_unfavorites) {
+            switchVisibility(mFavoriteRecycler, mUnfavoriteRecycler);
         }
     }
 
     /**
-     * Notifies that a board has been unstarred
-     * @param position Starred board position
+     * Notifies that a board has been unfavorite
+     * @param position Favorite board position
      */
     @Override
-    public void onUnstarSelected(int id, int position) {
-        mStarAdapter.removeItem(mHelper, id, position);
-        mUnstarAdapter.updateCursor(mHelper);
+    public void onUnfavoriteSelected(int id, int position) {
+        mFavoriteAdapter.removeItem(mHelper, id, position);
+        mUnfavoriteAdapter.updateCursor(mHelper);
     }
 
     /**
-     * Notifies that a board has been starred
-     * @param position Unstarred board position
+     * Notifies that a board has been favorite
+     * @param position Unfavorite board position
      */
     @Override
-    public void onStarSelected(int id, int position) {
-        mUnstarAdapter.removeItem(mHelper, id, position);
-        mStarAdapter.updateCursor(mHelper);
+    public void onFavoriteSelected(int id, int position) {
+        mUnfavoriteAdapter.removeItem(mHelper, id, position);
+        mFavoriteAdapter.updateCursor(mHelper);
     }
 
     /**
      * Board selected, starts intent to ThreadsActivity
-     * @param starred If board selected is starred or not
+     * @param favorited If board selected is favorite or not
      * @param position Board position into the adapter
      */
     @Override
-    public void onGoToSelected(String title, boolean starred, int position) {
-        final String path = starred ?
-                mStarAdapter.getItemPath(position) :
-                mUnstarAdapter.getItemPath(position);
+    public void onGoToSelected(String title, boolean favorited, int position) {
+        final String path = favorited ?
+                mFavoriteAdapter.getItemPath(position) :
+                mUnfavoriteAdapter.getItemPath(position);
         // Start new ContentsActivity
         if (path != null) { onClick(title, path); }
     }
@@ -144,9 +144,9 @@ public class BoardsActivity extends KuboActivity
     }
 
     @Override
-    public void onLongClick(int id, int position, boolean starred, @NonNull String title) {
+    public void onLongClick(int id, int position, boolean favorited, @NonNull String title) {
         BoardSelectedDialog
-                .newInstance(id, position, starred, title)
+                .newInstance(id, position, favorited, title)
                 .show(getSupportFragmentManager(), BoardSelectedDialog.TAG);
     }
 
@@ -155,10 +155,10 @@ public class BoardsActivity extends KuboActivity
      * sets the RecyclerView with the BoardsListRecycler adapter
      */
     private void flagReadyToRecyclers() {
-        // Setting up Starred Recycler adapter
-        settingUpRecyclerView(mStarRecycler, mStarAdapter);
-        // Setting up Unstarred Recycler adapter
-        settingUpRecyclerView(mUnstarRecycler, mUnstarAdapter);
+        // Setting up Favorite Recycler adapter
+        settingUpRecyclerView(mFavoriteRecycler, mFavoriteAdapter);
+        // Setting up Unfavorite Recycler adapter
+        settingUpRecyclerView(mUnfavoriteRecycler, mUnfavoriteAdapter);
     }
 
     /**
@@ -199,18 +199,7 @@ public class BoardsActivity extends KuboActivity
         mBottomBar.setItems(R.menu.boards_activity_menu);
         mBottomBar.setOnMenuTabClickListener(this);
 
-        mBottomBar.mapColorForTab(0, ContextCompat.getColor(this, R.color.colorStarredTab));
-        mBottomBar.mapColorForTab(1, ContextCompat.getColor(this, R.color.colorUnstarredTab));
-    }
-
-    /**
-     * Handles errors notifications through Toast instance
-     * @param error Error description
-     * @param errorCode Error HTTP/application code
-     */
-    public void showToastError(String error, int errorCode) {
-        mToast.setText(errorCode + ": " + error);
-        mToast.setDuration(Toast.LENGTH_LONG);
-        mToast.show();
+        mBottomBar.mapColorForTab(0, ContextCompat.getColor(this, R.color.colorFavoriteTab));
+        mBottomBar.mapColorForTab(1, ContextCompat.getColor(this, R.color.colorUnfavoriteTab));
     }
 }

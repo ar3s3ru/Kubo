@@ -9,7 +9,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.github.ar3s3ru.kubo.backend.database.KuboSQLHelper;
 import com.github.ar3s3ru.kubo.backend.models.Modification;
-import com.github.ar3s3ru.kubo.backend.models.Thread;
+import com.github.ar3s3ru.kubo.backend.models.Reply;
 import com.github.ar3s3ru.kubo.backend.net.KuboEvents;
 
 import java.util.TreeSet;
@@ -34,6 +34,7 @@ import java.util.TreeSet;
 
 // TODO: whole Javadoc
 public class KuboTableThread {
+
     private static final String TABLE_NAME = "thread";
 
     private static final String KEY_BOARD   = "board";
@@ -58,14 +59,26 @@ public class KuboTableThread {
             + DB_BOARD  + ", " + DB_NUMBER  + ", " + DB_COMMENT + ", " + DB_IMAGE  + ", "
             + DB_EXTENS + ", " + DB_LASTUP  + ", " + DB_AUTHOR  + ");";
 
-    /** Getters */
+    /**
+     * Getters
+     */
 
+    /**
+     * Get followed threads saved into the app database
+     * @param helper SQLite application helper instance
+     * @return Cursor with all the followed threads of the database
+     */
     public static Cursor getFollowedThreads(@NonNull KuboSQLHelper helper) {
         return helper.getReadableDatabase().query(
                 TABLE_NAME, null, null, null, null, null, null
         );
     }
 
+    /**
+     * Build a TreeSet of followed thread numbers for adapter usage
+     * @param helper SQLite application helper instance
+     * @return TreeSet with all the followed thread numbers
+     */
     public static TreeSet<Integer> getFollowedThreadsSet(@NonNull KuboSQLHelper helper) {
         final Cursor cursor = getFollowedThreads(helper);
         final TreeSet<Integer> set = new TreeSet<>();
@@ -78,47 +91,97 @@ public class KuboTableThread {
         return set;
     }
 
+    /**
+     * Get Thread board path
+     * @param cursor Followed threads' cursor
+     * @param position Current cursor position
+     * @return Return thread's board path into the cursor at the specified position
+     */
     public static String getThreadBoard(@NonNull Cursor cursor, int position) {
         cursor.moveToPosition(position);
         return cursor.getString(cursor.getColumnIndex(KEY_BOARD));
     }
 
+    /**
+     * Thread number getter
+     * @param cursor Followed threads' cursor
+     * @param position Current cursor position
+     * @return Return thread number from the cursor at the specified position
+     */
     public static int getThreadNumber(@NonNull Cursor cursor, int position) {
         cursor.moveToPosition(position);
         return cursor.getInt(cursor.getColumnIndex(KEY_NUMBER));
     }
 
+    /**
+     * Thread comment getter
+     * @param cursor Followed threads' cursor
+     * @param position Current cursor position
+     * @return Return thread comment from the cursor at the specified position
+     */
     public static String getThreadComment(@NonNull Cursor cursor, int position) {
         cursor.moveToPosition(position);
         return cursor.getString(cursor.getColumnIndex(KEY_COMMENT));
     }
 
+    /**
+     * Thread filename getter
+     * @param cursor Followed threads' cursor
+     * @param position Current cursor position
+     * @return Return thread filename from the cursor at the specified position
+     */
     public static long getThreadProperFilename(@NonNull Cursor cursor, int position) {
         cursor.moveToPosition(position);
         return cursor.getLong(cursor.getColumnIndex(KEY_IMAGE));
     }
 
+    /**
+     * Thread file extension getter
+     * @param cursor Followed threads' cursor
+     * @param position Current cursor position
+     * @return Return thread file extension from the cursor at the specified position
+     */
     public static String getFileExtension(@NonNull Cursor cursor, int position) {
         cursor.moveToPosition(position);
         return cursor.getString(cursor.getColumnIndex(KEY_EXTENS));
     }
 
+    /**
+     * Thread last update getter
+     * @param cursor Followed threads' cursor
+     * @param position Current cursor position
+     * @return Return thread last update from the cursor at the specified position
+     */
     public static long getLastUpdate(@NonNull Cursor cursor, int position) {
         cursor.moveToPosition(position);
         return cursor.getLong(cursor.getColumnIndex(KEY_LASTUP));
     }
 
+    /**
+     * Thread author getter
+     * @param cursor Followed threads' cursor
+     * @param position Current cursor position
+     * @return Return thread author from the cursor at the specified position
+     */
     public static String getAuthor(@NonNull Cursor cursor, int position) {
         cursor.moveToPosition(position);
         return cursor.getString(cursor.getColumnIndex(KEY_AUTHOR));
     }
 
-    /** Setters */
-    // TODO: Javadoc
+    /**
+     * Setters
+     */
 
-    public static long setFollowingThread(@NonNull KuboSQLHelper helper,
-                                          @NonNull Thread thread,
-                                          @NonNull String board) {
+    /**
+     * Set the specified thread as followed
+     * @param helper SQLite application helper instance
+     * @param thread Thread object (it's Reply extension because we use Reply fields)
+     * @param board Board path
+     * @return New row id
+     */
+    public static <T extends Reply> long setFollowingThread(@NonNull KuboSQLHelper helper,
+                                                            @NonNull T thread,
+                                                            @NonNull String board) {
         final ContentValues cv = new ContentValues();
 
         cv.put(KEY_BOARD,   board);
@@ -132,12 +195,24 @@ public class KuboTableThread {
         return helper.getWritableDatabase().insertOrThrow(TABLE_NAME, null, cv);
     }
 
+    /**
+     * Delete the specified thread from the database following threads
+     * @param helper SQLite application helper instance
+     * @param threadNumber Thread number to remove from following
+     * @return Number of rows affected by the opertaion
+     */
     public static int setUnfollowingThread(@NonNull KuboSQLHelper helper, int threadNumber) {
         return helper.getWritableDatabase().delete(
                 TABLE_NAME, KEY_NUMBER + "=" + threadNumber, null
         );
     }
 
+    /**
+     * Refresh thread's last update time
+     * @param helper SQLite application helper instance
+     * @param mod Modification object (which contains thread identification and last update)
+     * @return Number of rows affected by the opertaion
+     */
     public static int updateLastUpdated(@NonNull KuboSQLHelper helper, @NonNull Modification mod) {
         ContentValues cv = new ContentValues();
         cv.put(KEY_LASTUP, mod.lastModified);

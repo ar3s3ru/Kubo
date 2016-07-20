@@ -34,6 +34,7 @@ import com.github.ar3s3ru.kubo.utils.KuboUtilities;
  * cursor creation routines, getters, setters...
  */
 public class KuboTableBoard {
+
     private static final String TABLE_NAME  = "board";  // Table name
     private static final String LIMIT_QUERY = "50";     // Pagination (unused for now...)
 
@@ -295,5 +296,21 @@ public class KuboTableBoard {
     public static int getMaxFilesize(@NonNull Cursor cursor, int position) {
         cursor.moveToPosition(position);
         return cursor.getInt(cursor.getColumnIndex(KEY_MAX_FSIZE));
+    }
+
+    /**
+     * Returns board's title from its path
+     * @param helper SQLite application helper instance
+     * @param path Board path
+     * @return Associated board title
+     */
+    public static String getTitleFromPath(@NonNull KuboSQLHelper helper, @NonNull String path) {
+        final Cursor cursor = helper.getReadableDatabase().query(
+                TABLE_NAME, null, KEY_BOARD + "=\"" + path + "\"", null, null, null, null
+        );
+        final String title = getTitle(cursor, 0);
+
+        cursor.close();
+        return title;
     }
 }

@@ -28,6 +28,7 @@ import com.github.ar3s3ru.kubo.backend.database.tables.KuboTableThread;
 import com.github.ar3s3ru.kubo.backend.models.ThreadsList;
 import com.github.ar3s3ru.kubo.backend.net.KuboEvents;
 import com.github.ar3s3ru.kubo.backend.net.KuboRESTService;
+import com.github.ar3s3ru.kubo.utils.KuboStateListener;
 import com.github.ar3s3ru.kubo.views.dialogs.ErrorDialog;
 import com.github.ar3s3ru.kubo.views.recyclers.CatalogDirectRecycler;
 
@@ -257,7 +258,7 @@ public class ThreadsFragment extends Fragment implements CatalogDirectRecycler.O
         mAdapter.setUnfollowing(threadNumber);
 
         // Notifying Activity
-        ((Listener) getActivity()).onChangeFollowingState();
+        ((KuboStateListener) getActivity()).onChangeFollowingState();
     }
 
     /**
@@ -272,7 +273,7 @@ public class ThreadsFragment extends Fragment implements CatalogDirectRecycler.O
         mAdapter.setFollowing(threadNumber);
 
         // Notifying Activity
-        ((Listener) getActivity()).onChangeFollowingState();
+        ((KuboStateListener) getActivity()).onChangeFollowingState();
     }
 
     @Override
@@ -379,11 +380,6 @@ public class ThreadsFragment extends Fragment implements CatalogDirectRecycler.O
          * @param followed true if thread is followed, false otherwise
          */
         void onThreadClick(@NonNull String board, int threadNumber, boolean followed);
-
-        /**
-         * Callback executed when changing a thread's follow state
-         */
-        void onChangeFollowingState();
     }
 
     /**

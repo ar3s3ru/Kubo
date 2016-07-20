@@ -41,8 +41,8 @@ import butterknife.ButterKnife;
 
 public class RepliesAdapter extends RecyclerView.Adapter<RepliesAdapter.ViewHolder> {
 
-    public static final int VIEWTYPE_THREAD = 0;
-    public static final int VIEWTYPE_POST   = 1;
+    private static final int VIEWTYPE_THREAD = 0;
+    private static final int VIEWTYPE_POST   = 1;
 
     private final List<Reply> mList = new ArrayList<>();
 
@@ -51,11 +51,6 @@ public class RepliesAdapter extends RecyclerView.Adapter<RepliesAdapter.ViewHold
     public RepliesAdapter(@NonNull RepliesList list, @NonNull String board) {
         mList.addAll(list.replies);
         mBoard = board;
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return super.getItemId(position);
     }
 
     @Override
@@ -91,22 +86,45 @@ public class RepliesAdapter extends RecyclerView.Adapter<RepliesAdapter.ViewHold
         holder.onBindViewHolder(mList.get(position));
     }
 
-    public void swapList(RepliesList list) {
+    /**
+     * Swap adapter dataset with a new list
+     * @param list New adapter dataset
+     */
+    public void swapList(@NonNull RepliesList list) {
         mList.clear();
         mList.addAll(list.replies);
+        // Notify changes to superclass observers
         notifyDataSetChanged();
     }
 
+    /**
+     * Update board path
+     * @param board New board path
+     */
+    public void updateBoard(@NonNull String board) {
+        mBoard = board;
+    }
+
+    /**
+     * Abstract class for RepliesAdapter ViewHolder.
+     */
     static abstract class ViewHolder extends RecyclerView.ViewHolder {
+
         ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
 
-        // TODO: Javadoc
+        /**
+         * Abstract method for ViewHolder binding (executed into adapter's onBindViewHolder)
+         * @param reply Reply object to bind
+         */
         abstract void onBindViewHolder(@NonNull Reply reply);
     }
 
+    /**
+     * Thread ViewHolder (first element of the Adapter dataset)
+     */
     static class ThreadViewHolder extends ViewHolder {
 
         @BindView(R.id.replies_thread_thumbnail) ImageView thumbnail;
@@ -121,10 +139,10 @@ public class RepliesAdapter extends RecyclerView.Adapter<RepliesAdapter.ViewHold
 
         @Override
         void onBindViewHolder(@NonNull Reply reply) {
-            // TODO: download thumbnail
+            // Download thumbnail
             KuboUtilities.downloadImageForHolder(thumbnail, reply, mBoard);
 
-            // TODO: update callee
+            // Bind views
             comment.setText(Html.fromHtml(reply.comment));
             name.setText(reply.name);
             number.setText(String.format(Locale.ENGLISH, "%d", reply.number));
@@ -132,6 +150,9 @@ public class RepliesAdapter extends RecyclerView.Adapter<RepliesAdapter.ViewHold
         }
     }
 
+    /**
+     * Post ViewHolder (all the other elements of the Adapter dataset)
+     */
     static class PostViewHolder extends ViewHolder {
 
         @BindView(R.id.replies_post_thumbnail) ImageView thumbnail;
@@ -145,14 +166,15 @@ public class RepliesAdapter extends RecyclerView.Adapter<RepliesAdapter.ViewHold
 
         @Override
         void onBindViewHolder(@NonNull Reply reply) {
-            // TODO: download thumbnail
+            // Download thumbnail
             KuboUtilities.downloadImageForHolder(thumbnail, reply, mBoard);
 
-            // TODO: update callee
+            // Bind views
             if (reply.comment != null) {
                 // Sometimes can be null... go figures
                 comment.setText(Html.fromHtml(reply.comment));
             }
+
             name.setText(reply.name);
             number.setText(String.format(Locale.ENGLISH, "%d", reply.number));
         }

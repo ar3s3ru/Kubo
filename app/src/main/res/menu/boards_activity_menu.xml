@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/boards_activity_menu_starred"
+    <item android:id="@+id/boards_activity_menu_favorites"
         android:icon="@drawable/ic_star_full"
-        android:title="@string/header_starred" />
-    <item android:id="@+id/boards_activity_menu_unstarred"
+        android:title="@string/header_favorites" />
+    <item android:id="@+id/boards_activity_menu_unfavorites"
         android:icon="@drawable/ic_star_empty"
-        android:title="@string/header_unstarred" />
+        android:title="@string/header_unfavorites" />
 </menu>

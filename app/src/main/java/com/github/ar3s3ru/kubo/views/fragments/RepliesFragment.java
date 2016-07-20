@@ -13,15 +13,21 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ViewFlipper;
 
 import com.github.ar3s3ru.kubo.KuboApp;
 import com.github.ar3s3ru.kubo.R;
+import com.github.ar3s3ru.kubo.backend.database.KuboSQLHelper;
+import com.github.ar3s3ru.kubo.backend.database.tables.KuboTableThread;
 import com.github.ar3s3ru.kubo.backend.models.RepliesList;
 import com.github.ar3s3ru.kubo.backend.net.KuboEvents;
 import com.github.ar3s3ru.kubo.backend.net.KuboRESTService;
+import com.github.ar3s3ru.kubo.utils.KuboStateListener;
 import com.github.ar3s3ru.kubo.views.custom.ListItemDivider;
 import com.github.ar3s3ru.kubo.views.dialogs.ErrorDialog;
 import com.github.ar3s3ru.kubo.views.recyclers.RepliesAdapter;
@@ -29,6 +35,8 @@ import com.github.ar3s3ru.kubo.views.recyclers.RepliesAdapter;
 import org.parceler.Parcels;
 
 import java.lang.ref.WeakReference;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,9 +66,10 @@ public class RepliesFragment extends Fragment {
     private static final String LIST   = "com.github.ar3s3ru.kubo.views.fragments.replies.list";
     private static final String LAYOUT = "com.github.ar3s3ru.kubo.views.fragments.replies.layout";
 
-    private static final String TAG   = "RepliesFragment";
-    private static final String BOARD = "com.github.ar3s3ru.kubo.views.fragments.replies.board";
-    private static final String THNUM = "com.github.ar3s3ru.kubo.views.fragments.replies.number";
+    private static final String TAG    = "RepliesFragment";
+    private static final String BOARD  = "com.github.ar3s3ru.kubo.views.fragments.replies.board";
+    private static final String NUMBER = "com.github.ar3s3ru.kubo.views.fragments.replies.number";
+    private static final String FOLLOW = "com.github.ar3s3ru.kubo.views.fragments.replies.follow";
 
     private static final IntentFilter mFilter = new IntentFilter(KuboEvents.REPLIES);
 
@@ -72,11 +81,14 @@ public class RepliesFragment extends Fragment {
 
     private boolean update = false, firstRun = true;
 
-    private String mBoard;
-    private int    mThreadNumber;
+    private String  mBoard;
+    private int     mThreadNumber;
+    private boolean mFollowing;
 
     @BindView(R.id.fragment_replies_recyclerview) RecyclerView mRecyclerView;
     @BindView(R.id.fragment_replies_viewflipper)  ViewFlipper  mViewFlipper;
+
+    @Inject KuboSQLHelper mHelper;
 
     public RepliesFragment() {
         // Empty constructor...
@@ -87,15 +99,20 @@ public class RepliesFragment extends Fragment {
      * /{board}/{threadNumber}
      * @param board Board path
      * @param threadNumber Thread number
+     * @param follow If thread selected is followed (for options menu)
      * @return New RepliesFragment instance
      */
-    public static RepliesFragment newInstance(@NonNull String board, int threadNumber) {
+    public static RepliesFragment newInstance(@NonNull String board,
+                                              int threadNumber,
+                                              boolean follow) {
+
         RepliesFragment fragment = new RepliesFragment();
         Bundle args = new Bundle();
 
         // Set arguments
         args.putString(BOARD, board);
-        args.putInt(THNUM, threadNumber);
+        args.putInt(NUMBER, threadNumber);
+        args.putBoolean(FOLLOW, follow);
 
         fragment.setArguments(args);
         return fragment;
@@ -111,9 +128,11 @@ public class RepliesFragment extends Fragment {
         // Set up initial state
         if (firstRun) {
             mBoard        = getArguments().getString(BOARD);
-            mThreadNumber = getArguments().getInt(THNUM, 0);
+            mThreadNumber = getArguments().getInt(NUMBER, 0);
+            mFollowing    = getArguments().getBoolean(FOLLOW, false);
         }
 
+        // For menu inflating
         setHasOptionsMenu(true);
 
         // Create new receiver
@@ -194,6 +213,41 @@ public class RepliesFragment extends Fragment {
         mBroadcastManager.unregisterReceiver(mReceiver);
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.replies_fragment_menu, menu);
+
+        final MenuItem item = menu.findItem(R.id.replies_menu_follow);
+        if (item != null) {
+            item.setIcon(mFollowing ?
+                    R.drawable.ic_bookmark_menu_full :
+                    R.drawable.ic_bookmark_menu_empty);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.replies_menu_follow) {
+
+            if (mFollowing) {
+                item.setIcon(R.drawable.ic_bookmark_menu_empty);
+                KuboTableThread.setUnfollowingThread(mHelper, mThreadNumber);
+            } else {
+                item.setIcon(R.drawable.ic_bookmark_menu_full);
+                KuboTableThread.setFollowingThread(mHelper, mList.replies.get(0), mBoard);
+            }
+
+            // Notify changes to the activity
+            ((KuboStateListener) getActivity()).onChangeFollowingState();
+            // Change following state
+            mFollowing = !mFollowing;
+
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Sets up the recycler adapter with the specified replies list
      * @param replies New replies list
@@ -207,6 +261,7 @@ public class RepliesFragment extends Fragment {
         } else {
             // ...or swap dataset if we have one.
             mAdapter.swapList(replies);
+            mAdapter.updateBoard(mBoard);
         }
 
         // Set adapter
@@ -217,7 +272,7 @@ public class RepliesFragment extends Fragment {
 
     /**
      * Handles an HTTP replies download success by setting up/refreshing the (existing) adapter
-     * @param replies
+     * @param replies New downloaded replies list
      */
     private void handleRepliesSuccess(@NonNull RepliesList replies) {
         // Update (or set up) the adapter
@@ -241,19 +296,16 @@ public class RepliesFragment extends Fragment {
      * @param board Board path
      * @param threadNumber Thread number
      */
-    public void updateContents(@NonNull String board, int threadNumber) {
+    public void updateContents(@NonNull String board, int threadNumber, boolean following) {
         // Update new contents
         mBoard        = board;
         mThreadNumber = threadNumber;
+        mFollowing    = following;
         update        = true;
 
         // If the fragment is visible, calls onResume which handles notification cancel
         // and adapter dataset update
         if (isVisible()) { onResume(); }
-    }
-
-    public interface Listener {
-        
     }
 
     /**

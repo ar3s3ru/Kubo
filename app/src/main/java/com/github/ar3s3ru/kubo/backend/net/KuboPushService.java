@@ -109,7 +109,7 @@ public class KuboPushService extends Service  {
      */
     private static class PushThread extends Thread {
 
-        private static final int    WAITING_TIME    = 10000;  // 10 seconds
+        private static final int    WAITING_TIME    = 40000;  // 40 seconds
         private static final long[] VIBRATE_PATTERN = { 0, 300, 200, 300 };
 
         private final Context             sContext;
@@ -222,10 +222,12 @@ public class KuboPushService extends Service  {
             Intent intent = ContentsActivity.newContentsActivityIntent(
                     sContext, board, board, threadNumber
             );
+
             // New pending intent (FLAG_UPDATE_CURRENT updates the previous Activity intent)
             PendingIntent pIntent = PendingIntent.getActivity(
                     sContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT
             );
+
             // New app notification
             Notification notif = buildNotification(pIntent, board, threadNumber);
             // Send notification to the NotificationManager

@@ -8,14 +8,19 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 
+import com.github.ar3s3ru.kubo.KuboApp;
 import com.github.ar3s3ru.kubo.R;
+import com.github.ar3s3ru.kubo.backend.database.KuboSQLHelper;
+import com.github.ar3s3ru.kubo.backend.database.tables.KuboTableBoard;
 import com.github.ar3s3ru.kubo.backend.database.tables.KuboTableThread;
+import com.github.ar3s3ru.kubo.utils.KuboStateListener;
 import com.github.ar3s3ru.kubo.views.fragments.RepliesFragment;
 import com.github.ar3s3ru.kubo.views.fragments.ThreadsFragment;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,9 +43,12 @@ import butterknife.ButterKnife;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-public class ContentsActivity extends KuboActivity implements ThreadsFragment.Listener {
+public class ContentsActivity extends KuboActivity
+        implements ThreadsFragment.Listener, KuboStateListener {
+
     // Activity TAG
     private static final String TAG = "ContentsActivity";
+
     // Board path id
     private static final String PATH = "com.github.ar3s3ru.kubo.views.ContentsActivity.board_path";
     // Board title
@@ -55,6 +63,8 @@ public class ContentsActivity extends KuboActivity implements ThreadsFragment.Li
     /** Members variables */
     @BindView(R.id.activity_contents_toolbar) Toolbar mToolbar;
 
+    @Inject KuboSQLHelper mHelper;
+
     private Drawer mDrawer;
 
     private String mBoardPath, mBoardTitle;
@@ -63,11 +73,23 @@ public class ContentsActivity extends KuboActivity implements ThreadsFragment.Li
     /** MaterialDrawer elements */
     // TODO: add here
 
-    // TODO: Javadoc
-    public static Intent newContentsActivityIntent(@NonNull Context context,
-                                                   @NonNull String path,
-                                                   String title, int threadNumber) {
+    /**
+     * Create a new Intent to start ContentsActivity
+     * @param context UI context
+     * @param path Board path to use
+     * @param title Board title (if we have one)
+     * @param threadNumber Thread number (if we need it, otherwise use -1)
+     * @return New ContentsActivity Intent
+     */
+    public static Intent newContentsActivityIntent(@NonNull  Context context,
+                                                   @NonNull  String path,
+                                                   @Nullable String title,
+                                                   int threadNumber) {
+        // New intent
         return new Intent(context, ContentsActivity.class)
+                // If an action is not set, when dealing with different PendingIntents for the same
+                // activity, the intent drops its extras
+                .setAction(Long.toString(System.currentTimeMillis()))
                 .putExtra(PATH, path)
                 .putExtra(TITLE, title)
                 .putExtra(NUMBER, threadNumber);
@@ -79,34 +101,22 @@ public class ContentsActivity extends KuboActivity implements ThreadsFragment.Li
      * @param title Board title
      * @param path Board path
      */
-    public static void startContentsActivity(@NonNull Context context,
+    static void startContentsActivity(@NonNull Context context,
                                              @NonNull String title,
                                              @NonNull String path) {
         // Default threadNumber value (-1)
         context.startActivity(newContentsActivityIntent(context, path, title, -1));
     }
 
-    /**
-     * Starts ContentsActivity with provided path, from defined context, to show a certain thread
-     * @param context Starting context
-     * @param title Board title
-     * @param path Board path
-     * @param threadNumber Thread number
-     */
-    public static void startContentsActivityWithThread(@NonNull Context context,
-                                                       @NonNull String title,
-                                                       @NonNull String path,
-                                                       int threadNumber) {
-        // With threadNumber value
-        context.startActivity(newContentsActivityIntent(context, path, title, threadNumber));
-    }
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e(TAG, "onCreate");
         setContentView(R.layout.activity_contents);
+        // Bind views
         ButterKnife.bind(this);
+
+        // Performs dependency injection
+        ((KuboApp) getApplication()).getAppComponent().inject(this);
 
         // Set up MaterialDrawer
         setUpNavigationDrawer();
@@ -121,77 +131,96 @@ public class ContentsActivity extends KuboActivity implements ThreadsFragment.Li
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.e(TAG, "onNewIntent");
 
         // Set up contents again
         setUpContents(intent);
 
+        // Retrieve the RepliesFragment instance (if we have one already)
         final RepliesFragment fragment = (RepliesFragment)
                 getSupportFragmentManager().findFragmentByTag(REPLIES_TAG);
 
         if (fragment != null) {
-            updateRepliesFragment(fragment);
+            // We already have a RepliesFragment instance, update it
+            updateRepliesFragment(fragment, true);
         } else {
-            setUpRepliesFragment(mBoardPath, mThreadNumber, false);
+            // We don't have a RepliesFragment instance, create a new one
+            setUpRepliesFragment(mBoardPath, mThreadNumber, true);
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.e(TAG, "onResume");
+
         // Set up ActionBar
-        if (mBoardTitle != null) { mToolbar.setTitle(mBoardTitle); }
+        if (mBoardTitle != null) {
+            mToolbar.setTitle(
+                    // From notification, mBoardTitle == mBoardPath
+                    !mBoardTitle.equals(mBoardPath) ?
+                            mBoardTitle :
+                            KuboTableBoard.getTitleFromPath(mHelper, mBoardPath)
+            );
+        }
+
         setSupportActionBar(mToolbar);
     }
 
     @Override
     public void onBackPressed() {
-        Log.e(TAG, "onBackPressed");
+        // Get fragments count into the backstack
         final int fragmentsCount = getSupportFragmentManager().getBackStackEntryCount();
+
         if (fragmentsCount <= 1) {
+            // We have just one fragment, so exit
             super.onBackPressed();
         } else {
+            // We have more than one fragment, so pop from the backstack
             getSupportFragmentManager().popBackStackImmediate();
         }
     }
 
     @Override
     public void onThreadClick(@NonNull String board, int threadNumber, boolean followed) {
-        Log.e(TAG, "onThreadClick");
         // TODO: change fragment or send repliesFragment an intent
         mThreadNumber = threadNumber;
         mBoardPath    = board;
 
-        setUpRepliesFragment(board, threadNumber, false);
+        setUpRepliesFragment(board, threadNumber, followed);
     }
 
     @Override
     public void onChangeFollowingState() {
-        // TODO: change NavigationDrawer contents
         // Notifying following threads received
         KuboTableThread.notifyFollowingThreadsChanged(this);
     }
 
-    // TODO: Javadoc
+
+    /**
+     * Sets up the MaterialDrawer
+     */
     private void setUpNavigationDrawer() {
         mDrawer = new DrawerBuilder()
-                .withActivity(this)
-                .withToolbar(mToolbar)
-                .withSliderBackgroundColor(ContextCompat.getColor(this, R.color.colorVeryDark))
-                .build();
+                        .withActivity(this)
+                        .withToolbar(mToolbar)
+                        .withSliderBackgroundColor(ContextCompat.getColor(this, R.color.colorVeryDark))
+                        .build();
     }
 
-    // TODO: Javadoc
+    /**
+     * Set up local state from the intent
+     * @param intent Intent from which retrieve the status
+     */
     private void setUpContents(@NonNull Intent intent) {
-        Log.e(TAG, "setUpContents");
         mBoardPath    = intent.getStringExtra(PATH);
         mBoardTitle   = intent.getStringExtra(TITLE);
         mThreadNumber = intent.getIntExtra(NUMBER, -1);
     }
 
+    /**
+     * Set up the fragments according to the object state
+     * @throws RuntimeException if board path is not set
+     */
     private void setUpFragments() throws RuntimeException {
-        Log.e(TAG, "setUpFragments");
         // Checking required parameters
         if (mBoardPath == null) {
             throw new RuntimeException("Invalid intent used for ContentsActivity, " +
@@ -206,14 +235,17 @@ public class ContentsActivity extends KuboActivity implements ThreadsFragment.Li
                 (ThreadsFragment) getSupportFragmentManager().findFragmentByTag(THREADS_TAG);
 
         if (mThreadNumber != -1 && repliesFragment == null) {
-            // Create new RepliesFragment
-            setUpRepliesFragment(mBoardPath, mThreadNumber, threadsFragment == null);
+            // Create new RepliesFragment (executed from notification intent, so is followed)
+            setUpRepliesFragment(mBoardPath, mThreadNumber, true);
         } else if (threadsFragment == null) {
             // Create new ThreadsFragment
             setUpThreadsFragment();
         }
     }
 
+    /**
+     * Sets up a new ThreadsFragment instance
+     */
     private void setUpThreadsFragment() {
         final ThreadsFragment threadsFragment = ThreadsFragment.newInstance(mBoardPath);
 
@@ -224,26 +256,32 @@ public class ContentsActivity extends KuboActivity implements ThreadsFragment.Li
                 .commitNow();
     }
 
-    private void setUpRepliesFragment(@NonNull String board, int threadNumber, boolean adding) {
-        Log.e(TAG, "setUpRepliesFragment");
+    /**
+     * Sets up a new RepliesFragment instance
+     * @param board Board path
+     * @param threadNumber Thread number
+     * @param following Following state of the thread selected
+     */
+    private void setUpRepliesFragment(@NonNull String board,
+                                      int threadNumber,
+                                      boolean following) {
         final RepliesFragment repliesFragment =
-                RepliesFragment.newInstance(board, threadNumber);
+                RepliesFragment.newInstance(board, threadNumber, following);
 
-        FragmentTransaction ft = getSupportFragmentManager()
+        getSupportFragmentManager()
                 .beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-
-        if (adding) {
-            ft.add(R.id.activity_contents_fragment_container, repliesFragment, REPLIES_TAG);
-        } else {
-            ft.replace(R.id.activity_contents_fragment_container, repliesFragment, REPLIES_TAG);
-        }
-
-        ft.addToBackStack(null).commit();
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .replace(R.id.activity_contents_fragment_container, repliesFragment, REPLIES_TAG)
+                .addToBackStack(null)
+                .commit();
     }
 
-    private void updateRepliesFragment(@NonNull RepliesFragment fragment) {
-        Log.e(TAG, "updateRepliesFragment");
-        fragment.updateContents(mBoardPath, mThreadNumber);
+    /**
+     * Updates RepliesFragment instance state
+     * @param fragment RepliesFragment instance
+     * @param followed true if the new thread is followed, false otherwise
+     */
+    private void updateRepliesFragment(@NonNull RepliesFragment fragment, boolean followed) {
+        fragment.updateContents(mBoardPath, mThreadNumber, followed);
     }
 }

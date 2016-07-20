@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <array name="star_board_selected_actions">
+    <array name="favorite_board_selected_actions">
         <item>Go to</item>
         <item>Unstar</item>
     </array>
 
-    <array name="unstar_board_selected_actions">
+    <array name="unfavorite_board_selected_actions">
         <item>Go to</item>
         <item>Star</item>
     </array>

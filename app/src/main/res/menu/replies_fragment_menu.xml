@@ -4,6 +4,6 @@
     <item
         android:id="@+id/replies_menu_follow"
         android:icon="@drawable/ic_bookmark_empty"
-        android:title="LOL"
+        android:title="@string/replies_menu_followed"
         app:showAsAction="ifRoom" />
 </menu>

@@ -38,22 +38,22 @@ public class BoardSelectedDialog extends DialogFragment implements DialogInterfa
     public static final String TAG = "BoardSelectedDialog";
 
     /** Members variables */
-    private boolean  mBoardStarred;
+    private boolean  isBoardFavorited;
     private String   mTitle;
 
     private int mID;
     private int mPosition;
 
-    public static BoardSelectedDialog newInstance(int id, int position,
-                                                  boolean starred,
+    public static BoardSelectedDialog newInstance(int id, int position, boolean favorite,
                                                   @NonNull String title) {
+
         BoardSelectedDialog dialog = new BoardSelectedDialog();
         Bundle args = new Bundle();
 
         // Adding arguments
         args.putInt(ID, id);
         args.putInt(POS, position);
-        args.putBoolean(STAR, starred);
+        args.putBoolean(STAR, favorite);
         args.putString(TITLE, title);
 
         // Setting up arguments
@@ -68,7 +68,7 @@ public class BoardSelectedDialog extends DialogFragment implements DialogInterfa
 
         outState.putInt(ID, mID);
         outState.putInt(POS, mPosition);
-        outState.putBoolean(STAR, mBoardStarred);
+        outState.putBoolean(STAR, isBoardFavorited);
         outState.putString(TITLE, mTitle);
     }
 
@@ -86,18 +86,18 @@ public class BoardSelectedDialog extends DialogFragment implements DialogInterfa
         mID           = takeArgs.getInt(ID);
         mTitle        = takeArgs.getString(TITLE);
         mPosition     = takeArgs.getInt(POS);
-        mBoardStarred = takeArgs.getBoolean(STAR);
+        isBoardFavorited = takeArgs.getBoolean(STAR);
 
         builder.setTitle(mTitle)
                 .setNegativeButton(R.string.text_close, null);
 
-        if (mBoardStarred) {
+        if (isBoardFavorited) {
             // Select starred board options
-            builder.setItems(R.array.star_board_selected_actions, this);
+            builder.setItems(R.array.favorite_board_selected_actions, this);
         }
         else {
             // Select unstarred board options
-            builder.setItems(R.array.unstar_board_selected_actions, this);
+            builder.setItems(R.array.unfavorite_board_selected_actions, this);
         }
 
         return builder.create();
@@ -110,19 +110,19 @@ public class BoardSelectedDialog extends DialogFragment implements DialogInterfa
 
         if (which == 0) {
             // Open selected board
-            mListener.onGoToSelected(mTitle, mBoardStarred, mPosition);
-        } else if (mBoardStarred) {
+            mListener.onGoToSelected(mTitle, isBoardFavorited, mPosition);
+        } else if (isBoardFavorited) {
             // Unstarring
-            mListener.onUnstarSelected(mID, mPosition);
+            mListener.onUnfavoriteSelected(mID, mPosition);
         } else {
             // Starring
-            mListener.onStarSelected(mID, mPosition);
+            mListener.onFavoriteSelected(mID, mPosition);
         }
     }
 
     public interface Listener {
-        void onGoToSelected(String title, boolean starred, int position);
-        void onStarSelected(int id, int position);
-        void onUnstarSelected(int id, int position);
+        void onGoToSelected(String title, boolean favorited, int position);
+        void onFavoriteSelected(int id, int position);
+        void onUnfavoriteSelected(int id, int position);
     }
 }

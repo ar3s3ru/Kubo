@@ -9,17 +9,20 @@
         app:layout_constraintLeft_toLeftOf="@+id/catalog_layout"
         app:layout_constraintTop_toTopOf="@+id/catalog_layout"
         app:layout_constraintRight_toRightOf="@+id/catalog_layout"
-        app:layout_constraintBottom_toTopOf="@+id/catalog_thread_settings" />
+        app:layout_constraintBottom_toTopOf="@+id/catalog_thread_bookmark" />
 
-    <ImageView style="@style/KuboTheme.CardView.Settings.Bookmark"
+    <!-- TODO: change to Settings.Bookmark if settings are needed -->
+    <ImageView style="@style/KuboTheme.CardView.Settings"
         android:src="@drawable/ic_bookmark_empty"
         android:id="@+id/catalog_thread_bookmark"
         app:layout_constraintRight_toLeftOf="@+id/catalog_thread_settings"
         app:layout_constraintBottom_toBottomOf="@+id/catalog_layout" />
 
+    <!-- Gone for now, don't have settings to show -->
     <ImageView style="@style/KuboTheme.CardView.Settings"
         android:src="@drawable/ic_settings_horizontal"
         android:id="@+id/catalog_thread_settings"
+        android:visibility="gone"
         app:layout_constraintRight_toRightOf="@+id/catalog_layout"
         app:layout_constraintBottom_toBottomOf="@+id/catalog_layout" />
 
