@@ -6,7 +6,12 @@
     <ProgressBar style="@style/KuboTheme.ContentsActivity.ProgressBar"
         android:id="@+id/fragment_replies_progressbar" />
 
-    <android.support.v7.widget.RecyclerView style="@style/KuboTheme.List"
-        android:id="@+id/fragment_replies_recyclerview" />
+    <android.support.v4.widget.SwipeRefreshLayout style="@style/KuboTheme.List"
+        android:id="@+id/fragment_replies_swiper">
+
+        <android.support.v7.widget.RecyclerView style="@style/KuboTheme.List"
+            android:id="@+id/fragment_replies_recyclerview" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </ViewFlipper>

@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -61,7 +62,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  */
 
-public class RepliesFragment extends Fragment {
+public class RepliesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private static final String LIST   = "com.github.ar3s3ru.kubo.views.fragments.replies.list";
     private static final String LAYOUT = "com.github.ar3s3ru.kubo.views.fragments.replies.layout";
@@ -85,8 +86,9 @@ public class RepliesFragment extends Fragment {
     private int     mThreadNumber;
     private boolean mFollowing;
 
-    @BindView(R.id.fragment_replies_recyclerview) RecyclerView mRecyclerView;
-    @BindView(R.id.fragment_replies_viewflipper)  ViewFlipper  mViewFlipper;
+    @BindView(R.id.fragment_replies_swiper)       SwipeRefreshLayout mSwiper;
+    @BindView(R.id.fragment_replies_recyclerview) RecyclerView       mRecyclerView;
+    @BindView(R.id.fragment_replies_viewflipper)  ViewFlipper        mViewFlipper;
 
     @Inject KuboSQLHelper mHelper;
 
@@ -164,6 +166,9 @@ public class RepliesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_replies, container, false);
         ButterKnife.bind(this, view);
 
+        // Set up SwipeLayout listener
+        mSwiper.setOnRefreshListener(this);
+
         // Set up RecyclerView LayoutManager and ItemDivider
         mRecyclerView.addItemDecoration(mItemDivider);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -181,10 +186,6 @@ public class RepliesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        // Dismiss notifications
-        ((NotificationManager) getContext().getSystemService(NOTIFICATION_SERVICE))
-                .cancel(mThreadNumber);
 
         // Register receiver
         mBroadcastManager.registerReceiver(mReceiver, mFilter);
@@ -248,6 +249,11 @@ public class RepliesFragment extends Fragment {
         return false;
     }
 
+    @Override
+    public void onRefresh() {
+        KuboRESTService.getReplies(getContext(), mBoard, mThreadNumber);
+    }
+
     /**
      * Sets up the recycler adapter with the specified replies list
      * @param replies New replies list
@@ -268,6 +274,8 @@ public class RepliesFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
         // Display recycler view
         if (mViewFlipper.getDisplayedChild() == 0) { mViewFlipper.showNext(); }
+        // Stop refreshing
+        if (mSwiper.isRefreshing()) { mSwiper.setRefreshing(false); }
     }
 
     /**
@@ -275,6 +283,9 @@ public class RepliesFragment extends Fragment {
      * @param replies New downloaded replies list
      */
     private void handleRepliesSuccess(@NonNull RepliesList replies) {
+        // Dismiss notifications
+        ((NotificationManager) getContext().getSystemService(NOTIFICATION_SERVICE))
+                .cancel(mThreadNumber);
         // Update (or set up) the adapter
         setUpRecyclerAdapter(replies);
     }

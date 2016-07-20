@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 
 import com.github.ar3s3ru.kubo.KuboApp;
@@ -17,8 +16,6 @@ import com.github.ar3s3ru.kubo.backend.database.tables.KuboTableThread;
 import com.github.ar3s3ru.kubo.utils.KuboStateListener;
 import com.github.ar3s3ru.kubo.views.fragments.RepliesFragment;
 import com.github.ar3s3ru.kubo.views.fragments.ThreadsFragment;
-import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.DrawerBuilder;
 
 import javax.inject.Inject;
 
@@ -64,8 +61,6 @@ public class ContentsActivity extends KuboActivity
     @BindView(R.id.activity_contents_toolbar) Toolbar mToolbar;
 
     @Inject KuboSQLHelper mHelper;
-
-    private Drawer mDrawer;
 
     private String mBoardPath, mBoardTitle;
     private int mThreadNumber;
@@ -117,9 +112,6 @@ public class ContentsActivity extends KuboActivity
 
         // Performs dependency injection
         ((KuboApp) getApplication()).getAppComponent().inject(this);
-
-        // Set up MaterialDrawer
-        setUpNavigationDrawer();
 
         // Set up state
         setUpContents(getIntent());
@@ -192,18 +184,6 @@ public class ContentsActivity extends KuboActivity
     public void onChangeFollowingState() {
         // Notifying following threads received
         KuboTableThread.notifyFollowingThreadsChanged(this);
-    }
-
-
-    /**
-     * Sets up the MaterialDrawer
-     */
-    private void setUpNavigationDrawer() {
-        mDrawer = new DrawerBuilder()
-                        .withActivity(this)
-                        .withToolbar(mToolbar)
-                        .withSliderBackgroundColor(ContextCompat.getColor(this, R.color.colorVeryDark))
-                        .build();
     }
 
     /**
