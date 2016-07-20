@@ -5,8 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
@@ -42,84 +42,128 @@ public class ContentsActivity extends KuboActivity implements ThreadsFragment.Li
     // Activity TAG
     private static final String TAG = "ContentsActivity";
     // Board path id
-    private static final String BOARD_ID = "com.github.ar3s3ru.kubo.views.ContentsActivity.board_id";
+    private static final String PATH = "com.github.ar3s3ru.kubo.views.ContentsActivity.board_path";
     // Board title
-    private static final String BOARD_TL = "com.github.ar3s3ru.kubo.views.ContentsActivity.board_tl";
+    private static final String TITLE = "com.github.ar3s3ru.kubo.views.ContentsActivity.board_title";
+    // Thread number
+    private static final String NUMBER = "com.github.ar3s3ru.kubo.views.ContentsActivity.thread_number";
+
+    /** Fragment tags */
+    private static final String THREADS_TAG = "ThreadsFragment";
+    private static final String REPLIES_TAG = "RepliesFragment";
 
     /** Members variables */
-
     @BindView(R.id.activity_contents_toolbar) Toolbar mToolbar;
 
-    private Drawer   mDrawer;
-    private Fragment mFragment;
+    private Drawer mDrawer;
+
+    private String mBoardPath, mBoardTitle;
+    private int mThreadNumber;
 
     /** MaterialDrawer elements */
     // TODO: add here
 
+    // TODO: Javadoc
+    public static Intent newContentsActivityIntent(@NonNull Context context,
+                                                   @NonNull String path,
+                                                   String title, int threadNumber) {
+        return new Intent(context, ContentsActivity.class)
+                .putExtra(PATH, path)
+                .putExtra(TITLE, title)
+                .putExtra(NUMBER, threadNumber);
+    }
+
     /**
      * Starts ContentsActivity with provided path, from defined context
      * @param context Starting context
+     * @param title Board title
      * @param path Board path
      */
     public static void startContentsActivity(@NonNull Context context,
                                              @NonNull String title,
                                              @NonNull String path) {
-        context.startActivity(
-                new Intent(context, ContentsActivity.class)
-                        .putExtra(BOARD_ID, path)
-                        .putExtra(BOARD_TL, title)
-        );
+        // Default threadNumber value (-1)
+        context.startActivity(newContentsActivityIntent(context, path, title, -1));
+    }
+
+    /**
+     * Starts ContentsActivity with provided path, from defined context, to show a certain thread
+     * @param context Starting context
+     * @param title Board title
+     * @param path Board path
+     * @param threadNumber Thread number
+     */
+    public static void startContentsActivityWithThread(@NonNull Context context,
+                                                       @NonNull String title,
+                                                       @NonNull String path,
+                                                       int threadNumber) {
+        // With threadNumber value
+        context.startActivity(newContentsActivityIntent(context, path, title, threadNumber));
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.e(TAG, "onCreate");
         setContentView(R.layout.activity_contents);
-
         ButterKnife.bind(this);
-
-        // Set up ActionBar
-        setSupportActionBar(mToolbar);
 
         // Set up MaterialDrawer
         setUpNavigationDrawer();
 
+        // Set up state
+        setUpContents(getIntent());
+
         // Construct fragments
-        mFragment = ThreadsFragment.newInstance(
-                getIntent().getStringExtra(BOARD_TL),
-                getIntent().getStringExtra(BOARD_ID)
-        );
+        setUpFragments();
+    }
 
-        getSupportFragmentManager().beginTransaction().add(
-            R.id.activity_contents_fragment_container, mFragment
-        ).commitNow();
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.e(TAG, "onNewIntent");
 
-        // Freshly started activity, sets up member variables accordingly
-//        setUpContents(
-//                getIntent().getStringExtra(BOARD_TL),
-//                getIntent().getStringExtra(BOARD_ID)
-//        );
+        // Set up contents again
+        setUpContents(intent);
+
+        final RepliesFragment fragment = (RepliesFragment)
+                getSupportFragmentManager().findFragmentByTag(REPLIES_TAG);
+
+        if (fragment != null) {
+            updateRepliesFragment(fragment);
+        } else {
+            setUpRepliesFragment(mBoardPath, mThreadNumber, false);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.e(TAG, "onResume");
+        // Set up ActionBar
+        if (mBoardTitle != null) { mToolbar.setTitle(mBoardTitle); }
+        setSupportActionBar(mToolbar);
     }
 
     @Override
     public void onBackPressed() {
-        if (!getSupportFragmentManager().popBackStackImmediate()) {
+        Log.e(TAG, "onBackPressed");
+        final int fragmentsCount = getSupportFragmentManager().getBackStackEntryCount();
+        if (fragmentsCount <= 1) {
             super.onBackPressed();
+        } else {
+            getSupportFragmentManager().popBackStackImmediate();
         }
     }
 
     @Override
     public void onThreadClick(@NonNull String board, int threadNumber, boolean followed) {
+        Log.e(TAG, "onThreadClick");
         // TODO: change fragment or send repliesFragment an intent
-        RepliesFragment repliesFragment = RepliesFragment.newInstance(board, threadNumber);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        mThreadNumber = threadNumber;
+        mBoardPath    = board;
 
-        Log.e(TAG, "onThreadClick: board=" + board + ",threadNumber=" + threadNumber + ",followed=" + followed);
-
-        ft.replace(R.id.activity_contents_fragment_container, repliesFragment);
-        ft.addToBackStack("boh");
-
-        ft.commit();
+        setUpRepliesFragment(board, threadNumber, false);
     }
 
     @Override
@@ -129,19 +173,77 @@ public class ContentsActivity extends KuboActivity implements ThreadsFragment.Li
         KuboTableThread.notifyFollowingThreadsChanged(this);
     }
 
-//    // TODO: Javadoc
-//    private void setUpContents(String title, String path) {
-//        threadsFragment.setUpContents(title, path);
-//    }
-
     // TODO: Javadoc
     private void setUpNavigationDrawer() {
         mDrawer = new DrawerBuilder()
-                    .withActivity(this)
-                    .withToolbar(mToolbar)
-                    .withSliderBackgroundColor(
-                            getResources().getColor(R.color.colorVeryDark)
-                    )
-                    .build();
+                .withActivity(this)
+                .withToolbar(mToolbar)
+                .withSliderBackgroundColor(ContextCompat.getColor(this, R.color.colorVeryDark))
+                .build();
+    }
+
+    // TODO: Javadoc
+    private void setUpContents(@NonNull Intent intent) {
+        Log.e(TAG, "setUpContents");
+        mBoardPath    = intent.getStringExtra(PATH);
+        mBoardTitle   = intent.getStringExtra(TITLE);
+        mThreadNumber = intent.getIntExtra(NUMBER, -1);
+    }
+
+    private void setUpFragments() throws RuntimeException {
+        Log.e(TAG, "setUpFragments");
+        // Checking required parameters
+        if (mBoardPath == null) {
+            throw new RuntimeException("Invalid intent used for ContentsActivity, " +
+                    "must call static methods startContentsActivity() " +
+                    "or startContentsActivityFromNotification()");
+        }
+
+        final RepliesFragment repliesFragment =
+                (RepliesFragment) getSupportFragmentManager().findFragmentByTag(REPLIES_TAG);
+
+        final ThreadsFragment threadsFragment =
+                (ThreadsFragment) getSupportFragmentManager().findFragmentByTag(THREADS_TAG);
+
+        if (mThreadNumber != -1 && repliesFragment == null) {
+            // Create new RepliesFragment
+            setUpRepliesFragment(mBoardPath, mThreadNumber, threadsFragment == null);
+        } else if (threadsFragment == null) {
+            // Create new ThreadsFragment
+            setUpThreadsFragment();
+        }
+    }
+
+    private void setUpThreadsFragment() {
+        final ThreadsFragment threadsFragment = ThreadsFragment.newInstance(mBoardPath);
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .add(R.id.activity_contents_fragment_container, threadsFragment, THREADS_TAG)
+                .commitNow();
+    }
+
+    private void setUpRepliesFragment(@NonNull String board, int threadNumber, boolean adding) {
+        Log.e(TAG, "setUpRepliesFragment");
+        final RepliesFragment repliesFragment =
+                RepliesFragment.newInstance(board, threadNumber);
+
+        FragmentTransaction ft = getSupportFragmentManager()
+                .beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+
+        if (adding) {
+            ft.add(R.id.activity_contents_fragment_container, repliesFragment, REPLIES_TAG);
+        } else {
+            ft.replace(R.id.activity_contents_fragment_container, repliesFragment, REPLIES_TAG);
+        }
+
+        ft.addToBackStack(null).commit();
+    }
+
+    private void updateRepliesFragment(@NonNull RepliesFragment fragment) {
+        Log.e(TAG, "updateRepliesFragment");
+        fragment.updateContents(mBoardPath, mThreadNumber);
     }
 }

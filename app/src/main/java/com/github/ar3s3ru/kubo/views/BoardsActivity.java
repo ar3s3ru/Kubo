@@ -194,7 +194,7 @@ public class BoardsActivity extends KuboActivity
     private void settingUpBottomBar(@Nullable Bundle savedInstanceState) {
         mBottomBar = BottomBar.attach(this, savedInstanceState);
 
-        mBottomBar.setBackgroundColor(getResources().getColor(R.color.colorBackground));
+        mBottomBar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorBackground));
         mBottomBar.setMaxFixedTabs(1);                      // Workaround for tab coloring
         mBottomBar.setItems(R.menu.boards_activity_menu);
         mBottomBar.setOnMenuTabClickListener(this);

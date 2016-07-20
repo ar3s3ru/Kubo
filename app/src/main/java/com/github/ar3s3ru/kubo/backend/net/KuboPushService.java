@@ -1,4 +1,4 @@
-package com.github.ar3s3ru.kubo.backend.controller;
+package com.github.ar3s3ru.kubo.backend.net;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -35,7 +35,7 @@ import javax.inject.Inject;
 import retrofit2.Response;
 
 // TODO: Javadoc
-public class KuboPushService extends Service {
+public class KuboPushService extends Service  {
 
     private static final String TAG = "KuboPushService";
 
@@ -72,11 +72,8 @@ public class KuboPushService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
         // Unregister BroadcastReceiver
-        LocalBroadcastManager.getInstance(this)
-                .unregisterReceiver(mReceiver);
-
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
         // Interrupt thread
         mThread.interrupt();
     }
@@ -199,9 +196,13 @@ public class KuboPushService extends Service {
         }
 
         private void sendNotification(@NonNull String board, int threadNumber) {
-            Intent        intent  = new Intent(sContext, ContentsActivity.class);
-            PendingIntent pIntent = PendingIntent.getActivity(sContext, 0, intent, 0);
-            Notification  notif   = buildNotification(pIntent, board, threadNumber);
+            Intent intent = ContentsActivity.newContentsActivityIntent(
+                    sContext, board, board, threadNumber
+            );
+            PendingIntent pIntent = PendingIntent.getActivity(
+                    sContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT
+            );
+            Notification notif = buildNotification(pIntent, board, threadNumber);
 
             mNotifManager.notify(threadNumber, notif);
         }

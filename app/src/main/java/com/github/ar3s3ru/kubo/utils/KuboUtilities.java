@@ -2,6 +2,12 @@ package com.github.ar3s3ru.kubo.utils;
 
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.view.View;
+import android.widget.ImageView;
+
+import com.github.ar3s3ru.kubo.R;
+import com.github.ar3s3ru.kubo.backend.models.Reply;
+import com.squareup.picasso.Picasso;
 
 /**
  * Copyright (C) 2016  Danilo Cianfrone
@@ -33,6 +39,37 @@ public class KuboUtilities {
      */
     public static boolean convertFromInt(int value) {
         return value != 0;
+    }
+
+    /**
+     * Download Thread thumbnail image
+     * @param imageView ImageView for thumbnail display
+     * @param reply Reply object
+     */
+    public static void downloadImageForHolder(@NonNull ImageView imageView,
+                                              @NonNull Reply reply,
+                                              @NonNull String board) {
+        if (reply.properFilename == 0) {
+            // Reply has no image, just hide the ImageView
+            imageView.setVisibility(View.GONE);
+        } else {
+            // Show the ImageView and download the thumbnail
+            imageView.setVisibility(View.VISIBLE);
+            Picasso.with(imageView.getContext())
+                    .load(getThumbnailURL(board, reply.properFilename))
+                    .error(R.color.colorPrimaryDark)
+                    .placeholder(R.color.colorAccent)
+                    .into(imageView);
+        }
+    }
+
+    /**
+     * Get image string URL for thumbnail downloading
+     * @param fileName Thumbnail filename
+     * @return Thumbnail URL string
+     */
+    public static String getThumbnailURL(@NonNull String board, long fileName) {
+        return "https://i.4cdn.org/" + board + "/" + fileName + "s.jpg";
     }
 
     /**

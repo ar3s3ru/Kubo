@@ -31,6 +31,7 @@ import android.view.View;
 /**
  * Simple divider for RecyclerViews.
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class ListItemDivider extends RecyclerView.ItemDecoration {
     // Using member variables to deal with onDraw allocations overhead
     private final int spaceLeft, height;
@@ -42,8 +43,6 @@ public class ListItemDivider extends RecyclerView.ItemDecoration {
     private View currentChild;
     private RecyclerView.LayoutParams currentParams;
 
-    private boolean ignoreFirstElement;
-
     public ListItemDivider(@NonNull Context context, @DimenRes int spaceRes,
                            @DimenRes int heightRes, @ColorRes int colorRes) {
         spaceLeft = context.getResources().getDimensionPixelSize(spaceRes);
@@ -54,16 +53,6 @@ public class ListItemDivider extends RecyclerView.ItemDecoration {
 
         mPaint.setColor(context.getResources().getColor(colorRes));
         mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-
-        ignoreFirstElement = false;
-    }
-
-    public ListItemDivider(@NonNull Context context, @DimenRes int spaceRes,
-                           @DimenRes int heightRes, @ColorRes int colorRes,
-                           boolean ignoreFirstElement) {
-        // Calling default constructor
-        this(context, spaceRes, heightRes, colorRes);
-        this.ignoreFirstElement = ignoreFirstElement;
     }
 
     @Override
@@ -83,7 +72,7 @@ public class ListItemDivider extends RecyclerView.ItemDecoration {
         // We don't want to draw the last divider, so we use childs - 1
         childCount = parent.getChildCount() - 1;
 
-        for (childIdx = ignoreFirstElement ? 1 : 0; childIdx < childCount; childIdx++) {
+        for (childIdx = 0; childIdx < childCount; childIdx++) {
             // Get current child view and layout params
             currentChild  = parent.getChildAt(childIdx);
             currentParams = (RecyclerView.LayoutParams) currentChild.getLayoutParams();

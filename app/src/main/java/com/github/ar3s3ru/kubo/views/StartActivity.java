@@ -13,8 +13,8 @@ import android.widget.Toast;
 
 import com.github.ar3s3ru.kubo.KuboApp;
 import com.github.ar3s3ru.kubo.R;
-import com.github.ar3s3ru.kubo.backend.controller.KuboEvents;
-import com.github.ar3s3ru.kubo.backend.controller.KuboRESTService;
+import com.github.ar3s3ru.kubo.backend.net.KuboEvents;
+import com.github.ar3s3ru.kubo.backend.net.KuboRESTService;
 import com.github.ar3s3ru.kubo.utils.KuboUtilities;
 
 import java.lang.ref.WeakReference;
@@ -106,7 +106,7 @@ public class StartActivity extends KuboActivity {
 
             @Override
             public void onFinish() {
-                // Self explainatory...
+                // Self explanatory...
                 goToBoardsActivity();
             }
         }.start();
@@ -125,7 +125,7 @@ public class StartActivity extends KuboActivity {
      * Disables boards download on startup (updating the shared preferences)
      * and send intent to BoardsActivity.
      */
-    public void handleSuccessfullyDownload() {
+    private void handleSuccessfullyDownload() {
         // Remind that we don't need to download on startup anymore
         KuboUtilities.disableStartupBoards(mSharedPrefs);
         goToBoardsActivity();
@@ -136,7 +136,7 @@ public class StartActivity extends KuboActivity {
      * @param error Error description
      * @param errorCode Error HTTP/application code
      */
-    public void handleErrorDownload(String error, int errorCode) {
+    private void handleErrorDownload(String error, int errorCode) {
         mToast.setText(errorCode + ": " + error);
         mToast.setDuration(Toast.LENGTH_LONG);
         mToast.show();

@@ -266,4 +266,99 @@
         <item name="android:scaleType">centerCrop</item>
     </style>
 
+    <style name="KuboTheme.Replies">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="KuboTheme.Replies.Layout" parent="KuboTheme.Replies">
+        <item name="android:clickable">true</item>
+        <item name="android:foreground">?android:selectableItemBackground</item>
+    </style>
+
+    <style name="KuboTheme.Replies.Thumbnail">
+        <item name="android:layout_width">@dimen/replies_thumbnail_dim</item>
+        <item name="android:layout_height">@dimen/replies_thumbnail_dim</item>
+        <item name="android:layout_marginTop">@dimen/replies_large_margin</item>
+        <item name="android:scaleType">centerCrop</item>
+    </style>
+
+    <style name="KuboTheme.Replies.Thumbnail.Thread" parent="KuboTheme.Replies.Thumbnail">
+        <item name="android:layout_marginLeft">@dimen/replies_large_margin</item>
+    </style>
+
+    <style name="KuboTheme.Replies.Thumbnail.Post" parent="KuboTheme.Replies.Thumbnail">
+        <item name="android:layout_marginRight">@dimen/replies_large_margin</item>
+    </style>
+
+    <style name="KuboTheme.Replies.Comment" parent="KuboTheme.Replies" />
+
+    <style name="KuboTheme.Replies.Comment.Thread" parent="KuboTheme.Replies.Comment">
+        <item name="android:minHeight">@dimen/replies_thread_comment_min_height</item>
+        <item name="android:layout_marginLeft">@dimen/replies_mid_margin</item>
+        <item name="android:layout_marginTop">@dimen/replies_large_margin</item>
+        <item name="android:layout_marginRight">@dimen/replies_large_margin</item>
+    </style>
+
+    <style name="KuboTheme.Replies.Comment.Post" parent="KuboTheme.Replies.Comment">
+        <item name="android:minHeight">@dimen/replies_post_comment_min_height</item>
+        <item name="android:layout_marginLeft">@dimen/replies_large_margin</item>
+        <item name="android:layout_marginTop">@dimen/replies_short_margin</item>
+        <item name="android:layout_marginRight">@dimen/replies_mid_margin</item>
+        <item name="android:layout_marginBottom">@dimen/replies_large_margin</item>
+    </style>
+
+    <style name="KuboTheme.Replies.Header">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">?android:textAppearanceSmall</item>
+        <item name="android:textSize">@dimen/replies_header_textsize</item>
+    </style>
+
+    <style name="KuboTheme.Replies.Header.Name" parent="KuboTheme.Replies.Header">
+        <item name="android:layout_marginLeft">@dimen/replies_mid_margin</item>
+        <item name="android:layout_marginTop">@dimen/replies_mid_margin</item>
+    </style>
+
+    <style name="KuboTheme.Replies.Header.Name.Thread" parent="KuboTheme.Replies.Header.Name" />
+    
+    <style name="KuboTheme.Replies.Header.Name.Post" parent="KuboTheme.Replies.Header.Name">
+        <item name="android:layout_marginLeft">@dimen/replies_large_margin</item>
+        <item name="android:layout_marginTop">@dimen/replies_large_margin</item>
+    </style>
+
+    <style name="KuboTheme.Replies.Header.Number" parent="KuboTheme.Replies.Header.Name">
+        <item name="android:textColor">@color/colorAccent</item>
+    </style>
+
+    <style name="KuboTheme.Replies.Header.Number.Thread" parent="KuboTheme.Replies.Header.Number" />
+
+    <style name="KuboTheme.Replies.Header.Number.Post" parent="KuboTheme.Replies.Header.Number">
+        <item name="android:layout_marginTop">@dimen/replies_large_margin</item>
+    </style>
+
+    <style name="KuboTheme.Replies.Header.Replies" parent="KuboTheme.Replies.Header">
+        <item name="android:layout_marginRight">@dimen/replies_mid_margin</item>
+        <item name="android:layout_marginTop">@dimen/replies_mid_margin</item>
+    </style>
+
+    <style name="KuboTheme.Replies.Header.Replies.Icon" parent="KuboTheme.Replies.Header.Replies">
+        <item name="android:src">@drawable/ic_replies</item>
+    </style>
+
+    <style name="KuboTheme.Replies.Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:background">@color/dividerColor</item>
+    </style>
+
+    <style name="KuboTheme.Replies.Divider.Top" parent="KuboTheme.Replies.Divider">
+        <item name="android:layout_height">@dimen/generic_items_divider</item>
+        <item name="android:layout_marginTop">@dimen/replies_large_margin</item>
+    </style>
+
+    <style name="KuboTheme.Replies.Divider.Bottom" parent="KuboTheme.Replies.Divider">
+        <item name="android:layout_height">@dimen/generic_items_divider_foot</item>
+        <item name="android:layout_marginTop">@dimen/replies_mid_margin</item>
+    </style>
+
 </resources>

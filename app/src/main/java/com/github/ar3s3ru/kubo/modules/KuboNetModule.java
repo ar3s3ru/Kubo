@@ -3,7 +3,7 @@ package com.github.ar3s3ru.kubo.modules;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.github.ar3s3ru.kubo.backend.controller.KuboAPInterface;
+import com.github.ar3s3ru.kubo.backend.net.KuboAPInterface;
 
 import javax.inject.Singleton;
 

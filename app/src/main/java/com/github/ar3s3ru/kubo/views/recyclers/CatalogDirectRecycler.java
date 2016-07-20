@@ -10,12 +10,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.github.ar3s3ru.kubo.R;
 import com.github.ar3s3ru.kubo.backend.database.KuboSQLHelper;
 import com.github.ar3s3ru.kubo.backend.database.tables.KuboTableThread;
 import com.github.ar3s3ru.kubo.backend.models.Thread;
 import com.github.ar3s3ru.kubo.backend.models.ThreadsList;
+import com.github.ar3s3ru.kubo.utils.KuboUtilities;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -144,29 +144,6 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
                 )
         );
         imageView.setTag(BOOKMARK_KEY, bookmark);
-    }
-
-    /**
-     * Download Thread thumbnail image
-     * @param imageView ImageView for thumbnail display
-     * @param thread Thread object
-     */
-    private static void downloadImageForHolder(@NonNull ImageView imageView,
-                                               @NonNull Thread thread) {
-        Glide.with(imageView.getContext())
-                .load(getThumbnailURL(thread.properFilename))
-                .error(R.color.colorPrimaryDark)
-                .placeholder(R.color.colorAccent)
-                .into(imageView);
-    }
-
-    /**
-     * Get image string URL for thumbnail downloading
-     * @param fileName Thumbnail filename
-     * @return Thumbnail URL string
-     */
-    private static String getThumbnailURL(long fileName) {
-        return "https://t.4cdn.org/" + mBoard + "/" + fileName + "s.jpg";
     }
 
     /**
@@ -351,7 +328,7 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
             images.setText(String.format("%d", thread.images));
             replies.setText(String.format("%d", thread.replies));
 
-            CatalogDirectRecycler.downloadImageForHolder(thumbnail, thread);
+            KuboUtilities.downloadImageForHolder(thumbnail, thread, mBoard);
         }
     }
 
@@ -379,7 +356,7 @@ public class CatalogDirectRecycler extends RecyclerView.Adapter<CatalogDirectRec
             number.setText(String.format("%d", thread.number));
             name.setText(thread.name);
 
-            CatalogDirectRecycler.downloadImageForHolder(thumbnail, thread);
+            KuboUtilities.downloadImageForHolder(thumbnail, thread, mBoard);
         }
     }
 }

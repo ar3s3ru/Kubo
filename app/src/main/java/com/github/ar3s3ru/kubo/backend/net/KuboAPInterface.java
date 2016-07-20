@@ -1,4 +1,4 @@
-package com.github.ar3s3ru.kubo.backend.controller;
+package com.github.ar3s3ru.kubo.backend.net;
 
 import com.github.ar3s3ru.kubo.backend.models.BoardsList;
 import com.github.ar3s3ru.kubo.backend.models.ModificationList;

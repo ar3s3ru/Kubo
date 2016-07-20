@@ -1,7 +1,7 @@
 package com.github.ar3s3ru.kubo.components;
 
-import com.github.ar3s3ru.kubo.backend.controller.KuboPushService;
-import com.github.ar3s3ru.kubo.backend.controller.KuboRESTService;
+import com.github.ar3s3ru.kubo.backend.net.KuboPushService;
+import com.github.ar3s3ru.kubo.backend.net.KuboRESTService;
 import com.github.ar3s3ru.kubo.modules.KuboAppModule;
 import com.github.ar3s3ru.kubo.modules.KuboDBModule;
 import com.github.ar3s3ru.kubo.modules.KuboNetModule;

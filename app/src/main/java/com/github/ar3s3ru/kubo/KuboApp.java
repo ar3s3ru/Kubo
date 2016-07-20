@@ -3,7 +3,7 @@ package com.github.ar3s3ru.kubo;
 import android.app.Application;
 import android.content.Intent;
 
-import com.github.ar3s3ru.kubo.backend.controller.KuboPushService;
+import com.github.ar3s3ru.kubo.backend.net.KuboPushService;
 import com.github.ar3s3ru.kubo.components.DaggerKuboAppComponent;
 import com.github.ar3s3ru.kubo.components.DaggerKuboNetComponent;
 import com.github.ar3s3ru.kubo.components.KuboAppComponent;
@@ -40,9 +40,9 @@ public class KuboApp extends Application {
     private KuboAppComponent mAppComponent;
 
     /** Dagger Modules */
-    private final KuboNetModule mNetModule = new KuboNetModule("https://api.4chan.org");
-    private final KuboAppModule mAppModule = new KuboAppModule(this);
-    private final KuboDBModule  mDBModule  = new KuboDBModule();
+    private final KuboNetModule   mNetModule   = new KuboNetModule("https://api.4chan.org");
+    private final KuboAppModule   mAppModule   = new KuboAppModule(this);
+    private final KuboDBModule    mDBModule    = new KuboDBModule();
 
     @SuppressWarnings("deprecation")    // Dagger sometimes flags as deprecated some
     @Override                           // modules...

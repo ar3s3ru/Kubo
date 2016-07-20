@@ -12,9 +12,11 @@ import android.widget.TextView;
 import com.github.ar3s3ru.kubo.R;
 import com.github.ar3s3ru.kubo.backend.models.RepliesList;
 import com.github.ar3s3ru.kubo.backend.models.Reply;
+import com.github.ar3s3ru.kubo.utils.KuboUtilities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,8 +46,11 @@ public class RepliesAdapter extends RecyclerView.Adapter<RepliesAdapter.ViewHold
 
     private final List<Reply> mList = new ArrayList<>();
 
-    public RepliesAdapter(@NonNull RepliesList list) {
+    private static String mBoard;
+
+    public RepliesAdapter(@NonNull RepliesList list, @NonNull String board) {
         mList.addAll(list.replies);
+        mBoard = board;
     }
 
     @Override
@@ -117,12 +122,13 @@ public class RepliesAdapter extends RecyclerView.Adapter<RepliesAdapter.ViewHold
         @Override
         void onBindViewHolder(@NonNull Reply reply) {
             // TODO: download thumbnail
+            KuboUtilities.downloadImageForHolder(thumbnail, reply, mBoard);
 
             // TODO: update callee
             comment.setText(Html.fromHtml(reply.comment));
             name.setText(reply.name);
-            number.setText(String.format("%d", reply.number));
-            replies.setText(String.format("%d", reply.replyTo));
+            number.setText(String.format(Locale.ENGLISH, "%d", reply.number));
+            replies.setText(String.format(Locale.ENGLISH, "%d", reply.replyTo));
         }
     }
 
@@ -140,6 +146,7 @@ public class RepliesAdapter extends RecyclerView.Adapter<RepliesAdapter.ViewHold
         @Override
         void onBindViewHolder(@NonNull Reply reply) {
             // TODO: download thumbnail
+            KuboUtilities.downloadImageForHolder(thumbnail, reply, mBoard);
 
             // TODO: update callee
             if (reply.comment != null) {
@@ -147,7 +154,7 @@ public class RepliesAdapter extends RecyclerView.Adapter<RepliesAdapter.ViewHold
                 comment.setText(Html.fromHtml(reply.comment));
             }
             name.setText(reply.name);
-            number.setText(String.format("%d", reply.number));
+            number.setText(String.format(Locale.ENGLISH, "%d", reply.number));
         }
     }
 }

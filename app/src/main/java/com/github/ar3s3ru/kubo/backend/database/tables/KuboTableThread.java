@@ -7,10 +7,10 @@ import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 
-import com.github.ar3s3ru.kubo.backend.controller.KuboEvents;
 import com.github.ar3s3ru.kubo.backend.database.KuboSQLHelper;
 import com.github.ar3s3ru.kubo.backend.models.Modification;
 import com.github.ar3s3ru.kubo.backend.models.Thread;
+import com.github.ar3s3ru.kubo.backend.net.KuboEvents;
 
 import java.util.TreeSet;
 

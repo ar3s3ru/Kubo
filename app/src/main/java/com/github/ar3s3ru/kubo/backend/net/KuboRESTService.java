@@ -1,4 +1,4 @@
-package com.github.ar3s3ru.kubo.backend.controller;
+package com.github.ar3s3ru.kubo.backend.net;
 
 import android.app.IntentService;
 import android.content.Context;
@@ -86,6 +86,7 @@ public class KuboRESTService extends IntentService implements Callback {
     @SuppressWarnings("unchecked")
     @Override
     public void onResponse(Call call, Response response) {
+        // Response successful
         if (response.isSuccessful()) {
             // General programming manteined through 'instanceof' operator
             if (response.body() instanceof BoardsList) {
@@ -103,7 +104,7 @@ public class KuboRESTService extends IntentService implements Callback {
                 Log.e(TAG, "No event recognized, from call: " + call.toString());
             }
         } else {
-            handleErrors(response);
+            handleErrors(call, response.errorBody().toString(), response.code());
         }
     }
 
@@ -116,6 +117,7 @@ public class KuboRESTService extends IntentService implements Callback {
     @Override
     public void onFailure(Call call, Throwable t) {
         t.printStackTrace();
+        handleErrors(call, t.getMessage(), 500);
     }
 
     /**
@@ -134,42 +136,44 @@ public class KuboRESTService extends IntentService implements Callback {
      * @param statusTag Event status tag
      * @param errorTag Event error tag
      * @param errcodTag Event error code tag
-     * @param response Error response string
      * @return Intent for error response callback
      */
     private static Intent newErrorIntent(@NonNull String action,
                                          @NonNull String statusTag,
                                          @NonNull String errorTag,
                                          @NonNull String errcodTag,
-                                         @NonNull Response response) {
+                                         @NonNull String error,
+                                         int errorCode) {
         return new Intent(action)
                 .putExtra(statusTag, false)
-                .putExtra(errorTag, response.errorBody().toString())
-                .putExtra(errcodTag, response.code());
+                .putExtra(errorTag, error)
+                .putExtra(errcodTag, errorCode);
     }
 
     /**
      * Handle failed HTTP responses (300/400/500 codes).
-     * @param response Failed HTTP response
+     * @param call Failed HTTP call
      */
-    private void handleErrors(Response response) {
+    private void handleErrors(@NonNull Call call, @NonNull String error, int errorCode) {
         // Intent to send
+        final List<String> listSegments =
+                call.request().url().encodedPathSegments();
+
         Intent intent = null;
 
         // General programming manteined through 'instanceof' operator
-        if (response.body() instanceof BoardsList) {
+        if (listSegments.get(listSegments.size() - 1).equals("boards.json")) {
             // getBoards() error
             intent = newErrorIntent(KuboEvents.BOARDS, KuboEvents.BOARDS_STATUS,
-                    KuboEvents.BOARDS_ERR, KuboEvents.BOARDS_ERRCOD, response);
+                    KuboEvents.BOARDS_ERR, KuboEvents.BOARDS_ERRCOD, error, errorCode);
             // ---------------------------------------------------------------- //
-        } else if (response.body() instanceof List &&
-                   ((List) response.body()).get(0) instanceof ThreadsList) {
+        } else if (listSegments.get(listSegments.size() - 1).equals("catalog.json")) {
             // getCatalog() error
             intent = newErrorIntent(KuboEvents.CATALOG, KuboEvents.CATALOG_STATUS,
-                    KuboEvents.CATALOG_ERROR, KuboEvents.CATALOG_ERRCOD, response);
-        } else if (response.body() instanceof RepliesList) {
+                    KuboEvents.CATALOG_ERROR, KuboEvents.CATALOG_ERRCOD, error, errorCode);
+        } else if (listSegments.get(listSegments.size() - 2).equals("thread")) {
             intent = newErrorIntent(KuboEvents.REPLIES, KuboEvents.REPLIES_STATUS,
-                    KuboEvents.REPLIES_ERROR, KuboEvents.REPLIES_ERRCOD, response);
+                    KuboEvents.REPLIES_ERROR, KuboEvents.REPLIES_ERRCOD, error, errorCode);
         }
 
         if (intent != null) {

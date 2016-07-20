@@ -11,7 +11,9 @@
     <dimen name="drawable_padding_short">8dp</dimen>
     <dimen name="drawable_padding_long">12dp</dimen>
 
-    <dimen name="generic_items_divider">2px</dimen>
+    <dimen name="generic_items_divider">1dp</dimen>
+    <dimen name="generic_items_divider_foot">16dp</dimen>
+
     <dimen name="generic_margin_short">8dp</dimen>
     <dimen name="generic_margin_long">16dp</dimen>
 
@@ -30,4 +32,13 @@
     <dimen name="card_header_height">16dp</dimen>
     <dimen name="card_header_padding_lateral">4dp</dimen>
     <dimen name="card_header_padding_vertical">2dp</dimen>
+
+    <dimen name="replies_thumbnail_dim">80dp</dimen>
+    <dimen name="replies_large_margin">16dp</dimen>
+    <dimen name="replies_mid_margin">8dp</dimen>
+    <dimen name="replies_short_margin">4dp</dimen>
+
+    <dimen name="replies_thread_comment_min_height">80dp</dimen>
+    <dimen name="replies_post_comment_min_height">61dp</dimen>
+    <dimen name="replies_header_textsize">12sp</dimen>
 </resources>

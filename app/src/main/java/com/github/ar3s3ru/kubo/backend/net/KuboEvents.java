@@ -1,4 +1,4 @@
-package com.github.ar3s3ru.kubo.backend.controller;
+package com.github.ar3s3ru.kubo.backend.net;
 
 /**
  * Copyright (C) 2016  Danilo Cianfrone

@@ -26,12 +26,13 @@
             android:label="@string/boards_activity_label" />
         <activity
             android:name=".views.ContentsActivity"
+            android:launchMode="singleInstance"
             android:theme="@style/KuboTheme.ContentsActivity" />
         <service
-            android:name=".backend.controller.KuboRESTService"
+            android:name=".backend.net.KuboRESTService"
             android:exported="false" />
         <service
-            android:name=".backend.controller.KuboPushService"
+            android:name=".backend.net.KuboPushService"
             android:exported="false" />
     </application>
 

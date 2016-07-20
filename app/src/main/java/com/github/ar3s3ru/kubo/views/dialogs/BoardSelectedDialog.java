@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 
@@ -73,11 +72,12 @@ public class BoardSelectedDialog extends DialogFragment implements DialogInterfa
         outState.putString(TITLE, mTitle);
     }
 
+    @NonNull
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
         Bundle takeArgs = getArguments();
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
         if (savedInstanceState != null) {
             takeArgs = savedInstanceState;
         }
@@ -87,12 +87,6 @@ public class BoardSelectedDialog extends DialogFragment implements DialogInterfa
         mTitle        = takeArgs.getString(TITLE);
         mPosition     = takeArgs.getInt(POS);
         mBoardStarred = takeArgs.getBoolean(STAR);
-    }
-
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
         builder.setTitle(mTitle)
                 .setNegativeButton(R.string.text_close, null);
