@@ -343,7 +343,7 @@
     </style>
 
     <style name="KuboTheme.Replies.Header.Replies.Icon" parent="KuboTheme.Replies.Header.Replies">
-        <item name="android:src">@drawable/ic_replies</item>
+        <item name="android:src">@drawable/ic_time</item>
     </style>
 
     <style name="KuboTheme.Replies.Divider">

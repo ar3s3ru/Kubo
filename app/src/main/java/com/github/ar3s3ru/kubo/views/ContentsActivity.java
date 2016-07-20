@@ -167,7 +167,7 @@ public class ContentsActivity extends KuboActivity
             super.onBackPressed();
         } else {
             // We have more than one fragment, so pop from the backstack
-            getSupportFragmentManager().popBackStackImmediate();
+            getSupportFragmentManager().popBackStack();
         }
     }
 

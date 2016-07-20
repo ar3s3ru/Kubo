@@ -14,6 +14,7 @@ import com.github.ar3s3ru.kubo.backend.models.RepliesList;
 import com.github.ar3s3ru.kubo.backend.models.Reply;
 import com.github.ar3s3ru.kubo.utils.KuboUtilities;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -146,7 +147,7 @@ public class RepliesAdapter extends RecyclerView.Adapter<RepliesAdapter.ViewHold
             comment.setText(Html.fromHtml(reply.comment));
             name.setText(reply.name);
             number.setText(String.format(Locale.ENGLISH, "%d", reply.number));
-            replies.setText(String.format(Locale.ENGLISH, "%d", reply.replyTo));
+            replies.setText(Html.fromHtml(reply.timeNow));
         }
     }
 
